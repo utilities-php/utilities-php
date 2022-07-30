@@ -1,0 +1,40 @@
+{
+   "name": "utilities-php/database",
+   "description": "Utilities for working with databases",
+   "license": "MIT",
+   "keywords": [
+      "php",
+      "utilities",
+      "database"
+   ],
+   "homepage": "https://github.com/utilities-php/utilities-php",
+   "support": {
+      "issues": "https://github.com/utilities-php/utilities-php/issues",
+      "source": "https://github.com/utilities-php/utilities-php",
+      "docs": "https://github.com/utilities-php/utilities-php"
+   },
+   "minimum-stability": "dev",
+   "prefer-stable": true,
+   "require": {
+      "php": ">=8.0",
+      "ext-pdo": "*",
+      "utilities-php/common": "*"
+   },
+   "scripts": {
+      "install": "composer install --ignore-platform-reqs",
+      "update": "composer update --ignore-platform-reqs"
+   },
+   "autoload": {
+      "psr-4": {
+         "Utilities\\Database\\": "src/"
+      }
+   },
+   "autoload-dev": {
+      "psr-4": {
+         "UtilitiesTests\\Database\\": "tests/"
+      }
+   },
+   "config": {
+      "sort-packages": true
+   }
+}

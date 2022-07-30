@@ -1,0 +1,74 @@
+{
+   "name": "utilities-php/utilities-php",
+   "description": "This is a utility library to make your coding process faster and easier",
+   "license": "MIT",
+   "keywords": [
+      "utilities",
+      "library",
+      "litehex",
+      "composer",
+      "package",
+      "helper",
+      "php"
+   ],
+   "homepage": "https://github.com/utilities-php/utilities-php",
+   "support": {
+      "issues": "https://github.com/utilities-php/utilities-php/issues",
+      "source": "https://github.com/utilities-php/utilities-php",
+      "docs": "https://github.com/utilities-php/utilities-php"
+   },
+   "authors": [
+      {
+         "name": "Shahrad Elahi",
+         "email": "shahrad@litehex.com",
+         "role": "developer"
+      }
+   ],
+   "minimum-stability": "dev",
+   "prefer-stable": true,
+   "require": {
+      "php": ">=8.0",
+      "ext-pdo": "*",
+      "ext-json": "*",
+      "ext-openssl": "*",
+      "psr/container": "^1.0|^2.0",
+      "psr/log": "^1.0|^2.0|^3.0"
+   },
+   "require-dev": {
+      "phpunit/phpunit": "^9.5.20",
+      "nxp/math-executor": "^2.3.0",
+      "shahradelahi/easy-http": "^v1.2.0"
+   },
+   "scripts": {
+      "install-dependencies": "composer install --ignore-platform-reqs",
+      "update-dependencies": "composer update --ignore-platform-reqs",
+      "test-coverage": "phpunit --colors=always --coverage-clover clover.xml"
+   },
+   "suggest": {},
+   "replace": {
+      "utilities-php/database": "*",
+      "utilities-php/router": "*",
+      "utilities-php/common": "*",
+      "utilities-php/trader": "*"
+   },
+   "autoload": {
+      "psr-4": {
+         "Utilities\\Database\\": "src/database/src/",
+         "Utilities\\Router\\": "src/router/src/",
+         "Utilities\\Common\\": "src/common/src/",
+         "Utilities\\Trader\\": "src/trader/src/"
+      }
+   },
+   "autoload-dev": {
+      "psr-4": {
+         "UtilitiesTests\\Common\\": "src/common/tests/",
+         "UtilitiesTests\\Database\\": "src/database/tests/",
+         "UtilitiesTests\\Router\\": "src/router/tests/",
+         "UtilitiesTests\\Trader\\": "src/trader/tests/"
+      }
+   },
+   "config": {
+      "optimize-autoloader": true,
+      "sort-packages": true
+   }
+}
