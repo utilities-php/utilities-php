@@ -39,13 +39,13 @@ class Encryption
 
         $key = hash(static::$algorithm, $secret);
         $len = openssl_cipher_iv_length(static::$cipher);
-        if (is_string($len) !== true) {
+        if ($len === false) {
             throw new \RuntimeException(sprintf(
                 'The cipher %s is not supported.', static::$cipher
             ));
         }
 
-        $iv = substr(hash(static::$algorithm, $len), 0, 16);
+        $iv = substr(hash(static::$algorithm, (string)$len), 0, 16);
 
         return base64_encode(openssl_encrypt(
             $input,
@@ -69,9 +69,9 @@ class Encryption
      * @param string $secret
      * @param string $input
      * @param bool $plain
-     * @return string
+     * @return string|false
      */
-    public static function decrypt(string $secret, string $input, bool $plain = true): string
+    public static function decrypt(string $secret, string $input, bool $plain = true): string|false
     {
         if (!static::validateSecret($secret)) {
             throw new \RuntimeException(sprintf(
@@ -81,13 +81,13 @@ class Encryption
 
         $key = hash(static::$algorithm, $secret);
         $len = openssl_cipher_iv_length(static::$cipher);
-        if (is_string($len) !== true) {
+        if ($len === false) {
             throw new \RuntimeException(sprintf(
                 'The cipher %s is not supported.', static::$cipher
             ));
         }
 
-        $iv = substr(hash(static::$algorithm, $len), 0, 16);
+        $iv = substr(hash(static::$algorithm, (string)$len), 0, 16);
 
         return openssl_decrypt(
             base64_decode($input),

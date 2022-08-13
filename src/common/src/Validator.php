@@ -199,4 +199,46 @@ class Validator
         return true;
     }
 
+    /**
+     * Validate data types
+     *
+     * Valid types:
+     *
+     * @param array $haystack e.g. ['name' => "Amir", 'age' => 25, 'is_admin' => true]
+     * @param array $needles e.g. ['name' => "string", 'age' => "integer|string", 'is_admin' => "boolean"]
+     * @return bool
+     */
+    public static function validateType(array $haystack, array $needles): bool
+    {
+        $valid_types = [
+            'boolean', 'integer', 'double', 'string', 'array', 'object',
+            'resource', 'null', 'unknown type', 'resource (closed)'
+        ];
+
+        foreach ($needles as $key => $types) {
+            $actual_type = strtolower(gettype($haystack[$key]));
+            if (!in_array($actual_type, $valid_types)) {
+                throw new \InvalidArgumentException(sprintf(
+                    'Invalid type for key "%s". Expected one of "%s", got "%s".',
+                    $key,
+                    implode('", "', $valid_types),
+                    $actual_type
+                ));
+            }
+
+            if (str_contains($types, '|')) {
+                if (!in_array($actual_type, explode('|', $types))) {
+                    return false;
+                }
+
+            } else {
+                if ($actual_type != $types) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
 }

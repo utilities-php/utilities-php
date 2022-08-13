@@ -1,0 +1,12 @@
+[submodule "src/common"]
+	path = src/common
+	url = https://github.com/utilities-php/common.git
+[submodule "src/database"]
+	path = src/database
+	url = https://github.com/utilities-php/common.git
+[submodule "src/router"]
+	path = src/router
+	url = https://github.com/utilities-php/router.git
+[submodule "src/trader"]
+	path = src/trader
+	url = https://github.com/utilities-php/trader.git

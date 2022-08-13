@@ -56,14 +56,16 @@
       "psr-4": {
          "Utilities\\Database\\": "src/database/src/",
          "Utilities\\Router\\": "src/router/src/",
-         "Utilities\\Common\\": "src/common/src/"
+         "Utilities\\Common\\": "src/common/src/",
+         "Utilities\\Trader\\": "src/trader/src/"
       }
    },
    "autoload-dev": {
       "psr-4": {
          "UtilitiesTests\\Common\\": "src/common/tests/",
          "UtilitiesTests\\Database\\": "src/database/tests/",
-         "UtilitiesTests\\Router\\": "src/router/tests/"
+         "UtilitiesTests\\Router\\": "src/router/tests/",
+         "UtilitiesTests\\Trader\\": "src/trader/tests/"
       }
    },
    "config": {

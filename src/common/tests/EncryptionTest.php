@@ -2,11 +2,10 @@
 
 namespace UtilitiesTests\Common;
 
-use PHPUnit\Framework\TestCase;
 use Utilities\Common\Common;
 use Utilities\Common\Encryption;
 
-class EncryptionTest extends TestCase
+class EncryptionTest extends \PHPUnit\Framework\TestCase
 {
 
     private string $text = "Lorem Ipsum is simply dummy text of the printing and typesetting industry.";
@@ -15,13 +14,13 @@ class EncryptionTest extends TestCase
     {
         Encryption::$algorithm = 'sha256';
         Encryption::$cipher = 'AES-256-CBC';
-        echo "Data: $this->text\n";
+        echo "Data: $this->text" . PHP_EOL;
 
         $secretKey = $this->generateSecretKey();
-        echo "Secret Key: $secretKey\n";
+        echo "Secret Key: $secretKey" . PHP_EOL;
 
         $encrypted = Encryption::encrypt($secretKey, $this->text);
-        echo "Encrypted: $encrypted\n";
+        echo "Encrypted: $encrypted" . PHP_EOL;
 
         $this->assertEquals($this->text, Encryption::decrypt($secretKey, $encrypted));
         $this->assertNotEquals($this->text, Encryption::decrypt($this->generateSecretKey(), $encrypted));

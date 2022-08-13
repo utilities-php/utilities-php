@@ -86,21 +86,6 @@ class Common
     }
 
     /**
-     * Check are values are empty (API Response)
-     *
-     * @param array $params
-     * @return void
-     */
-    public static function EmptyParams(array $params = []): void
-    {
-        foreach ($params as $key => $value) {
-            if ($value == null) Connection::sendStatus(400, false, [
-                'description' => "Bad Request: '$key' is empty",
-            ]);
-        }
-    }
-
-    /**
      * Get multiple values from array by key
      *
      * @param array $haystack
@@ -114,25 +99,6 @@ class Common
         foreach ($needle as $key) {
             if ($skipEmpty && $haystack[$key] == null) continue;
             $result[$key] = $haystack[$key];
-        }
-        return $result;
-    }
-
-    /**
-     * Require given keys in array and send error if not found
-     *
-     * @param array $haystack
-     * @param array $needle
-     * @return array
-     */
-    public static function RequireParams(array $haystack, array $needle): array
-    {
-        $result = [];
-        foreach ($needle as $key) {
-            if ($haystack[$key] == null) Connection::sendStatus(400, false, [
-                'description' => "Bad Request: '$key' is empty",
-            ]);
-            else $result[$key] = $haystack[$key];
         }
         return $result;
     }
