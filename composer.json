@@ -36,6 +36,7 @@
       "psr/log": "^1.0|^2.0|^3.0"
    },
    "require-dev": {
+      "rector/rector": "^0.12.9",
       "phpunit/phpunit": "^9.5.20",
       "nxp/math-executor": "^2.3.0",
       "shahradelahi/easy-http": "^v1.2.0"
@@ -43,7 +44,7 @@
    "scripts": {
       "install-dependencies": "composer install --ignore-platform-reqs",
       "update-dependencies": "composer update --ignore-platform-reqs",
-      "tests": "vendor/bin/phpunit --configuration ./phpunit.xml --teamcity --colors=always"
+      "tests": "phpunit --configuration ./phpunit.xml --teamcity --colors=always"
    },
    "suggest": {},
    "replace": {

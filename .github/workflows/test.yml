@@ -1,4 +1,4 @@
-name: PHP Test coverage
+name: PHPUnit Test
 
 on:
   push:
@@ -29,8 +29,10 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-php-
 
-      - name: Install dependencies
-        run: composer run-script install-dependencies
+      - name: Install and update Composer packages
+        run: |
+          composer run-script install-dependencies
+          composer run-script update-dependencies
 
       - name: Run test suite
         run: composer run-script tests
