@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Utilities\Router;
 
@@ -26,12 +27,16 @@ class URLs
 
     /**
      * @param int $index Get the segment by index
-     * @return string
+     * @return string|false
      */
-    public static function segment(int $index): string
+    public static function segment(int $index): string|false
     {
         $segments = self::getSegments();
-        if (isset($segments[$index])) return $segments[$index];
+
+        if (isset($segments[$index])) {
+            return $segments[$index];
+        }
+
         return false;
     }
 
@@ -69,7 +74,7 @@ class URLs
      */
     public static function QueryString(array $extra = []): array
     {
-        $raw_data = explode("&", $_SERVER['QUERY_STRING']);
+        $raw_data = explode("&", $_SERVER['QUERY_STRING'] ?? '');
         $result = [];
 
         if (count($raw_data) > 0 && $raw_data[0] != "") {
@@ -89,7 +94,7 @@ class URLs
     /**
      * @param string $url (without http:// and domain) (ex: /home/shahrad/testEcho)
      * @param string $pattern Example: '/{sector}/{subsector}/{method}/'
-     * @return array
+     * @return array the matched segments
      */
     public static function parseURL(string $url, string $pattern): array
     {
@@ -102,6 +107,32 @@ class URLs
             }
         }
         return $data;
+    }
+
+    /**
+     * Find index of segment by use a keyword
+     *
+     * @param string $keyword
+     * @param bool $insensitive (optional) if true, the keyword will be case-insensitive
+     * @return int
+     */
+    public static function findIndexOfSegment(string $keyword, bool $insensitive = false): int
+    {
+        if ($insensitive) {
+            $keyword = strtolower($keyword);
+        }
+
+        foreach (URLs::getSegments() as $index => $value) {
+            if ($insensitive) {
+                $value = strtolower($value);
+            }
+
+            if ($value == $keyword) {
+                return $index;
+            }
+        }
+
+        return -1;
     }
 
 }

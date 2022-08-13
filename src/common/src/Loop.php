@@ -45,4 +45,21 @@ class Loop
         static::$running = false;
     }
 
+    /**
+     * @param callable $callback
+     * @param int $interval (optional) in milliseconds
+     * @return void
+     */
+    public static function runForever(callable $callback, int $interval = 500): void
+    {
+        static::$running = true;
+        $last_hit = Time::getMillisecond();
+        while (static::$running) {
+            if (Time::getMillisecond() - $last_hit > $interval) {
+                $callback();
+                $last_hit = Time::getMillisecond();
+            }
+        }
+    }
+
 }

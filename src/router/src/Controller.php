@@ -1,6 +1,9 @@
 <?php
+declare(strict_types=1);
 
 namespace Utilities\Router;
+
+use Utilities\Router\Interfaces\ControllerInterface;
 
 /**
  * Controller class
@@ -9,31 +12,12 @@ namespace Utilities\Router;
  * @author  Shahrad Elahi (https://github.com/shahradelahi)
  * @license https://github.com/utilities-php/router/blob/master/LICENSE (MIT License)
  */
-class Controller
+abstract class Controller extends AnonymousController implements ControllerInterface
 {
 
-    /**
-     * Key
-     *
-     * @var string
-     */
-    protected string $key;
-
-    /**
-     * Controller Constructor
-     *
-     * @param string $method The name of method to be called
-     * @param array $middleSegments The next segment of the URL
-     */
-    public function __construct(string $method, array $middleSegments)
+    public function __process(Request $request): void
     {
-        $this->key = $method;
-
-        if (method_exists($this, '__process')) {
-            $this->__process($method, $middleSegments);
-        }
-
-        Application::passDataToMethod($this, $method);
+        // Simply implement this method is ignored.
     }
 
 }

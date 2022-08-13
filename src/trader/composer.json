@@ -1,0 +1,39 @@
+{
+   "name": "utilities-php/trader",
+   "description": "Any utility functions for the trader",
+   "license": "MIT",
+   "keywords": [
+      "php",
+      "utilities",
+      "trader"
+   ],
+   "homepage": "https://github.com/utilities-php/utilities-php",
+   "support": {
+      "issues": "https://github.com/utilities-php/utilities-php/issues",
+      "source": "https://github.com/utilities-php/utilities-php",
+      "docs": "https://github.com/utilities-php/utilities-php"
+   },
+   "minimum-stability": "dev",
+   "prefer-stable": true,
+   "require": {
+      "php": "^8.0",
+      "utilities-php/common": "*"
+   },
+   "scripts": {
+      "install": "composer install --ignore-platform-reqs",
+      "update": "composer update --ignore-platform-reqs"
+   },
+   "autoload": {
+      "psr-4": {
+         "Utilities\\Trader\\": "src/"
+      }
+   },
+   "autoload-dev": {
+      "psr-4": {
+         "UtilitiesTests\\Trader\\": "tests/"
+      }
+   },
+   "config": {
+      "sort-packages": true
+   }
+}
