@@ -1,6 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<phpunit bootstrap="vendor/autoload.php">
-    <testsuite>
-        <directory>tests/</directory>
-    </testsuite>
+<phpunit bootstrap="vendor/autoload.php" colors="true" convertErrorsToExceptions="true"
+         convertNoticesToExceptions="true" convertWarningsToExceptions="true" processIsolation="false"
+         stopOnFailure="false">
+    <coverage processUncoveredFiles="true">
+        <include>
+            <directory suffix=".php">./src/router/src</directory>
+            <directory suffix=".php">./src/database/src</directory>
+            <directory suffix=".php">./src/common/src</directory>
+            <directory suffix=".php">./src/trader/src</directory>
+        </include>
+    </coverage>
+    <testsuites>
+        <testsuite name="Tests">
+            <directory suffix="Test.php">./src/router/tests</directory>
+            <directory suffix="Test.php">./src/database/tests</directory>
+            <directory suffix="Test.php">./src/common/tests</directory>
+            <directory suffix="Test.php">./src/trader/tests</directory>
+        </testsuite>
+    </testsuites>
 </phpunit>

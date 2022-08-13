@@ -31,6 +31,7 @@
       "ext-pdo": "*",
       "ext-json": "*",
       "ext-openssl": "*",
+      "ext-fileinfo": "*",
       "psr/container": "^1.0|^2.0",
       "psr/log": "^1.0|^2.0|^3.0"
    },
@@ -42,7 +43,7 @@
    "scripts": {
       "install-dependencies": "composer install --ignore-platform-reqs",
       "update-dependencies": "composer update --ignore-platform-reqs",
-      "test-coverage": "phpunit --colors=always --coverage-clover clover.xml"
+      "tests": "phpunit --configuration ./phpunit.xml --teamcity --colors=always"
    },
    "suggest": {},
    "replace": {
