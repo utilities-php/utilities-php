@@ -47,10 +47,10 @@ class Math
      * Fixed decimal
      *
      * @param float $number
-     * @param float $decimal
+     * @param int $decimal
      * @return float
      */
-    public static function fixedDecimal(float $number, float $decimal = 2): float
+    public static function fixedDecimal(float $number, int $decimal = 2): float
     {
         return (float)number_format($number, $decimal, '.', '');
     }
