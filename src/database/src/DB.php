@@ -115,6 +115,27 @@ class DB
     }
 
     /**
+     * Get the last error
+     *
+     * @return array
+     */
+    public function errorInfo(): array
+    {
+        return $this->getConnection()->errorInfo();
+    }
+
+    /**
+     * @return PDO
+     */
+    public function getConnection(): PDO
+    {
+        $this->PDOClass->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
+        $this->PDOClass->setAttribute(PDO::ATTR_STRINGIFY_FETCHES, false);
+
+        return $this->PDOClass;
+    }
+
+    /**
      * Save the connection info to a file
      *
      * @param string $secret
@@ -168,32 +189,11 @@ class DB
     }
 
     /**
-     * @return PDO
-     */
-    public function getConnection(): PDO
-    {
-        $this->PDOClass->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
-        $this->PDOClass->setAttribute(PDO::ATTR_STRINGIFY_FETCHES, false);
-
-        return $this->PDOClass;
-    }
-
-    /**
      * @return int|string
      */
     public function insertId(): int|string
     {
         return $this->getConnection()->lastInsertId();
-    }
-
-    /**
-     * Get the last error
-     *
-     * @return array
-     */
-    public function errorInfo(): array
-    {
-        return $this->getConnection()->errorInfo();
     }
 
     /**

@@ -30,6 +30,7 @@
       "php": ">=8.0",
       "ext-pdo": "*",
       "ext-json": "*",
+      "ext-mcrypt": "*",
       "ext-openssl": "*",
       "ext-fileinfo": "*",
       "psr/container": "^1.0|^2.0",

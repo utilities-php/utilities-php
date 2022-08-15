@@ -45,25 +45,6 @@ abstract class Application implements ApplicationRouteInterface
     }
 
     /**
-     * Find the directories, route and controller by defined values
-     *
-     * @param array $options ["insensitive"]
-     * @return void
-     */
-    protected function findPath(array $options = []): void
-    {
-        if (!Origin::validate()) {
-            Response::send(StatusCode::FORBIDDEN, [
-                'error_message' => 'Origin not allowed',
-            ]);
-        }
-
-        Router::any('/execute-watchers', function () {
-            $this->runWatchers();
-        });
-    }
-
-    /**
      * Resolve the route
      *
      * @param array $options (optional) [insensitive]
@@ -92,6 +73,25 @@ abstract class Application implements ApplicationRouteInterface
         Response::send(StatusCode::INTERNAL_SERVER_ERROR, [
             'description' => "Internal Server Error",
         ]);
+    }
+
+    /**
+     * Find the directories, route and controller by defined values
+     *
+     * @param array $options ["insensitive"]
+     * @return void
+     */
+    protected function findPath(array $options = []): void
+    {
+        if (!Origin::validate()) {
+            Response::send(StatusCode::FORBIDDEN, [
+                'error_message' => 'Origin not allowed',
+            ]);
+        }
+
+        Router::any('/execute-watchers', function () {
+            $this->runWatchers();
+        });
     }
 
 }

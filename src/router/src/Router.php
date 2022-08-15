@@ -29,24 +29,6 @@ class Router
     use RouterTrait;
 
     /**
-     * create a route that matches the given HTTP methods
-     *
-     * @param string $method
-     * @param string $uri
-     * @param callable $callback
-     * @return void
-     */
-    public static function match(string $method, string $uri, callable $callback): void
-    {
-        if (!isset(static::$routes[$method])) {
-            static::$routes[$method] = [];
-        }
-
-        static::$routes[$method][$uri] = $callback;
-        self::resolve();
-    }
-
-    /**
      * rate limit
      *
      * @param string $uri the uri to rate limit (e.g. /api/v1/users)
@@ -130,51 +112,21 @@ class Router
     }
 
     /**
-     * Does uri registered in router?
+     * create a route that matches the given HTTP methods
      *
-     * @param string $uri e.g. /api/v1/users or /api/v1/users/{id}
-     * @return bool
-     */
-    public static function isRegistered(string $uri): bool
-    {
-        foreach (static::$routes as $method => $routes) {
-            foreach ($routes as $route => $callback) {
-                if ($route === $uri) {
-                    return true;
-                }
-            }
-        }
-
-        return false;
-    }
-
-    /**
-     * create a resource route. it can be public documents, images, css, js, etc.
-     *
-     * Note: this will give access to whole directory. (e.g. /public/*)
-     *
-     * @todo: create test for this method
-     *
-     * @param string $uri the uri to rate limit (e.g. /docs)
-     * @param string $localPath the absolute path to the directory (e.g. /var/www/html/docs)
+     * @param string $method
+     * @param string $uri
+     * @param callable $callback
      * @return void
      */
-    public static function resource(string $uri, string $localPath): void
+    public static function match(string $method, string $uri, callable $callback): void
     {
-        foreach (scandir($localPath) as $file) {
-            if ($file !== '.' && $file !== '..') {
-                $filePath = $localPath . '/' . $file;
-                if (is_dir($filePath)) {
-                    self::resource($uri . '/' . $file, $filePath);
-                } else {
-                    $extension = pathinfo($filePath, PATHINFO_EXTENSION);
-                    header('Content-Type: ' . PathFinder::getMimeType($extension));
-                    self::get($uri . '/' . $file, function () use ($filePath) {
-                        return file_get_contents($filePath);
-                    });
-                }
-            }
+        if (!isset(static::$routes[$method])) {
+            static::$routes[$method] = [];
         }
+
+        static::$routes[$method][$uri] = $callback;
+        self::resolve();
     }
 
     /**
@@ -232,6 +184,54 @@ class Router
             'query_string' => URLs::QueryString(),
             'params' => $params,
         ]);
+    }
+
+    /**
+     * Does uri registered in router?
+     *
+     * @param string $uri e.g. /api/v1/users or /api/v1/users/{id}
+     * @return bool
+     */
+    public static function isRegistered(string $uri): bool
+    {
+        foreach (static::$routes as $method => $routes) {
+            foreach ($routes as $route => $callback) {
+                if ($route === $uri) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * create a resource route. it can be public documents, images, css, js, etc.
+     *
+     * Note: this will give access to whole directory. (e.g. /public/*)
+     *
+     * @todo: create test for this method
+     *
+     * @param string $uri the uri to rate limit (e.g. /docs)
+     * @param string $localPath the absolute path to the directory (e.g. /var/www/html/docs)
+     * @return void
+     */
+    public static function resource(string $uri, string $localPath): void
+    {
+        foreach (scandir($localPath) as $file) {
+            if ($file !== '.' && $file !== '..') {
+                $filePath = $localPath . '/' . $file;
+                if (is_dir($filePath)) {
+                    self::resource($uri . '/' . $file, $filePath);
+                } else {
+                    $extension = pathinfo($filePath, PATHINFO_EXTENSION);
+                    header('Content-Type: ' . PathFinder::getMimeType($extension));
+                    self::get($uri . '/' . $file, function () use ($filePath) {
+                        return file_get_contents($filePath);
+                    });
+                }
+            }
+        }
     }
 
     /**

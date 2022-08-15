@@ -33,22 +33,6 @@ class Collector
     private static ?DB $database = null;
 
     /**
-     * Get Database
-     *
-     * @return DB
-     */
-    protected static function getDatabase(): DB
-    {
-        if (static::$database === null) {
-            static::$database = new DB(
-                static::$database_secret
-            );
-        }
-
-        return static::$database;
-    }
-
-    /**
      * Find data with specified column and value
      *
      * @param string $column
@@ -72,6 +56,22 @@ class Collector
             'table' => static::$table_name,
             'where' => $conditions
         ]);
+    }
+
+    /**
+     * Get Database
+     *
+     * @return DB
+     */
+    protected static function getDatabase(): DB
+    {
+        if (static::$database === null) {
+            static::$database = new DB(
+                static::$database_secret
+            );
+        }
+
+        return static::$database;
     }
 
     /**

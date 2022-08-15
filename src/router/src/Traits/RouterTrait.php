@@ -47,6 +47,21 @@ trait RouterTrait
     ];
 
     /**
+     * Find the route and pass the data to the callback
+     *
+     * @param string $uri
+     * @return void
+     */
+    private static function findAndPassData(string $uri): void
+    {
+        if (($find = Router::find($uri)) !== false) {
+            if (is_callable(($callback = static::$routes[$find['method']][$find['route']]))) {
+                call_user_func_array($callback, [...$find['params']]);
+            }
+        }
+    }
+
+    /**
      * Find dynamic route with the given uri
      *
      * @param string $uri
@@ -89,21 +104,6 @@ trait RouterTrait
         }
 
         return '#^' . $uri . '$#';
-    }
-
-    /**
-     * Find the route and pass the data to the callback
-     *
-     * @param string $uri
-     * @return void
-     */
-    private static function findAndPassData(string $uri): void
-    {
-        if (($find = Router::find($uri)) !== false) {
-            if (is_callable(($callback = static::$routes[$find['method']][$find['route']]))) {
-                call_user_func_array($callback, [...$find['params']]);
-            }
-        }
     }
 
 }
