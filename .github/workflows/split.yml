@@ -46,3 +46,5 @@ jobs:
           repository_organization: 'utilities-php'
           repository_name: '${{ matrix.package.split_repository }}'
 
+          user_name: "LitehexCI"
+          user_email: "opensource@litehex.com"
