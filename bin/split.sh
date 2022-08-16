@@ -3,9 +3,7 @@
 set -e
 set -x
 
-CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
-BASEPATH=$(cd `dirname $0`; cd ../src/; pwd)
-REPOS=$@
+CURRENT_BRANCH="master"
 
 function split()
 {
@@ -20,12 +18,12 @@ function remote()
 
 git pull origin $CURRENT_BRANCH
 
-if [[ $# -eq 0 ]]; then
-    REPOS=$(ls $BASEPATH)
-fi
+remote auth git@github.com:utilities-php/common.git
+remote auth git@github.com:utilities-php/database.git
+remote auth git@github.com:utilities-php/router.git
+remote auth git@github.com:utilities-php/trader.git
 
-for REPO in $REPOS ; do
-    remote $REPO git@github.com:utilities-php/$REPO.git
-
-    split "src/$REPO" $REPO
-done
+split 'src/common' common
+split 'src/database' database
+split 'src/router' router
+split 'src/trader' trader
