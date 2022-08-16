@@ -45,7 +45,8 @@
    "scripts": {
       "install-dependencies": "composer install --ignore-platform-reqs",
       "update-dependencies": "composer update --ignore-platform-reqs",
-      "tests": "phpunit --configuration ./phpunit.xml --teamcity --colors=always"
+      "tests": "phpunit --configuration ./phpunit.xml --teamcity --colors=always",
+      "split-packages": "./bin/detect-spliter.sh"
    },
    "suggest": {},
    "replace": {
