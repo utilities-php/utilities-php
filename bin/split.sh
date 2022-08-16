@@ -7,7 +7,7 @@ CURRENT_BRANCH="master"
 
 function split()
 {
-    SHA1=`./bin/splitsh-lite --prefix=$1`
+    SHA1=$(./splitsh-lite-linux --prefix=$1)
     git push $2 "$SHA1:refs/heads/$CURRENT_BRANCH" -f
 }
 
@@ -21,7 +21,7 @@ git pull origin $CURRENT_BRANCH
 remote auth git@github.com:utilities-php/common.git
 remote auth git@github.com:utilities-php/database.git
 remote auth git@github.com:utilities-php/router.git
-remote auth git@github.com:utilities-php/trader.git
+remote trader git@github.com:utilities-php/trader.git
 
 split 'src/common' common
 split 'src/database' database

@@ -1,0 +1,48 @@
+name: 'Packages Split'
+
+on:
+  push:
+    branches:
+      - master
+    tags:
+      - '*'
+
+env:
+  GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+
+jobs:
+  packages_split:
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        package:
+          -
+            local_path: 'common'
+            split_repository: 'common'
+
+          -
+            local_path: 'database'
+            split_repository: 'database'
+
+          -
+            local_path: 'router'
+            split_repository: 'router'
+
+          -
+            local_path: 'trader'
+            split_repository: 'trader'
+
+    steps:
+      -   uses: actions/checkout@v2
+
+      -
+        if: "!startsWith(github.ref, 'refs/tags/')"
+        uses: "symplify/monorepo-split-github-action@2.1"
+        with:
+          package_directory: 'src/${{ matrix.package.local_path }}'
+
+          repository_organization: 'utilities-php'
+          repository_name: '${{ matrix.package.split_repository }}'
+
