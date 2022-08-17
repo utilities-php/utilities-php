@@ -40,7 +40,7 @@ trait ControllerTrait
                 ));
             }
 
-            if (in_array($slug, Application::$reservedWords)) {
+            if (in_array($slug, Application::$reserved_words)) {
                 throw new \RuntimeException(sprintf(
                     'The slug `%s` is reserved word',
                     $slug

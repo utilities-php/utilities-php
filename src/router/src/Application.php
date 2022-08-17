@@ -6,7 +6,7 @@ namespace Utilities\Router;
 use Utilities\Router\Interfaces\ApplicationRouteInterface;
 use Utilities\Router\Traits\ControllerTrait;
 use Utilities\Router\Traits\DirectoryTrait;
-use Utilities\Router\Traits\WatcherTrait;
+use Utilities\Router\Traits\ServicesTrait;
 use Utilities\Router\Utils\StatusCode;
 
 /**
@@ -20,7 +20,7 @@ abstract class Application implements ApplicationRouteInterface
 {
 
     use ControllerTrait;
-    use WatcherTrait;
+    use ServicesTrait;
     use DirectoryTrait;
 
     /**
@@ -28,7 +28,7 @@ abstract class Application implements ApplicationRouteInterface
      *
      * @var array
      */
-    public static array $reservedWords = [
+    public static array $reserved_words = [
         'execute-watchers',
     ];
 
@@ -81,7 +81,7 @@ abstract class Application implements ApplicationRouteInterface
      * @param array $options ["insensitive"]
      * @return void
      */
-    protected function findPath(array $options = []): void
+    private function findPath(array $options = []): void
     {
         if (!Origin::validate()) {
             Response::send(StatusCode::FORBIDDEN, [
@@ -90,7 +90,7 @@ abstract class Application implements ApplicationRouteInterface
         }
 
         Router::any('/execute-watchers', function () {
-            $this->runWatchers();
+            Services::run();
         });
     }
 

@@ -28,6 +28,15 @@ class Origin
     protected static array $allowedIps = [];
 
     /**
+     * Strict mode.
+     *
+     * By setting this to true, the origin will be checked strictly.
+     *
+     * @var bool
+     */
+    public static bool $strict_mode = false;
+
+    /**
      * Add allowed domain.
      *
      * @param string $domain The domain. (e.g. example.com or *.example.com)
@@ -150,6 +159,10 @@ class Origin
             }
 
             return true;
+        }
+
+        if (static::$strict_mode !== true) {
+            return isset($_SERVER['HTTP_ORIGIN']) ? $flag : true;
         }
 
         return $flag;

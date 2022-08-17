@@ -71,6 +71,7 @@ class Response
         }
 
         echo $body;
+        die($statusCode);
     }
 
     /**

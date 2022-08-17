@@ -146,10 +146,8 @@ class Router
         $uri = str_ends_with($uri, '/') ? substr($uri, 0, -1) : $uri;
 
         if (isset(static::$routes['ANY'])) {
-            static::$routes[$method] = array_merge(
-                static::$routes[$method], static::$routes['ANY']
-            );
-
+            $data_to_merge = static::$routes[$method] ?? [];
+            static::$routes[$method] = array_merge($data_to_merge, static::$routes['ANY']);
             unset(static::$routes['ANY']);
         }
 

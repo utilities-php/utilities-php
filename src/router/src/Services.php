@@ -8,55 +8,55 @@ use Utilities\Common\Connection;
 use Utilities\Common\Loop;
 
 /**
- * Watcher class
+ * Services class
  *
  * @link    https://github.com/utilities-php/router
  * @author  Shahrad Elahi (https://github.com/shahradelahi)
  * @license https://github.com/utilities-php/router/blob/master/LICENSE (MIT License)
  */
-class Watcher
+class Services
 {
 
     /**
-     * Watchers.
+     * Services.
      *
      * @var array
      */
-    private static array $watchers = [];
+    private static array $services = [];
 
     /**
-     * Add a watcher.
+     * Add a services
      *
-     * @param array $watchers [['key', 'class', 'interval'], ...]
+     * @param array $services [['key', 'class', 'interval'], ...]
      * @return void
      */
-    public static function add(array $watchers): void
+    public static function add(array $services): void
     {
-        foreach ($watchers as $watcher) {
-            if (!is_array($watcher) || !is_string($watcher['class']) || !is_numeric($watcher['interval'])) {
+        foreach ($services as $service) {
+            if (!is_array($service) || !is_string($service['class']) || !is_numeric($service['interval'])) {
                 throw new \RuntimeException(sprintf(
-                    'The watcher `%s` is not valid.',
-                    $watcher
+                    'The service `%s` is not valid.',
+                    $service
                 ));
             }
 
-            if (!method_exists($watcher['class'], '__run')) {
+            if (!method_exists($service['class'], '__run')) {
                 throw new \RuntimeException(sprintf(
-                    'The watcher `%s` does not have a __run method.',
-                    $watcher['class']
+                    'The service `%s` does not have a __run method.',
+                    $service['class']
                 ));
             }
 
-            static::$watchers[] = $watcher;
+            static::$services[] = $service;
         }
     }
 
     /**
-     * Create instance of the watcher.
+     * Create instance of the service.
      *
-     * @param string $key The key of the watcher.
-     * @param string $class Watcher class name.
-     * @param int $interval Watcher interval. (e.g. 60 for 1 minute)
+     * @param string $key The key of the service.
+     * @param string $class Service class name.
+     * @param int $interval Service interval. (e.g. 60 for 1 minute)
      * @return array ['key', 'class', 'interval']
      */
     public static function create(string $key, string $class, int $interval): array
@@ -69,22 +69,22 @@ class Watcher
     }
 
     /**
-     * Remove a watcher from the list.
+     * Remove a service.
      *
      * @param string $key
      * @return void
      */
     public static function remove(string $key): void
     {
-        foreach (static::$watchers as $index => $watcher) {
-            if ($watcher['key'] === $key) {
-                unset(static::$watchers[$index]);
+        foreach (static::$services as $index => $service) {
+            if ($service['key'] === $key) {
+                unset(static::$services[$index]);
             }
         }
     }
 
     /**
-     * Run the watchers.
+     * Run the services.
      *
      * @return void
      */
@@ -103,10 +103,10 @@ class Watcher
                 Loop::stop();
             }
 
-            foreach (static::$watchers as $watcher) {
-                if (time() - $last_runs[$watcher['key']] >= $watcher['interval']) {
-                    (new $watcher['class']())->__run();
-                    $last_runs[$watcher['key']] = time();
+            foreach (static::$services as $service) {
+                if (time() - $last_runs[$service['key']] >= $service['interval']) {
+                    (new $service['class']())->__run();
+                    $last_runs[$service['key']] = time();
                 }
             }
         });
