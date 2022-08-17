@@ -10,7 +10,7 @@ use Utilities\Database\Exceptions\ConnectionRefusedException;
 use Utilities\Database\Exceptions\InvalidSecretException;
 
 /**
- * Database class
+ * DB class
  *
  * @link    https://github.com/utilities-php/database
  * @author  Shahrad Elahi (https://github.com/shahradelahi)
