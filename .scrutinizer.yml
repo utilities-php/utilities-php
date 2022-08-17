@@ -1,0 +1,20 @@
+build:
+  tests:
+    override:
+      - true
+
+  nodes:
+    tests:
+      environment:
+        php:
+          version: 8.0
+          pecl_extensions:
+            - mcrypt
+    analysis:
+      environment:
+        php:
+          version: 8.0
+          pecl_extensions:
+            - mcrypt
+      tests:
+        override: [php-scrutinizer-run]

@@ -1,7 +1,5 @@
-# Router Utilities - PHP
-
 <p align="center">
-  <a href="https://github.com/utilities-php/utilities-php" target="_blank" rel="noopener noreferrer"><img style="border-radius: 8%" width="140" height="auto" src="https://cdn.jsdelivr.net/gh/utilities-php/utilities-php/docs/logo-2x.png" alt="Utilities PHP" /></a>
+  <a href="https://github.com/utilities-php/utilities-php" target="_blank" rel="noopener noreferrer"><img width="140" height="auto" src="https://cdn.jsdelivr.net/gh/utilities-php/utilities-php/logo.png" alt="Utilities PHP" /></a>
 </p>
 <p align="center">
   <a href="https://github.com/utilities-php/utilities-php/actions"><img src="https://github.com/utilities-php/utilities-php/workflows/PHPUnit%20Test/badge.svg" alt="Build Status" /></a>
@@ -15,6 +13,8 @@
   <a href="https://packagist.org/packages/utilities-php/utilities-php"><img src="https://img.shields.io/packagist/dt/utilities-php/router" alt="Downloads" /></a>
   <a href="https://packagist.org/packages/utilities-php/utilities-php"><img src="https://img.shields.io/github/license/utilities-php/router" alt="License" /></a>
 </p>
+
+# Router Utilities - PHP
 
 ## Introduction
 
