@@ -23,6 +23,13 @@ class Response
     private static int $status_code = -1;
 
     /**
+     * Kill process after sending response.
+     *
+     * @var bool
+     */
+    public static bool $PROCESS_KILLER = true;
+
+    /**
      * Require given keys in array and send error if not found
      *
      * @param array $haystack
@@ -71,7 +78,7 @@ class Response
         }
 
         echo $body;
-        die($statusCode);
+        if (static::$PROCESS_KILLER) die($statusCode);
     }
 
     /**

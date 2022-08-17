@@ -20,6 +20,8 @@ class App extends \Utilities\Router\Application
      */
     public function __process(Request $request): void
     {
+        Response::$PROCESS_KILLER = false;
+
         self::addController([
             Controller::__create('james', JamesController::class, '/james'),
             Controller::__create('todo', TodoController::class, '/api/todo'),
