@@ -2,8 +2,8 @@
 <p align="center">
   <a href="https://scrutinizer-ci.com/g/utilities-php/utilities-php/?branch=master"><img src="https://img.shields.io/scrutinizer/g/utilities-php/utilities-php/master.svg?style=flat" alt="Code Quality" /></a>
   <a href="https://travis-ci.com/utilities-php/utilities-php"><img src="https://scrutinizer-ci.com/g/utilities-php/utilities-php/badges/build.png?b=master" alt="Build Status" /></a>
-  <a href="https://packagist.org/packages/telegram-bot-php/core"><img src="https://img.shields.io/packagist/v/telegram-bot-php/core.svg" alt="Latest Stable Version" /></a>
-  <a href="https://packagist.org/packages/telegram-bot-php/core"><img src="https://img.shields.io/github/license/telegram-bot-php/core" alt="License" /></a>
+  <a href="https://packagist.org/packages/utilities-php/utilities-php"><img src="https://img.shields.io/packagist/v/utilities-php/utilities-php.svg" alt="Latest Stable Version" /></a>
+  <a href="https://packagist.org/packages/utilities-php/utilities-php"><img src="https://img.shields.io/github/license/utilities-php/utilities-php" alt="License" /></a>
 </p>
 
 # Utilities
@@ -47,6 +47,6 @@ php composer.phar require "utilities-php/utilities-php"
 
 #### Windows:
 
-[Download installer for Windows](https://getcomposer.org/download/)
+[Download installer for Windows](https://getcomposer.org/doc/00-intro.md#installation-windows)
 
 </details>

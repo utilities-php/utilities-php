@@ -23,12 +23,12 @@ class App extends \Utilities\Router\Application
         Response::$PROCESS_KILLER = false;
 
         self::addController([
-            Controller::__create('james', JamesController::class, '/james'),
-            Controller::__create('todo', TodoController::class, '/api/todo'),
+            Controller::__create('/james', JamesController::class),
+            Controller::__create('/api/todo', TodoController::class),
         ]);
 
         Origin::addDomain('localhost', false, 60 * 60 * 24);
-        Origin::addDomain('example.com', true, 86400);
+        Origin::addDomain('example.com', true);
     }
 
     /**

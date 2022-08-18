@@ -148,8 +148,45 @@ class HelloController extends \Utilities\Router\Controller
 
 ##### Create a controller with secure routes
 
+Please note that you have to implement the `__isAuthorized()` method into your controller class, and also you can rewrite the unauthorized message by implementing the `__unauthorized()` method.
 ```php
-// Todo: Add documentation
+use Utilities\Router\Attributes\Route;
+use Utilities\Router\Response;
+use Utilities\Router\Utils\StatusCode;
+
+class PaymentController extends \Utilities\Router\Controller
+{
+
+    private string $secret = "SOMETHING";
+
+    public function __isAuthorized(): bool
+    {
+        if ($this->secret === "SOMETHING") {
+            return true;
+        }
+
+        return false;
+    }
+
+    public function __unauthorized(): void
+    {
+        Response::send(StatusCode::UNAUTHORIZED,[
+            'message'=> "Unauthorized: Sorry, your request could not be processed"
+        ]);
+    }
+
+    // NOTE: The third parameter of the `Route` attribute is for defining whether the route is secure or not.
+    #[Route('POST', '/user/payment', true)]
+    public function pay(array $params): void
+    {
+        Response::send(StatusCode::OK, [
+            'result' => [
+                'name' => $params['name'],
+            ],
+        ]);
+    }
+
+}
 ```
 
 ##### Anonymous controllers
@@ -211,8 +248,8 @@ class App extends \Utilities\Router\Application
     public function __process(Request $request): void
     {
         self::addController([
-            'Todo' => Controller::__instance(TodoController::class, '/api/todo'),
-            'Users' => Controller::__instance(UsersController::class, '/api/users')
+            Controller::__create('/api/todo', TodoController::class),
+            Controller::__create('/api/users', UsersController::class)
         ]);
     }
 

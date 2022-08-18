@@ -38,15 +38,15 @@ class AnonymousController
     /**
      * Create an instance of the controller for the application
      *
-     * @param string $slug The slug of the controller
-     * @param string $class The class name
      * @param string $uri The uri to be matched
+     * @param string $class The class name
      * @return array
      */
-    public static function __create(string $slug, string $class, string $uri): array
+    public static function __create(string $uri, string $class): array
     {
+        $segments = explode('\\', $class);
         return [
-            $slug => [
+            end($segments) => [
                 'controller' => $class,
                 'uri' => str_ends_with($uri, '/') ? substr($uri, 0, -1) : $uri
             ]

@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace Utilities\Router;
 
+use Utilities\Router\Traits\OriginTrait;
+
 /**
  * Origin class
  *
@@ -12,6 +14,8 @@ namespace Utilities\Router;
  */
 class Origin
 {
+
+    use OriginTrait;
 
     /**
      * The allowed domains.
@@ -51,22 +55,6 @@ class Origin
             'allowCredentials' => $allowCredentials,
             'maxAge' => $maxAge,
         ];
-    }
-
-    /**
-     * Convert domain to Regex.
-     *
-     * @param string $domain The domain. (e.g. example.com or *.example.com)
-     * @return string The Regex. (e.g. ^example\.com$ or ^.*\.example\.com$)
-     */
-    private static function domainToRegex(string $domain): string
-    {
-        $domain = str_replace('.', '\.', $domain);
-        if (str_starts_with($domain, '*')) {
-            return '^.*' . substr($domain, 1) . '$';
-        }
-
-        return '^' . $domain . '$';
     }
 
     /**
@@ -120,28 +108,18 @@ class Origin
     {
         $flag = false;
 
-        if (isset($_SERVER['HTTP_ORIGIN'])) {
-            foreach (static::$allowedDomains as $domain) {
-                if (preg_match_all('/' . $domain['domain'] . '/i', parse_url($_SERVER['HTTP_ORIGIN'])['path']) > 0) {
-                    self::sendHeader('Access-Control-Allow-Origin', $_SERVER['HTTP_ORIGIN']);
-                    self::sendHeader('Access-Control-Allow-Credentials', $domain['allowCredentials'] ? 'true' : 'false');
-                    self::sendHeader('Access-Control-Max-Age', $domain['maxAge'] ?? $options['maxAge']);
-                    $flag = true;
-                    break;
-                }
-            }
+        if (isset($_SERVER['HTTP_ORIGIN']) && ($domain = self::validateOrigin($_SERVER['HTTP_ORIGIN'])) !== false) {
+            self::sendHeader('Access-Control-Allow-Origin', $_SERVER['HTTP_ORIGIN']);
+            self::sendHeader('Access-Control-Allow-Credentials', $domain['allowCredentials'] ? 'true' : 'false');
+            self::sendHeader('Access-Control-Max-Age', $domain['maxAge'] ?? $options['maxAge']);
+            $flag = true;
         }
 
-        if (isset($_SERVER['REMOTE_ADDR'])) {
-            foreach (static::$allowedIps as $ip) {
-                if ($_SERVER['REMOTE_ADDR'] == $ip) {
-                    $flag = true;
-                    break;
-                }
-            }
+        if (isset($_SERVER['REMOTE_ADDR']) && self::validateIp($_SERVER['REMOTE_ADDR']) !== false) {
+            $flag = true;
         }
 
-        if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
+        if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS' && $flag) {
             if (isset($_SERVER['HTTP_ACCESS_CONTROL_REQUEST_METHOD'])) {
                 self::sendHeader('Access-Control-Allow-Methods', $_SERVER['HTTP_ACCESS_CONTROL_REQUEST_METHOD']);
             }
@@ -166,21 +144,6 @@ class Origin
         }
 
         return $flag;
-    }
-
-    /**
-     * Send the headers but in safe mode.
-     *
-     * @param string $header The header. (e.g. Access-Control-Allow-Origin)
-     * @param string $value The value. (e.g. * or example.com)
-     */
-    private static function sendHeader(string $header, mixed $value): void
-    {
-        if (headers_sent()) {
-            return;
-        }
-
-        header("{$header}: {$value}");
     }
 
 }
