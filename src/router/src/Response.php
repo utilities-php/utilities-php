@@ -23,6 +23,11 @@ class Response
     private static int $status_code = -1;
 
     /**
+     * @var array|string
+     */
+    private static array|string $last_response = [];
+
+    /**
      * Kill process after sending response.
      *
      * @var bool
@@ -57,6 +62,7 @@ class Response
      */
     public static function send(int $statusCode, string|array $body = []): void
     {
+        static::$last_response = $body;
         static::$status_code = $statusCode;
         $status = ($statusCode >= 200 && $statusCode < 300);
 
@@ -104,6 +110,20 @@ class Response
     public static function getStatusCode(): int
     {
         return static::$status_code;
+    }
+
+    /**
+     * This method returns the last response. On empty, it returns null.
+     *
+     * @param string|null $key (optional) the key of the response If it is an array
+     * @return array|string
+     */
+    public static function getResponse(string $key = null): array|string
+    {
+        if ($key == null) {
+            return static::$last_response;
+        }
+        return static::$last_response[$key] ?? static::$last_response;
     }
 
 }

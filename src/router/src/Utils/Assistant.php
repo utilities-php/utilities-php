@@ -8,6 +8,7 @@ use Utilities\Router\Attributes\Route;
 use Utilities\Router\Controller;
 use Utilities\Router\Request;
 use Utilities\Router\Router;
+use Utilities\Router\URLs;
 
 /**
  * Assistant class
@@ -71,7 +72,7 @@ class Assistant
                 $methodParams['headers'] = getallheaders();
             }
             if ($key == 'queries') {
-                $methodParams['queries'] = array_merge($_GET, $_POST);
+                $methodParams['queries'] = array_merge($_GET, $_POST, URLs::QueryString());
             }
             if ($key == 'params') {
                 $methodParams['params'] = Request::getParams();
@@ -81,6 +82,7 @@ class Assistant
             }
         }
 
+        echo json_encode(array_merge($methodParams, $mergeWith)) . PHP_EOL;
         return array_merge($methodParams, $mergeWith);
     }
 
@@ -110,12 +112,12 @@ class Assistant
     /**
      * Pass the request to the controller for self-processing
      *
-     * @param Controller $class the controller class
+     * @param object $class the controller class
      * @param string $method the method name
      * @param array $mergeWith (optional)
      * @return bool
      */
-    public static function passDataToMethod(AnonymousController $class, string $method, array $mergeWith = []): bool
+    public static function passDataToMethod(object $class, string $method, array $mergeWith = []): bool
     {
         if (!method_exists($class, $method)) {
             return false;

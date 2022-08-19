@@ -7,6 +7,7 @@ use Utilities\Router\Interfaces\ApplicationRouteInterface;
 use Utilities\Router\Traits\ControllerTrait;
 use Utilities\Router\Traits\DirectoryTrait;
 use Utilities\Router\Traits\ServicesTrait;
+use Utilities\Router\Utils\Assistant;
 use Utilities\Router\Utils\StatusCode;
 
 /**
@@ -92,6 +93,19 @@ abstract class Application implements ApplicationRouteInterface
         Router::any('/execute-watchers', function () {
             Services::run();
         });
+
+        $reflection = new \ReflectionClass($this);
+        $methods = $reflection->getMethods(\ReflectionMethod::IS_PUBLIC);
+        foreach ($methods as $refMethod) {
+            if (Assistant::hasRouteAttribute($refMethod)) {
+                foreach (Assistant::extractRouteAttributes($refMethod) as $route) {
+                    $methodName = $refMethod->getName();
+                    Router::match($route->getMethod(), $route->getUri(), function () use ($methodName) {
+                        Assistant::passDataToMethod($this, $methodName);
+                    });
+                }
+            }
+        }
     }
 
 }

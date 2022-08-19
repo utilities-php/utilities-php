@@ -12,14 +12,6 @@ use Utilities\Router\Router;
 class RouterTest extends \PHPUnit\Framework\TestCase
 {
 
-    public function test_get_uri()
-    {
-        RouterTest::setRequest(['REQUEST_URI' => '/test/test2']);
-        Router::createRequest();
-
-        $this->assertEquals('/test/test2', Request::getUri());
-    }
-
     public static function setRequest(array $extra): void
     {
         $_SERVER['REQUEST_METHOD'] = 'GET';
@@ -31,6 +23,14 @@ class RouterTest extends \PHPUnit\Framework\TestCase
         $_SERVER['REQUEST_TIME'] = time();
         $_SERVER['REQUEST_TIME_FLOAT'] = microtime(true);
         $_SERVER = array_merge($_SERVER, $extra);
+    }
+
+    public function test_get_uri()
+    {
+        RouterTest::setRequest(['REQUEST_URI' => '/test/test2']);
+        Router::createRequest();
+
+        $this->assertEquals('/test/test2', Request::getUri());
     }
 
     public function test_get_route()

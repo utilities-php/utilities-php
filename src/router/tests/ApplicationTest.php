@@ -48,4 +48,17 @@ class ApplicationTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(200, Response::getStatusCode());
     }
 
+    public function test_echo()
+    {
+        RouterTest::setRequest([
+            'QUERY_STRING' => 'test=test2',
+            'REQUEST_URI' => '/echo/',
+        ]);
+
+        (new App())->resolve();
+        $this->assertEquals(Response::getResponse('result'), [
+            'test' => 'test2',
+        ]);
+    }
+
 }

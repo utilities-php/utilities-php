@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace UtilitiesTests\Router\Creative;
 
+use Utilities\Router\Attributes\Route;
 use Utilities\Router\Controller;
 use Utilities\Router\Origin;
 use Utilities\Router\Request;
@@ -51,12 +52,14 @@ class App extends \Utilities\Router\Application
     }
 
     /**
+     * @param array $queries
      * @return void
      */
-    public function echo(): void
+    #[Route('GET', '/echo')]
+    public function echo(array $queries): void
     {
         Response::send(StatusCode::OK, [
-            'description' => "Internal Server Error",
+            'result' => $queries ?? [],
         ]);
     }
 
