@@ -59,6 +59,16 @@ class ApplicationTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(Response::getResponse('result'), [
             'test' => 'test2',
         ]);
+
+        RouterTest::setRequest([
+            'QUERY_STRING' => 'test3=test4',
+            'REQUEST_URI' => '/james/echo/',
+        ]);
+
+        (new App())->resolve();
+        $this->assertEquals(Response::getResponse('result'), [
+            'test3' => 'test4',
+        ]);
     }
 
 }
