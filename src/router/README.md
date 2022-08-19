@@ -8,10 +8,10 @@
   <a href="https://travis-ci.com/utilities-php/router"><img src="https://travis-ci.com/utilities-php/router.svg?branch=master" alt="Build Status" /></a>
 </p>
 <p align="center">
-  <a href="https://packagist.org/packages/utilities-php/router"><img src="https://img.shields.io/packagist/v/utilities-php/router.svg" alt="Latest Stable Version" /></a>
-  <a href="https://packagist.org/packages/utilities-php/router"><img src="https://img.shields.io/github/languages/code-size/utilities-php/router" alt="Code Size" /></a>
-  <a href="https://packagist.org/packages/utilities-php/router"><img src="https://img.shields.io/packagist/dt/utilities-php/router" alt="Downloads" /></a>
-  <a href="https://packagist.org/packages/utilities-php/router"><img src="https://img.shields.io/github/license/utilities-php/router" alt="License" /></a>
+  <a href="https://packagist.org/packages/utilities-php/router"><img src="https://img.shields.io/packagist/v/utilities-php/router.svg?cacheSeconds=3600" alt="Latest Stable Version" /></a>
+  <a href="https://packagist.org/packages/utilities-php/router"><img src="https://img.shields.io/github/languages/code-size/utilities-php/router?cacheSeconds=3600" alt="Code Size" /></a>
+  <a href="https://packagist.org/packages/utilities-php/router"><img src="https://img.shields.io/packagist/dt/utilities-php/router?cacheSeconds=3600" alt="Downloads" /></a>
+  <a href="https://packagist.org/packages/utilities-php/router"><img src="https://img.shields.io/github/license/utilities-php/router?cacheSeconds=3600" alt="License" /></a>
 </p>
 
 # Router Utilities - PHP
