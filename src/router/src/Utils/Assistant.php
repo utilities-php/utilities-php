@@ -82,7 +82,6 @@ class Assistant
             }
         }
 
-        echo json_encode(array_merge($methodParams, $mergeWith)) . PHP_EOL;
         return array_merge($methodParams, $mergeWith);
     }
 

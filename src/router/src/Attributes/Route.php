@@ -32,7 +32,7 @@ class Route
      */
     public function getUri(): string
     {
-        return $this->uri;
+        return str_starts_with($this->uri, "/") ? $this->uri : "/{$this->uri}";
     }
 
     /**
