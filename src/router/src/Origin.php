@@ -38,7 +38,7 @@ class Origin
      *
      * @var bool
      */
-    public static bool $strict_mode = false;
+    public static bool $STRICT_MODE = false;
 
     /**
      * Add allowed domain.
@@ -139,7 +139,7 @@ class Origin
             return true;
         }
 
-        if (static::$strict_mode !== true) {
+        if (static::$STRICT_MODE !== true) {
             return isset($_SERVER['HTTP_ORIGIN']) ? $flag : true;
         }
 

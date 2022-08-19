@@ -24,7 +24,7 @@ class JamesController extends \Utilities\Router\Controller
     public function echo(array $queries): void
     {
         Response::send(StatusCode::OK, [
-            'queries' => $queries,
+            'result' => $queries ?? [],
         ]);
     }
 
