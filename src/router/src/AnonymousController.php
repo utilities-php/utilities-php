@@ -45,10 +45,14 @@ class AnonymousController
     public static function __create(string $uri, string $class): array
     {
         $segments = explode('\\', $class);
+
+        $uri = str_ends_with($uri, '/') ? substr($uri, 0, -1) : $uri;
+        $uri = str_starts_with($uri, '/') ? $uri : '/' . $uri;
+
         return [
             end($segments) => [
                 'controller' => $class,
-                'uri' => str_ends_with($uri, '/') ? substr($uri, 0, -1) : $uri
+                'uri' => $uri
             ]
         ];
     }

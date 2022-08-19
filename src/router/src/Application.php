@@ -106,6 +106,10 @@ abstract class Application implements ApplicationRouteInterface
                 }
             }
         }
+
+        if (Response::getStatusCode() === -1) {
+            $this->__notFound();
+        }
     }
 
 }

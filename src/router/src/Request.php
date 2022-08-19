@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Utilities\Router;
 
 use Utilities\Common\Validator;
+use Utilities\Router\Utils\StatusCode;
 
 /**
  * Request class
@@ -92,6 +93,42 @@ class Request
     public static function getInput(): ?string
     {
         return file_get_contents('php://input');
+    }
+
+    /**
+     * Check are values are empty (API Response)
+     *
+     * If any value is empty, send error response.
+     *
+     * @param array $params
+     * @return void
+     */
+    public static function emptyParams(array $params = []): void
+    {
+        foreach ($params as $key => $value) {
+            if ($value == null) Response::send(StatusCode::BAD_REQUEST, [
+                'description' => sprintf("Bad Request: the '%s' parameter is empty", $key)
+            ]);
+        }
+    }
+
+    /**
+     * Require given keys in array and send error if not found
+     *
+     * @param array $haystack
+     * @param array $needle
+     * @return array
+     */
+    public static function requiredParams(array $haystack, array $needle): array
+    {
+        $result = [];
+        foreach ($needle as $key) {
+            if ($haystack[$key] == null) Response::send(StatusCode::BAD_REQUEST, [
+                'description' => sprintf("Bad Request: the '%s' parameter is required", $key)
+            ]);
+            else $result[$key] = $haystack[$key];
+        }
+        return $result;
     }
 
     /**

@@ -20,12 +20,12 @@ class Response
     /**
      * @var int
      */
-    private static int $status_code = -1;
+    private static int $STATUS_CODE = -1;
 
     /**
      * @var array|string
      */
-    private static array|string $last_response = [];
+    private static array|string $LAST_RESPONSE = [];
 
     /**
      * Kill process after sending response.
@@ -33,25 +33,6 @@ class Response
      * @var bool
      */
     public static bool $PROCESS_KILLER = true;
-
-    /**
-     * Require given keys in array and send error if not found
-     *
-     * @param array $haystack
-     * @param array $needle
-     * @return array
-     */
-    public static function RequireParams(array $haystack, array $needle): array
-    {
-        $result = [];
-        foreach ($needle as $key) {
-            if ($haystack[$key] == null) Response::send(StatusCode::BAD_REQUEST, [
-                'description' => sprintf("Bad Request: the '%s' parameter is required", $key)
-            ]);
-            else $result[$key] = $haystack[$key];
-        }
-        return $result;
-    }
 
     /**
      * Send response.
@@ -62,8 +43,8 @@ class Response
      */
     public static function send(int $statusCode, string|array $body = []): void
     {
-        static::$last_response = $body;
-        static::$status_code = $statusCode;
+        static::$LAST_RESPONSE = $body;
+        static::$STATUS_CODE = $statusCode;
         $status = ($statusCode >= 200 && $statusCode < 300);
 
         http_response_code($statusCode);
@@ -88,28 +69,13 @@ class Response
     }
 
     /**
-     * Check are values are empty (API Response)
-     *
-     * @param array $params
-     * @return void
-     */
-    public static function EmptyParams(array $params = []): void
-    {
-        foreach ($params as $key => $value) {
-            if ($value == null) Response::send(StatusCode::BAD_REQUEST, [
-                'description' => sprintf("Bad Request: the '%s' parameter is empty", $key)
-            ]);
-        }
-    }
-
-    /**
      * This method returns the last status code. On empty, it returns -1.
      *
      * @return int
      */
     public static function getStatusCode(): int
     {
-        return static::$status_code;
+        return static::$STATUS_CODE;
     }
 
     /**
@@ -121,9 +87,40 @@ class Response
     public static function getResponse(string $key = null): array|string
     {
         if ($key == null) {
-            return static::$last_response;
+            return static::$LAST_RESPONSE;
         }
-        return static::$last_response[$key] ?? static::$last_response;
+        return static::$LAST_RESPONSE[$key] ?? static::$LAST_RESPONSE;
+    }
+
+    /**
+     * Close and send an empty response
+     *
+     * @return void
+     */
+    public static function close(): void
+    {
+        static::$STATUS_CODE = StatusCode::NO_CONTENT;
+        die(StatusCode::NO_CONTENT);
+    }
+
+    /**
+     * Close the connection with client and let server do rest of the job
+     *
+     * @param string $text
+     * @return void
+     */
+    public static function closeConnection(string $text = ''): void
+    {
+        static::$STATUS_CODE = StatusCode::OK;
+        ob_end_clean();
+        header("Connection: close");
+        ignore_user_abort(true);
+        ob_start();
+        echo($text);
+        $size = ob_get_length();
+        header("Content-Length: $size");
+        ob_end_flush();
+        flush();
     }
 
 }
