@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace Utilities\Router;
 
 use Utilities\Common\Common;
-use Utilities\Common\Connection;
 use Utilities\Common\Loop;
 
 /**
@@ -91,7 +90,7 @@ class Services
     public static function run(): void
     {
         header('Content-Type: application/json');
-        Connection::closeConnection(Common::prettyJson([
+        Response::closeConnection(Common::prettyJson([
             'ok' => true,
             'message' => 'Services are running...'
         ]));
