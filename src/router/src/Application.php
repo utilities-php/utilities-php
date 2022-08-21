@@ -54,7 +54,11 @@ abstract class Application implements ApplicationRouteInterface
     public function resolve(array $options = []): void
     {
         set_exception_handler(function (\Throwable $throwable) {
-            $this->__exception($throwable);
+            $this->__exception(new \Exception(
+                $throwable->getMessage(),
+                $throwable->getCode(),
+                $throwable->getPrevious()
+            ));
             die(500);
         });
 
@@ -66,10 +70,10 @@ abstract class Application implements ApplicationRouteInterface
     /**
      * to handle the exceptions, implement this method in your class
      *
-     * @param \Throwable $throwable
+     * @param \Exception $exception
      * @return void
      */
-    public function __exception(\Throwable $throwable): void
+    public function __exception(\Exception $exception): void
     {
         Response::send(StatusCode::INTERNAL_SERVER_ERROR, [
             'description' => "Internal Server Error",

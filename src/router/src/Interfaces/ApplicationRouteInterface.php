@@ -16,10 +16,10 @@ interface ApplicationRouteInterface extends CommonRouteInterface
     /**
      * On exception, this method will be called.
      *
-     * @param \Throwable $throwable
+     * @param \Exception $exception the exception
      * @return void
      */
-    public function __exception(\Throwable $throwable): void;
+    public function __exception(\Exception $exception): void;
 
     /**
      * On not found, this method will be called.

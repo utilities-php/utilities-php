@@ -253,7 +253,7 @@ class App extends \Utilities\Router\Application
         ]);
     }
 
-    public function __exception(\Throwable $throwable): void
+    public function __exception(\Exception $exception): void
     {
         Response::send(StatusCode::INTERNAL_SERVER_ERROR,[
             'description' => "Internal Server Error",
