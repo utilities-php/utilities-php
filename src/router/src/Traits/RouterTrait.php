@@ -5,6 +5,7 @@ namespace Utilities\Router\Traits;
 
 use Utilities\Router\Controller;
 use Utilities\Router\Router;
+use Utilities\Router\URLs;
 
 /**
  * RouterTrait class
@@ -69,24 +70,22 @@ trait RouterTrait
      */
     private static function find(string $uri): array|false
     {
-        foreach (static::$routes as $method => $routes) {
-            foreach ($routes as $route => $callback) {
-                if (preg_match_all(self::convertUri2RegExp($route), $uri, $matches)) {
-                    $params = [];
-                    foreach ($matches as $key => $value) {
-                        if (is_numeric($key)) {
-                            continue;
-                        }
-
-                        $params[$key] = $value[0];
+        foreach (static::$routes[URLs::getMethod()] ?? [] as $route => $callback) {
+            if (preg_match_all(self::convertUri2RegExp($route), $uri, $matches)) {
+                $params = [];
+                foreach ($matches as $key => $value) {
+                    if (is_numeric($key)) {
+                        continue;
                     }
 
-                    return [
-                        'method' => $method,
-                        'route' => $route,
-                        'params' => $params,
-                    ];
+                    $params[$key] = $value[0];
                 }
+
+                return [
+                    'method' => URLs::getMethod(),
+                    'route' => $route,
+                    'params' => $params,
+                ];
             }
         }
 

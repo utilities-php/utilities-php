@@ -135,4 +135,14 @@ class URLs
         return -1;
     }
 
+    /**
+     * Get request method
+     *
+     * @retrun string
+     */
+    public static function getMethod(): string
+    {
+        return $_SERVER['REQUEST_METHOD'] ?? 'GET';
+    }
+
 }

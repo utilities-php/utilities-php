@@ -28,6 +28,8 @@ class Router
 
     use RouterTrait;
 
+    protected static bool $CAN_RESOLVE = true;
+
     /**
      * rate limit
      *
@@ -75,6 +77,7 @@ class Router
         }
 
         try {
+            static::$CAN_RESOLVE = false;
             foreach ((new \ReflectionClass($controller))->getMethods() as $refMethod) {
                 if (str_starts_with($refMethod->getName(), '__')) {
                     continue;
@@ -106,9 +109,13 @@ class Router
 
         } catch (\ReflectionException $e) {
             throw new ControllerException($e->getMessage(), $e->getCode(), $e);
+
+        } finally {
+            static::$CAN_RESOLVE = true;
         }
 
         self::$controllers[$uri] = $controller;
+        self::resolve();
     }
 
     /**
@@ -126,7 +133,9 @@ class Router
         }
 
         static::$routes[$method][$uri] = $callback;
-        self::resolve();
+        if (static::$CAN_RESOLVE) {
+            self::resolve();
+        }
     }
 
     /**
@@ -145,6 +154,7 @@ class Router
         $method = $request === null ? Request::getMethod() : $request::getMethod();
         $uri = str_ends_with($uri, '/') ? substr($uri, 0, -1) : $uri;
 
+
         if (isset(static::$routes['ANY'])) {
             $data_to_merge = static::$routes[$method] ?? [];
             static::$routes[$method] = array_merge($data_to_merge, static::$routes['ANY']);
@@ -161,7 +171,7 @@ class Router
      */
     public static function createRequest(): Request
     {
-        $find = self::find($_SERVER['REQUEST_URI']);
+        $find = self::find(URLs::getURL());
         $params = $find !== false ? $find['params'] : [];
 
         $headers = (function () {
@@ -175,8 +185,8 @@ class Router
         })();
 
         return new Request([
-            'uri' => $_SERVER['REQUEST_URI'],
-            'method' => $_SERVER['REQUEST_METHOD'],
+            'uri' => URLs::getURL(),
+            'method' => URLs::getMethod(),
             'headers' => $headers,
             'body' => file_get_contents('php://input'),
             'query_string' => URLs::QueryString(),
