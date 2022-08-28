@@ -69,7 +69,7 @@ abstract class Application implements ApplicationRouteInterface
         set_exception_handler(function (\Throwable $throwable) {
             $this->__exception(new \Exception(
                 $throwable->getMessage(),
-                $throwable->getCode(),
+                (int)$throwable->getCode(),
                 $throwable->getPrevious()
             ));
             die(500);
