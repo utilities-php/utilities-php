@@ -14,6 +14,7 @@ use Utilities\Router\Utils\StatusCode;
  * @method static array getQueryString() Returns the request query string.
  * @method static array getHeaders() Returns the request headers.
  * @method static array getParams() Returns the request params.
+ * @method static void setParams(array $params) Returns the request params.
  *
  * @link    https://github.com/utilities-php/router
  * @author  Shahrad Elahi (https://github.com/shahradelahi)
@@ -141,6 +142,12 @@ class Request
         if (str_starts_with($name, 'get')) {
             $property = substr($name, 3);
             return static::$data[strtolower(ltrim(preg_replace('/[A-Z]/', '_$0', $property), '_'))];
+        }
+
+        if (str_starts_with($name, 'set')) {
+            $property = substr($name, 3);
+            static::$data[strtolower(ltrim(preg_replace('/[A-Z]/', '_$0', $property), '_'))] = $arguments[0];
+            return null;
         }
 
         if (method_exists(static::class, $name)) {

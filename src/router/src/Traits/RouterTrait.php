@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Utilities\Router\Traits;
 
 use Utilities\Router\Controller;
+use Utilities\Router\Request;
 use Utilities\Router\Router;
 use Utilities\Router\URLs;
 
@@ -57,6 +58,7 @@ trait RouterTrait
     {
         if (($find = Router::find($uri)) !== false) {
             if (is_callable(($callback = static::$routes[$find['method']][$find['route']]))) {
+                Request::setParams($find['params']);
                 call_user_func_array($callback, [...$find['params']]);
             }
         }
