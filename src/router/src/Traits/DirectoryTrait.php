@@ -46,7 +46,7 @@ trait DirectoryTrait
      * @param bool $insensitive
      * @return void
      */
-    private function findDirectory(array $request, bool $insensitive): void
+    private function findDirectory(array $request, bool $insensitive = false): void
     {
         if (($directory = $this->getDirectory($request['sector'], $insensitive)) !== false) {
             if (!str_ends_with($directory, '/')) {

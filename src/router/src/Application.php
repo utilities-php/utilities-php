@@ -46,6 +46,19 @@ abstract class Application implements ApplicationRouteInterface
     }
 
     /**
+     * to handle the exceptions, implement this method in your class
+     *
+     * @param \Exception $exception
+     * @return void
+     */
+    public function __exception(\Exception $exception): void
+    {
+        Response::send(StatusCode::INTERNAL_SERVER_ERROR, [
+            'description' => "Internal Server Error",
+        ]);
+    }
+
+    /**
      * Resolve the route
      *
      * @param array $options (optional) [insensitive]
@@ -68,19 +81,6 @@ abstract class Application implements ApplicationRouteInterface
     }
 
     /**
-     * to handle the exceptions, implement this method in your class
-     *
-     * @param \Exception $exception
-     * @return void
-     */
-    public function __exception(\Exception $exception): void
-    {
-        Response::send(StatusCode::INTERNAL_SERVER_ERROR, [
-            'description' => "Internal Server Error",
-        ]);
-    }
-
-    /**
      * Find the directories, route and controller by defined values
      *
      * @param array $options ["insensitive"]
@@ -97,6 +97,11 @@ abstract class Application implements ApplicationRouteInterface
         Router::any('/execute-watchers', function () {
             Services::run();
         });
+
+        $this->findDirectory([
+            'sector' => URLs::segment(0),
+            'method' => URLs::segment(1),
+        ]);
 
         $reflection = new \ReflectionClass($this);
         $methods = $reflection->getMethods(\ReflectionMethod::IS_PUBLIC);
