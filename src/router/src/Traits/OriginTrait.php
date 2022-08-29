@@ -54,7 +54,14 @@ trait OriginTrait
     private static function validateOrigin(string $origin): array|false
     {
         foreach (static::$allowedDomains as $domain) {
-            if (preg_match_all('/' . $domain['domain'] . '/i', parse_url($origin)['path']) > 0) {
+            if (preg_match_all('/((http([s])?:\/\/)?(localhost|127.0.0.1){1}(([:])?[\0-9]{4})?\/?){1}/', $origin)) {
+                if ($domain['domain'] === 'localhost'){
+                    return $domain;
+                }
+            }
+
+            $path = parse_url($origin)['path'] ?? $domain['domain'];
+            if (preg_match_all('/' . self::domainToRegex($domain['domain']) . '/i', $path) > 0) {
                 return $domain;
             }
         }

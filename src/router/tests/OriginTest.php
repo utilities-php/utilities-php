@@ -17,11 +17,17 @@ class OriginTest extends \PHPUnit\Framework\TestCase
             'REMOTE_ADDR' => '31.187.72.206',
         ]);
 
-        Origin::addDomain('*.example.com', true, 86400);
+        Origin::addDomain('*.example.com', true);
         $this->assertTrue(Origin::validate());
 
         Origin::removeDomain('*.example.com');
         Origin::addIp('31.187.72.206');
+        $this->assertTrue(Origin::validate());
+
+        RouterTest::setRequest([
+            'HTTP_ORIGIN' => 'http://localhost:3000',
+        ]);
+        Origin::addDomain('localhost', true);
         $this->assertTrue(Origin::validate());
     }
 
@@ -45,7 +51,6 @@ class OriginTest extends \PHPUnit\Framework\TestCase
     public function test_regex()
     {
         $res = preg_match_all('/^.*\.litehex\.com$/', 'subdomain.examplelitehex.com', $matches) > 0;
-        echo json_encode($matches, JSON_PRETTY_PRINT) . PHP_EOL;
         $this->assertFalse($res);
     }
 

@@ -51,7 +51,7 @@ class Origin
     public static function addDomain(string $domain, bool $allowCredentials = false, int $maxAge = 86400): void
     {
         static::$allowedDomains[] = [
-            'domain' => self::domainToRegex($domain),
+            'domain' => $domain,
             'allowCredentials' => $allowCredentials,
             'maxAge' => $maxAge,
         ];
