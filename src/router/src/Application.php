@@ -75,9 +75,13 @@ abstract class Application implements ApplicationRouteInterface
             die(500);
         });
 
+        self::addExtraDimensions($options);
+
         $this->__process(Router::createRequest());
 
-        self::findPath($options);
+        if (Response::getStatusCode() === -1) {
+            $this->__notFound();
+        }
     }
 
     /**
@@ -86,7 +90,7 @@ abstract class Application implements ApplicationRouteInterface
      * @param array $options ["insensitive"]
      * @return void
      */
-    private function findPath(array $options = []): void
+    private function addExtraDimensions(array $options = []): void
     {
         if (!Origin::validate()) {
             Response::send(StatusCode::FORBIDDEN, [
@@ -114,10 +118,6 @@ abstract class Application implements ApplicationRouteInterface
                     });
                 }
             }
-        }
-
-        if (Response::getStatusCode() === -1) {
-            $this->__notFound();
         }
     }
 
