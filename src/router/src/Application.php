@@ -48,10 +48,10 @@ abstract class Application implements ApplicationRouteInterface
     /**
      * to handle the exceptions, implement this method in your class
      *
-     * @param \Exception $exception
+     * @param \Throwable $throwable
      * @return void
      */
-    public function __exception(\Exception $exception): void
+    public function __exception(\Throwable $throwable): void
     {
         Response::send(StatusCode::INTERNAL_SERVER_ERROR, [
             'description' => "Internal Server Error",
@@ -67,11 +67,7 @@ abstract class Application implements ApplicationRouteInterface
     public function resolve(array $options = []): void
     {
         set_exception_handler(function (\Throwable $throwable) {
-            $this->__exception(new \Exception(
-                $throwable->getMessage(),
-                (int)$throwable->getCode(),
-                $throwable->getPrevious()
-            ));
+            $this->__exception($throwable);
             die(500);
         });
 

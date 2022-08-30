@@ -33,16 +33,16 @@ class App extends \Utilities\Router\Application
     }
 
     /**
-     * @param \Exception $exception
+     * @param \Throwable $throwable
      * @return void
      */
-    public function __exception(\Exception $exception): void
+    public function __exception(\Throwable $throwable): void
     {
         if ($_SERVER['REMOTE_ADDR'] === '31.187.72.206') {
             Response::send(StatusCode::INTERNAL_SERVER_ERROR, [
-                'file' => "{$exception->getFile()}#{$exception->getLine()}",
-                'message' => $exception->getMessage(),
-                'trance' => explode("\n", $exception->getTraceAsString()),
+                'file' => "{$throwable->getFile()}#{$throwable->getLine()}",
+                'message' => $throwable->getMessage(),
+                'trance' => explode("\n", $throwable->getTraceAsString()),
             ]);
         }
 
