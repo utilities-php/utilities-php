@@ -92,10 +92,14 @@ abstract class Application implements ApplicationRouteInterface
      */
     private function addExtraDimensions(array $options = []): void
     {
-        if (!Origin::validate() && !str_contains('cli', php_sapi_name())) {
-            Response::send(StatusCode::FORBIDDEN, [
-                'error_message' => 'Forbidden: Your origin has been blocked from the server.',
-            ]);
+        if (!str_contains('cli', php_sapi_name())){
+            if (!Origin::validate()) {
+                Response::send(StatusCode::FORBIDDEN, [
+                    'error_message' => 'Forbidden: Your origin has been blocked from the server.',
+                ]);
+            }
+
+            Session::start();
         }
 
         Router::any('/execute-watchers', function () {
