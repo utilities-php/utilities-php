@@ -120,23 +120,31 @@ class Origin
         }
 
         if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS' && $flag) {
+
             if (isset($_SERVER['HTTP_ACCESS_CONTROL_REQUEST_METHOD'])) {
-                self::sendHeader('Access-Control-Allow-Methods', $_SERVER['HTTP_ACCESS_CONTROL_REQUEST_METHOD']);
+                $requestMethods = $_SERVER['HTTP_ACCESS_CONTROL_REQUEST_METHOD'] . ', OPTIONS';
+                self::sendHeader('Access-Control-Allow-Methods', $requestMethods);
             }
 
             if (isset($_SERVER['HTTP_ACCESS_CONTROL_REQUEST_HEADERS'])) {
+
                 $allowedHeaders = [];
+                $rqdHeaders = $_SERVER['HTTP_ACCESS_CONTROL_REQUEST_HEADERS'];
 
-                foreach (explode(',', $_SERVER['HTTP_ACCESS_CONTROL_REQUEST_HEADERS']) as $header) {
-                    if (in_array($header, $options['allowedHeaders'])) {
-                        $allowedHeaders[] = $header;
+                if (static::$STRICT_MODE) {
+                    foreach (str_contains(',', $rqdHeaders) ? explode(',', $rqdHeaders) : [$rqdHeaders] as $header) {
+                        if (in_array($header, $options['allowedHeaders'])) {
+                            $allowedHeaders[] = $header;
+                        }
                     }
-                }
+                    self::sendHeader('Access-Control-Allow-Headers', implode(',', $allowedHeaders));
 
-                self::sendHeader('Access-Control-Allow-Headers', implode(',', $allowedHeaders));
+                } else {
+                    self::sendHeader('Access-Control-Allow-Headers', $rqdHeaders);
+                }
             }
 
-            return true;
+            exit(0);
         }
 
         if (static::$STRICT_MODE !== true) {

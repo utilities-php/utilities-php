@@ -92,9 +92,9 @@ abstract class Application implements ApplicationRouteInterface
      */
     private function addExtraDimensions(array $options = []): void
     {
-        if (!Origin::validate()) {
+        if (!Origin::validate() && !str_contains('cli', php_sapi_name())) {
             Response::send(StatusCode::FORBIDDEN, [
-                'error_message' => 'Origin not allowed',
+                'error_message' => 'Forbidden: Your origin has been blocked from the server.',
             ]);
         }
 
@@ -107,9 +107,7 @@ abstract class Application implements ApplicationRouteInterface
             'method' => URLs::segment(1),
         ]);
 
-        $reflection = new \ReflectionClass($this);
-        $methods = $reflection->getMethods(\ReflectionMethod::IS_PUBLIC);
-        foreach ($methods as $refMethod) {
+        foreach ((new \ReflectionClass($this))->getMethods(\ReflectionMethod::IS_PUBLIC) as $refMethod) {
             if (Assistant::hasRouteAttribute($refMethod)) {
                 foreach (Assistant::extractRouteAttributes($refMethod) as $route) {
                     $methodName = $refMethod->getName();
