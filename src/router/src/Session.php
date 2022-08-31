@@ -19,6 +19,7 @@ class Session
      * @var User
      */
     public static User $user;
+
     /**
      * @var array
      */
@@ -181,11 +182,9 @@ class Session
      */
     public static function start(array $params = []): void
     {
-        if ($params) {
-            self::setCookieParams($params);
-        }
+        self::setCookieParams($params);
 
-        if (session_status() === PHP_SESSION_NONE) {
+        if (!headers_sent() && session_status() === PHP_SESSION_NONE) {
             session_set_cookie_params(static::$cookieParams);
             session_start();
         }
