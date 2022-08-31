@@ -16,11 +16,11 @@ class OriginTest extends \PHPUnit\Framework\TestCase
             'SERVER_PORT' => '443',
             'REMOTE_ADDR' => '31.187.72.206',
         ]);
+        Origin::reset();
 
         Origin::addDomain('*.example.com', true);
         $this->assertTrue(Origin::validate());
 
-        Origin::removeDomain('*.example.com');
         Origin::addIp('31.187.72.206');
         $this->assertTrue(Origin::validate());
 
@@ -39,11 +39,11 @@ class OriginTest extends \PHPUnit\Framework\TestCase
             'SERVER_PORT' => '443',
             'REMOTE_ADDR' => '68.45.72.206',
         ]);
+        Origin::reset();
 
         Origin::addDomain('*.litehex.com', true, 86400);
         $this->assertFalse(Origin::validate());
 
-        Origin::removeDomain('example.com');
         Origin::addIp('8.8.8.8');
         $this->assertFalse(Origin::validate());
     }

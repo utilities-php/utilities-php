@@ -18,6 +18,15 @@ class Origin
     use OriginTrait;
 
     /**
+     * Strict mode.
+     *
+     * By setting this to true, the origin will be checked strictly.
+     *
+     * @var bool
+     */
+    public static bool $STRICT_MODE = false;
+
+    /**
      * The allowed domains.
      *
      * @var array
@@ -30,15 +39,6 @@ class Origin
      * @var array
      */
     protected static array $allowedIps = [];
-
-    /**
-     * Strict mode.
-     *
-     * By setting this to true, the origin will be checked strictly.
-     *
-     * @var bool
-     */
-    public static bool $STRICT_MODE = false;
 
     /**
      * Add allowed domain.

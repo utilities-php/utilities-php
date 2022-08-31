@@ -14,22 +14,6 @@ trait OriginTrait
 {
 
     /**
-     * Convert domain to Regex.
-     *
-     * @param string $domain The domain. (e.g. example.com or *.example.com)
-     * @return string The Regex. (e.g. ^example\.com$ or ^.*\.example\.com$)
-     */
-    private static function domainToRegex(string $domain): string
-    {
-        $domain = str_replace('.', '\.', $domain);
-        if (str_starts_with($domain, '*')) {
-            return '^.*' . substr($domain, 1) . '$';
-        }
-
-        return '^' . $domain . '$';
-    }
-
-    /**
      * Send the headers but in safe mode.
      *
      * @param string $header The header. (e.g. Access-Control-Allow-Origin)
@@ -54,10 +38,8 @@ trait OriginTrait
     private static function validateOrigin(string $origin): array|false
     {
         foreach (static::$allowedDomains as $domain) {
-            if (preg_match_all('/((http([s])?:\/\/)?(localhost|127.0.0.1){1}(([:])?[\0-9]{4})?\/?){1}/', $origin)) {
-                if ($domain['domain'] === 'localhost'){
-                    return $domain;
-                }
+            if (self::isLocalhost() && $domain['domain'] === 'localhost') {
+                return $domain;
             }
 
             $path = parse_url($origin)['path'] ?? $domain['domain'];
@@ -67,6 +49,22 @@ trait OriginTrait
         }
 
         return false;
+    }
+
+    /**
+     * Convert domain to Regex.
+     *
+     * @param string $domain The domain. (e.g. example.com or *.example.com)
+     * @return string The Regex. (e.g. ^example\.com$ or ^.*\.example\.com$)
+     */
+    private static function domainToRegex(string $domain): string
+    {
+        $domain = str_replace('.', '\.', $domain);
+        if (str_starts_with($domain, '*')) {
+            return '^.*' . substr($domain, 1) . '$';
+        }
+
+        return '^' . $domain . '$';
     }
 
     /**
@@ -82,6 +80,50 @@ trait OriginTrait
         }
 
         return false;
+    }
+
+    /**
+     * Get origin host
+     *
+     * @retrun string
+     */
+    private static function getOriginHostName(): string
+    {
+        $data = preg_replace('/(http(s*)):\/\//i', '', $_SERVER['HTTP_ORIGIN'] ?? '');
+        if (str_ends_with('/', $data)) {
+            return substr($data, 0, strlen($data) - 1);
+        }
+
+        return $data;
+    }
+
+    /**
+     * Is same site?
+     *
+     * @retrun bool
+     */
+    public static function isSameSite(): bool
+    {
+        return $_SERVER['SERVER_NAME'] === self::getOriginHostName();
+    }
+
+    /**
+     * @return bool
+     */
+    public static function isLocalhost(): bool
+    {
+        return preg_match_all('/((http([s])?:\/\/)?(localhost|127.0.0.1){1}(([:])?[\0-9]{4})?\/?){1}/', self::getOriginHostName()) !== false;
+    }
+
+    /**
+     * This method will delete every trusted domains and ip addresses
+     *
+     * @retrun void
+     */
+    public static function reset(): void
+    {
+        static::$allowedDomains = [];
+        static::$allowedIps = [];
     }
 
 }

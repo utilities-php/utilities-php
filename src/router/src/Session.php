@@ -294,9 +294,7 @@ class Session
     {
         $defaults = [
             'lifetime' => intval(ini_get('session.gc_maxlifetime')),
-            'path' => ini_get('session.save_path'),
             'domain' => ini_get('session.cookie_domain'),
-            'secure' => ini_get('session.cookie_secure'),
             'httponly' => ini_get('session.cookie_httponly'),
         ];
 
