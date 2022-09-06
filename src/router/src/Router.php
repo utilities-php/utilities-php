@@ -128,6 +128,10 @@ class Router
      */
     public static function match(string $method, string $uri, callable $callback): void
     {
+        if (str_ends_with($uri, '/') && strlen($uri) > 1) {
+            $uri = substr($uri, 0, -1);
+        }
+
         if (!isset(static::$routes[$method])) {
             static::$routes[$method] = [];
         }
@@ -153,7 +157,6 @@ class Router
         $uri = $request === null ? Request::getUri() : $request::getUri();
         $method = $request === null ? Request::getMethod() : $request::getMethod();
         $uri = str_ends_with($uri, '/') ? substr($uri, 0, -1) : $uri;
-
 
         if (isset(static::$routes['ANY'])) {
             $data_to_merge = static::$routes[$method] ?? [];

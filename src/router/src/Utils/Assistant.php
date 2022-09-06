@@ -128,7 +128,7 @@ class Assistant
         if (Assistant::hasRouteAttribute($reflection)) {
             foreach (self::extractRouteAttributes($reflection) as $route) {
                 if ($route->isSecure()) {
-                    $authenticated = call_user_func([$class, '__isAuthenticated']);
+                    $authenticated = call_user_func([$class, '__isAuthorized']);
                     if (!$authenticated) {
                         $class->__unauthorized();
                     }
