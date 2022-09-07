@@ -50,6 +50,11 @@ abstract class Application implements ApplicationRouteInterface
 
         $this->__process(Router::createRequest());
 
+        $this->findDirectory([
+            'sector' => URLs::segment(0),
+            'method' => URLs::segment(1),
+        ]);
+
         if (Response::getStatusCode() === -1) {
             $this->__notFound();
         }
@@ -93,11 +98,6 @@ abstract class Application implements ApplicationRouteInterface
         Router::any('/execute-watchers', function () {
             Services::run();
         });
-
-        $this->findDirectory([
-            'sector' => URLs::segment(0),
-            'method' => URLs::segment(1),
-        ]);
 
         foreach ((new \ReflectionClass($this))->getMethods(\ReflectionMethod::IS_PUBLIC) as $refMethod) {
             if (Assistant::hasRouteAttribute($refMethod)) {

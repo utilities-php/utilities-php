@@ -48,23 +48,25 @@ trait DirectoryTrait
      */
     private function findDirectory(array $request, bool $insensitive = false): void
     {
-        if (($directory = $this->getDirectory($request['sector'], $insensitive)) !== false) {
-            if (!str_ends_with($directory, '/')) {
-                $directory .= '/';
-            }
-
-            $filename = str_contains($request['method'], '.') ? $request['method'] : $request['method'] . '.php';
-            $file = $directory . $filename;
-
-            if (file_exists($file)) {
-                $fileMime = mime_content_type($file);
-
-                if ($fileMime != 'text/php') {
-                    header('Content-Type: ' . $fileMime);
+        if (is_string($request['sector']) && is_string($request['method'])) {
+            if (($directory = $this->getDirectory($request['sector'], $insensitive)) !== false) {
+                if (!str_ends_with($directory, '/')) {
+                    $directory .= '/';
                 }
 
-                include_once $file;
-                die(200);
+                $filename = str_contains($request['method'], '.') ? $request['method'] : $request['method'] . '.php';
+                $file = $directory . $filename;
+
+                if (file_exists($file)) {
+                    $fileMime = mime_content_type($file);
+
+                    if ($fileMime != 'text/php') {
+                        header('Content-Type: ' . $fileMime);
+                    }
+
+                    include_once $file;
+                    die(200);
+                }
             }
         }
     }
