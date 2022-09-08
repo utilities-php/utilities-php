@@ -21,9 +21,7 @@ class GoogleAuthenticator
      * 16 characters, randomly chosen from the allowed base32 characters.
      *
      * @param int $secretLength
-     *
      * @return string
-     * @throws \Exception
      */
     public function createSecret(int $secretLength = 16): string
     {
@@ -31,26 +29,26 @@ class GoogleAuthenticator
 
         // Valid secret lengths are 80 to 640 bits
         if ($secretLength < 16 || $secretLength > 128) {
-            throw new \Exception('Bad secret length');
+            throw new \RuntimeException('Bad secret length');
         }
+
         $secret = '';
         $rnd = false;
-        if (function_exists('random_bytes')) {
-            $rnd = random_bytes($secretLength);
-        } elseif (function_exists('mcrypt_create_iv')) {
-            $rnd = mcrypt_create_iv($secretLength);
-        } elseif (function_exists('openssl_random_pseudo_bytes')) {
+
+        if (function_exists('openssl_random_pseudo_bytes')) {
             $rnd = openssl_random_pseudo_bytes($secretLength, $cryptoStrong);
             if (!$cryptoStrong) {
                 $rnd = false;
             }
         }
+
         if ($rnd !== false) {
             for ($i = 0; $i < $secretLength; ++$i) {
                 $secret .= $validChars[ord($rnd[$i]) & 31];
             }
+
         } else {
-            throw new \Exception('No source of secure random');
+            throw new \RuntimeException('No source of secure random');
         }
 
         return $secret;
