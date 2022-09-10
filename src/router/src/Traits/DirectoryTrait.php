@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace Utilities\Router\Traits;
 
+use RuntimeException;
+
 /**
  * DirectoryTrait class
  *
@@ -30,7 +32,7 @@ trait DirectoryTrait
     {
         foreach ($directories as $key => $directory) {
             if (!is_dir($directory)) {
-                throw new \RuntimeException(
+                throw new RuntimeException(
                     'The directory ' . $directory . ' does not exist'
                 );
             }

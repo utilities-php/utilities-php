@@ -18,6 +18,9 @@ jobs:
       fail-fast: false
       matrix:
         package:
+          - local_path: 'auth'
+            split_repository: 'auth'
+
           - local_path: 'common'
             split_repository: 'common'
 

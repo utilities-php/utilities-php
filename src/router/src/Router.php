@@ -3,6 +3,10 @@ declare(strict_types=1);
 
 namespace Utilities\Router;
 
+use BadMethodCallException;
+use ReflectionClass;
+use ReflectionException;
+use Utilities\Auth\Session;
 use Utilities\Common\Time;
 use Utilities\Router\Exceptions\ControllerException;
 use Utilities\Router\Exceptions\SessionException;
@@ -78,7 +82,7 @@ class Router
 
         try {
             static::$CAN_RESOLVE = false;
-            foreach ((new \ReflectionClass($controller))->getMethods() as $refMethod) {
+            foreach ((new ReflectionClass($controller))->getMethods() as $refMethod) {
                 if (str_starts_with($refMethod->getName(), '__')) {
                     continue;
                 }
@@ -107,7 +111,7 @@ class Router
 
             }
 
-        } catch (\ReflectionException $e) {
+        } catch (ReflectionException $e) {
             throw new ControllerException($e->getMessage(), $e->getCode(), $e);
 
         } finally {
@@ -174,7 +178,7 @@ class Router
      */
     public static function createRequest(): Request
     {
-        $find = self::find(URLs::getURL());
+        $find = self::find(URL::getURL());
         $params = $find !== false ? $find['params'] : [];
 
         $headers = (function () {
@@ -188,11 +192,11 @@ class Router
         })();
 
         return new Request([
-            'uri' => URLs::getURL(),
-            'method' => URLs::getMethod(),
+            'uri' => URL::getURL(),
+            'method' => URL::getMethod(),
             'headers' => $headers,
             'body' => file_get_contents('php://input'),
-            'query_string' => URLs::QueryString(),
+            'query_string' => URL::QueryString(),
             'params' => $params,
         ]);
     }
@@ -294,7 +298,7 @@ class Router
             return call_user_func_array([self::class, $name], $arguments);
         }
 
-        throw new \BadMethodCallException(sprintf(
+        throw new BadMethodCallException(sprintf(
             'Call to undefined method %s::%s()',
             self::class, $name
         ));

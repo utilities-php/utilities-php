@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace Utilities\Common;
 
+use RuntimeException;
+
 /**
  * Encryption class
  *
@@ -31,8 +33,8 @@ class Encryption
      */
     public static function encrypt(string $secret, string $input, bool $plain = true): string
     {
-        if (!static::validateSecret($secret)) {
-            throw new \RuntimeException(sprintf(
+        if (strlen($secret) < 16) {
+            throw new RuntimeException(sprintf(
                 'This secret key is not usable: %s', $secret
             ));
         }
@@ -40,29 +42,26 @@ class Encryption
         $key = hash(static::$algorithm, $secret);
         $len = openssl_cipher_iv_length(static::$cipher);
         if ($len === false) {
-            throw new \RuntimeException(sprintf(
+            throw new RuntimeException(sprintf(
                 'The cipher %s is not supported.', static::$cipher
             ));
         }
 
         $iv = substr(hash(static::$algorithm, (string)$len), 0, 16);
 
-        return base64_encode(openssl_encrypt(
+        if (!$encrypt = openssl_encrypt(
             $input,
             static::$cipher,
             $plain ? $secret : $key,
             0,
             $plain ? substr($secret, 0, 16) : $iv,
-        ));
-    }
+        )) {
+            throw new RuntimeException(
+                'the openssl_encrypt() method is just a failure, please review your code.'
+            );
+        }
 
-    /**
-     * @param string $secret
-     * @return bool
-     */
-    private static function validateSecret(string $secret): bool
-    {
-        return strlen($secret) >= 16;
+        return base64_encode($encrypt);
     }
 
     /**
@@ -73,8 +72,8 @@ class Encryption
      */
     public static function decrypt(string $secret, string $input, bool $plain = true): string|false
     {
-        if (!static::validateSecret($secret)) {
-            throw new \RuntimeException(sprintf(
+        if (strlen($secret) < 16) {
+            throw new RuntimeException(sprintf(
                 'This secret key is not usable: %s', $secret
             ));
         }
@@ -82,7 +81,7 @@ class Encryption
         $key = hash(static::$algorithm, $secret);
         $len = openssl_cipher_iv_length(static::$cipher);
         if ($len === false) {
-            throw new \RuntimeException(sprintf(
+            throw new RuntimeException(sprintf(
                 'The cipher %s is not supported.', static::$cipher
             ));
         }

@@ -3,7 +3,10 @@ declare(strict_types=1);
 
 namespace Utilities\Common;
 
+use Exception;
 use NXP\MathExecutor;
+use RuntimeException;
+use Utilities\Common\Traits\DecimalsTrait;
 
 /**
  * Math class
@@ -15,6 +18,8 @@ use NXP\MathExecutor;
 class Math
 {
 
+    use DecimalsTrait;
+
     /**
      * Solve problem
      *
@@ -25,8 +30,8 @@ class Math
     {
         try {
             return (new MathExecutor())->execute($problem);
-        } catch (\Exception $e) {
-            throw new \RuntimeException($e->getMessage(), $e->getCode(), $e);
+        } catch (Exception $e) {
+            throw new RuntimeException($e->getMessage(), $e->getCode(), $e);
         }
     }
 
@@ -44,58 +49,6 @@ class Math
     }
 
     /**
-     * Fixed decimal
-     *
-     * @param float $number
-     * @param int $decimal
-     * @return float
-     */
-    public static function fixedDecimal(float $number, int $decimal = 2): float
-    {
-        return (float)number_format($number, $decimal, '.', '');
-    }
-
-    /**
-     * Decimals Count
-     *
-     * @param float $number
-     * @return int
-     */
-    public static function decimalsCount(float $number): int
-    {
-        $parts = explode('.', (string)$number);
-        return count($parts) > 1 ? strlen($parts[1]) : 0;
-    }
-
-    /**
-     * Round up
-     *
-     * @param float $number
-     * @param int $decimal
-     * @return float
-     */
-    public static function roundUp(float $number, int $decimal = 2): float
-    {
-        return self::fixedDecimal(ceil($number * pow(10, $decimal)) / pow(10, $decimal), $decimal);
-    }
-
-    /**
-     * Max Decimals
-     *
-     * For example 0.00123456 has 6 decimals, and we want round it to 4 decimals,
-     * so we use this function and return 0.00123
-     *
-     * @param float $number
-     * @param int $decimal
-     * @return float
-     */
-    public static function maxDecimals(float $number, int $decimal = 2): float
-    {
-        $parts = explode('.', (string)$number);
-        return count($parts) > 1 ? self::fixedDecimal((float)($parts[0] . '.' . substr($parts[1], 0, $decimal)), $decimal) : $number;
-    }
-
-    /**
      * Get percentage of number
      *
      * Example: 10% of 256 is 25.6
@@ -110,40 +63,62 @@ class Math
     }
 
     /**
-     * multiply
+     * Exponentiation
      *
-     * @param float|int $number
-     * @param float|int $multiplier
-     * @return float
+     * @param int $base
+     * @param int $exponent
+     * @return int
      */
-    public static function multiply(float|int $number, float|int $multiplier): float
+    public static function exponentiation(int $base, int $exponent): int
     {
-        return $number * $multiplier;
+        return $exponent === 0 ? 1 : $base * self::exponentiation($base, $exponent - 1);
     }
 
     /**
-     * Non zero decimal count
+     * is prime
      *
-     * @param float $number
-     * @return int
+     * @param int $number
+     * @return bool
      */
-    public static function nonZeroDecimalCount(float $number): int
+    public static function isPrime(int $number): bool
     {
-        $parts = explode('.', (string)$number);
-
-        if (count($parts) > 1) {
-            $decimals = strlen($parts[1]);
-            $count = 0;
-
-            for ($i = 0; $i < $decimals; $i++) {
-                if ($parts[1][$i] != '0') {
-                    $count += 1;
-                }
-            }
-
+        if ($number < 2) {
+            return false;
         }
+        if ($number === 2) {
+            return true;
+        }
+        if ($number % 2 === 0) {
+            return false;
+        }
+        for ($i = 3; $i <= (int)sqrt($number); $i += 2) {
+            if ($number % $i === 0) {
+                return false;
+            }
+        }
+        return true;
+    }
 
-        return $count ?? 0;
+    /**
+     * Is even
+     *
+     * @param int $number
+     * @return bool
+     */
+    public static function isEven(int $number): bool
+    {
+        return $number % 2 == 0;
+    }
+
+    /**
+     * Is odd
+     *
+     * @param int $number
+     * @return bool
+     */
+    public static function isOdd(int $number): bool
+    {
+        return !self::isEven($number);
     }
 
 }

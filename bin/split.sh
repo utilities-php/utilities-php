@@ -18,11 +18,13 @@ function remote()
 
 git pull origin $CURRENT_BRANCH
 
+remote auth git@github.com:utilities-php/auth.git
 remote common git@github.com:utilities-php/common.git
 remote database git@github.com:utilities-php/database.git
 remote router git@github.com:utilities-php/router.git
 remote trader git@github.com:utilities-php/router.git
 
+split 'src/auth' auth
 split 'src/common' common
 split 'src/database' database
 split 'src/router' router

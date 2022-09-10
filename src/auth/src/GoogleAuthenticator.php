@@ -1,6 +1,8 @@
 <?php
 
-namespace Utilities\Common;
+namespace Utilities\Auth;
+
+use RuntimeException;
 
 /**
  * PHP Class for handling Google Authenticator 2-factor authentication.
@@ -29,7 +31,7 @@ class GoogleAuthenticator
 
         // Valid secret lengths are 80 to 640 bits
         if ($secretLength < 16 || $secretLength > 128) {
-            throw new \RuntimeException('Bad secret length');
+            throw new RuntimeException('Bad secret length');
         }
 
         $secret = '';
@@ -48,7 +50,7 @@ class GoogleAuthenticator
             }
 
         } else {
-            throw new \RuntimeException('No source of secure random');
+            throw new RuntimeException('No source of secure random');
         }
 
         return $secret;

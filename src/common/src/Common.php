@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Utilities\Common;
 
 use EasyHttp\Client;
+use RuntimeException;
 
 /**
  * Common class
@@ -28,7 +29,7 @@ class Common
         }
 
         if (!is_array($data)) {
-            throw new \RuntimeException(sprintf(
+            throw new RuntimeException(sprintf(
                 'The given data is not a valid json string or array. Given: %s',
                 $data
             ));

@@ -9,7 +9,7 @@ use Utilities\Router\Attributes\Route;
 use Utilities\Router\Request;
 use Utilities\Router\Router;
 
-class RouterTest extends \PHPUnit\Framework\TestCase
+class RouterTest extends TestCase
 {
 
     public static function setRequest(array $extra): void

@@ -3,12 +3,16 @@ declare(strict_types=1);
 
 namespace Utilities\Router\Utils;
 
-use Utilities\Router\AnonymousController;
+use Exception;
+use ReflectionFunction;
+use ReflectionMethod;
+use ReflectionParameter;
+use RuntimeException;
 use Utilities\Router\Attributes\Route;
 use Utilities\Router\Controller;
 use Utilities\Router\Request;
 use Utilities\Router\Router;
-use Utilities\Router\URLs;
+use Utilities\Router\URL;
 
 /**
  * Assistant class
@@ -35,15 +39,15 @@ class Assistant
 
         try {
 
-            $reflection = new \ReflectionFunction($callback);
+            $reflection = new ReflectionFunction($callback);
             $arguments = $reflection->getParameters();
 
             call_user_func_array($callback, self::generatePassingData($arguments, $mergeWith));
 
             return true;
 
-        } catch (\Exception $e) {
-            throw new \RuntimeException(
+        } catch (Exception $e) {
+            throw new RuntimeException(
                 $e->getMessage(),
                 $e->getCode(),
                 $e->getPrevious()
@@ -54,7 +58,7 @@ class Assistant
     /**
      * Generate passing data
      *
-     * @param \ReflectionParameter[] $require ["headers", "queries", "params", "input"]
+     * @param ReflectionParameter[] $require ["headers", "queries", "params", "input"]
      * @param array $mergeWith
      * @return array
      */
@@ -72,7 +76,7 @@ class Assistant
                 $methodParams['headers'] = getallheaders();
             }
             if ($key == 'queries') {
-                $methodParams['queries'] = array_merge($_GET, $_POST, URLs::QueryString());
+                $methodParams['queries'] = array_merge($_GET, $_POST, URL::QueryString());
             }
             if ($key == 'params') {
                 $methodParams['params'] = Request::getParams();
@@ -96,7 +100,7 @@ class Assistant
     public static function registerRoute(Controller $class, string $method, Route $route): void
     {
         if (!method_exists($class, $method)) {
-            throw new \RuntimeException(sprintf(
+            throw new RuntimeException(sprintf(
                 'Method `%s` not found in class `%s`',
                 $method,
                 get_class($class)
@@ -122,7 +126,7 @@ class Assistant
             return false;
         }
 
-        $reflection = new \ReflectionMethod($class, $method);
+        $reflection = new ReflectionMethod($class, $method);
         $arguments = $reflection->getParameters();
 
         if (Assistant::hasRouteAttribute($reflection)) {
@@ -144,10 +148,10 @@ class Assistant
     /**
      * Check method has Route attribute
      *
-     * @param \ReflectionMethod $reflection
+     * @param ReflectionMethod $reflection
      * @return bool
      */
-    public static function hasRouteAttribute(\ReflectionMethod $reflection): bool
+    public static function hasRouteAttribute(ReflectionMethod $reflection): bool
     {
         return count($reflection->getAttributes(Route::class)) > 0;
     }
@@ -155,10 +159,10 @@ class Assistant
     /**
      * Extract route attributes from method
      *
-     * @param \ReflectionMethod $reflection
+     * @param ReflectionMethod $reflection
      * @return array|Route[]
      */
-    public static function extractRouteAttributes(\ReflectionMethod $reflection): array
+    public static function extractRouteAttributes(ReflectionMethod $reflection): array
     {
         $attributes = [];
         foreach ($reflection->getAttributes(Route::class) as $attribute) {

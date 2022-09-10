@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace Utilities\Router;
 
+use BadMethodCallException;
+use RuntimeException;
 use Utilities\Common\Validator;
 use Utilities\Router\Utils\StatusCode;
 
@@ -45,7 +47,7 @@ class Request
 
         foreach ($types as $key => $value) {
             if (!in_array($key, array_keys($initial))) {
-                throw new \RuntimeException(sprintf(
+                throw new RuntimeException(sprintf(
                     'The given data of %s, must contain the following keys: %s',
                     '\Utilities\Router\Request',
                     implode(', ', array_keys($types))
@@ -54,7 +56,7 @@ class Request
         }
 
         if (!Validator::validateType($initial, $types)) {
-            throw new \RuntimeException(sprintf(
+            throw new RuntimeException(sprintf(
                 "The type of %s must be %s",
                 '\Utilities\Router\Request',
                 implode(', ', $types)
@@ -154,7 +156,7 @@ class Request
             return static::$name(...$arguments);
         }
 
-        throw new \BadMethodCallException(sprintf(
+        throw new BadMethodCallException(sprintf(
             'Call to undefined method %s::%s()',
             self::class,
             $name

@@ -21,23 +21,6 @@ class Loop
     protected static bool $running = false;
 
     /**
-     * @param callable $callback
-     * @param int $interval in milliseconds
-     * @return void
-     */
-    public static function run(callable $callback, int $interval = 500): void
-    {
-        static::$running = true;
-        $last_hit = Time::getMillisecond();
-        while (static::$running) {
-            if (Time::getMillisecond() - $last_hit > $interval) {
-                $callback();
-                $last_hit = Time::getMillisecond();
-            }
-        }
-    }
-
-    /**
      * @return void
      */
     public static function stop(): void
@@ -47,10 +30,10 @@ class Loop
 
     /**
      * @param callable $callback
-     * @param int $interval (optional) in milliseconds
+     * @param int $interval in milliseconds
      * @return void
      */
-    public static function runForever(callable $callback, int $interval = 500): void
+    public static function run(callable $callback, int $interval): void
     {
         static::$running = true;
         $last_hit = Time::getMillisecond();
@@ -60,6 +43,17 @@ class Loop
                 $last_hit = Time::getMillisecond();
             }
         }
+    }
+
+    /**
+     * @param callable $callback
+     * @param int $interval in milliseconds
+     * @return void
+     */
+    public static function runAfter(callable $callback, int $interval): void
+    {
+        Time::millisecondSleep($interval);
+        $callback();
     }
 
 }

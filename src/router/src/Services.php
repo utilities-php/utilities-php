@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Utilities\Router;
 
+use RuntimeException;
 use Utilities\Common\Common;
 use Utilities\Common\Loop;
 
@@ -33,14 +34,14 @@ class Services
     {
         foreach ($services as $service) {
             if (!is_array($service) || !is_string($service['class']) || !is_numeric($service['interval'])) {
-                throw new \RuntimeException(sprintf(
+                throw new RuntimeException(sprintf(
                     'The service `%s` is not valid.',
                     $service
                 ));
             }
 
             if (!method_exists($service['class'], '__run')) {
-                throw new \RuntimeException(sprintf(
+                throw new RuntimeException(sprintf(
                     'The service `%s` does not have a __run method.',
                     $service['class']
                 ));

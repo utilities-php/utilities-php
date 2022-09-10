@@ -3,9 +3,10 @@ declare(strict_types=1);
 
 namespace UtilitiesTests\Trader;
 
+use PHPUnit\Framework\TestCase;
 use Utilities\Trader\Trader;
 
-class ToolsTest extends \PHPUnit\Framework\TestCase
+class ToolsTest extends TestCase
 {
 
     public function test_calculatePL()

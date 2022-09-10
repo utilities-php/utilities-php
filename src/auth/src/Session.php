@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Utilities\Router;
+namespace Utilities\Auth;
 
 use Utilities\Common\Common;
 
@@ -18,7 +18,7 @@ class Session
     /**
      * @var User
      */
-    public static User $user;
+    private static User $user;
 
     /**
      * @var array
@@ -457,7 +457,7 @@ class Session
      *
      * @return User
      */
-    private static function getUser(): User
+    public static function getUser(): User
     {
         if (!isset($_SESSION['_user'])) {
             $_SESSION['_user'] = new User();

@@ -3,23 +3,22 @@ declare(strict_types=1);
 
 namespace UtilitiesTests\Database;
 
-use PHPUnit\Framework\TestCase;
-use Utilities\Database\SQLQueryBuilder;
+use Utilities\Database\QueryBuilder;
 
-class DatabaseTest extends TestCase
+class DatabaseTest extends \PHPUnit\Framework\TestCase
 {
 
-    public function test_create_update_query()
+    public function test_create_update_query(): void
     {
         $this->assertEquals(
-            $this->create_update_query(),
-            "UPDATE `users` SET `name` = 'John Doe' WHERE `id` = 1"
+            "UPDATE `users` SET `name` = 'John Doe' WHERE `id` = 1",
+            $this->create_update_query()
         );
     }
 
     private function create_update_query(): string
     {
-        return SQLQueryBuilder::update([
+        return QueryBuilder::update([
             'table' => 'users',
             'where' => [
                 'id' => 1
@@ -30,7 +29,7 @@ class DatabaseTest extends TestCase
         ]);
     }
 
-    public function test_create_insert_query()
+    public function test_create_insert_query(): void
     {
         $this->assertEquals(
             $this->create_insert_query(),
@@ -40,7 +39,7 @@ class DatabaseTest extends TestCase
 
     private function create_insert_query(): string
     {
-        return SQLQueryBuilder::insert([
+        return QueryBuilder::insert([
             'table' => 'users',
             'columns' => [
                 'name' => 'John',
@@ -49,7 +48,7 @@ class DatabaseTest extends TestCase
         ]);
     }
 
-    public function test_create_delete_query()
+    public function test_create_delete_query(): void
     {
         $this->assertEquals(
             $this->create_delete_query(),
@@ -59,7 +58,7 @@ class DatabaseTest extends TestCase
 
     private function create_delete_query(): string
     {
-        return SQLQueryBuilder::delete([
+        return QueryBuilder::delete([
             'table' => 'users',
             'where' => [
                 'id' => 1
@@ -67,7 +66,7 @@ class DatabaseTest extends TestCase
         ]);
     }
 
-    public function test_create_select_query()
+    public function test_create_select_query(): void
     {
         $this->assertEquals(
             $this->create_select_query(),
@@ -77,7 +76,7 @@ class DatabaseTest extends TestCase
 
     private function create_select_query(): string
     {
-        return SQLQueryBuilder::select([
+        return QueryBuilder::select([
             'table' => 'users',
             'columns' => [
                 'id',
@@ -93,7 +92,7 @@ class DatabaseTest extends TestCase
     public function test_create_select_query_with_multiple_where_conditions()
     {
         $this->assertEquals(
-            SQLQueryBuilder::select([
+            QueryBuilder::select([
                 'table' => 'users',
                 'columns' => [
                     'id',

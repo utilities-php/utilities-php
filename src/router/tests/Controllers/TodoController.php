@@ -5,12 +5,13 @@ namespace UtilitiesTests\Router\Controllers;
 
 use Utilities\Router\Attributes\RateLimit;
 use Utilities\Router\Attributes\Route;
+use Utilities\Router\Controller;
 use Utilities\Router\Request;
 use Utilities\Router\Response;
 use Utilities\Router\Utils\StatusCode;
 
 #[RateLimit(60, 10)]
-class TodoController extends \Utilities\Router\Controller
+class TodoController extends Controller
 {
 
     public function __process(Request $request): void

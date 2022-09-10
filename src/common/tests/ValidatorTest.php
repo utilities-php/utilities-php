@@ -3,9 +3,10 @@ declare(strict_types=1);
 
 namespace UtilitiesTests\Common;
 
+use PHPUnit\Framework\TestCase;
 use Utilities\Common\Validator;
 
-class ValidatorTest extends \PHPUnit\Framework\TestCase
+class ValidatorTest extends TestCase
 {
 
     public function testValidateType()

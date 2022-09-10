@@ -6,7 +6,7 @@ namespace Utilities\Router\Traits;
 use Utilities\Router\Controller;
 use Utilities\Router\Request;
 use Utilities\Router\Router;
-use Utilities\Router\URLs;
+use Utilities\Router\URL;
 
 /**
  * RouterTrait class
@@ -72,7 +72,7 @@ trait RouterTrait
      */
     private static function find(string $uri): array|false
     {
-        foreach (static::$routes[URLs::getMethod()] ?? [] as $route => $callback) {
+        foreach (static::$routes[URL::getMethod()] ?? [] as $route => $callback) {
             if (preg_match_all(self::convertUri2RegExp($route), $uri, $matches)) {
                 $params = [];
                 foreach ($matches as $key => $value) {
@@ -84,7 +84,7 @@ trait RouterTrait
                 }
 
                 return [
-                    'method' => URLs::getMethod(),
+                    'method' => URL::getMethod(),
                     'route' => $route,
                     'params' => $params,
                 ];

@@ -3,9 +3,10 @@ declare(strict_types=1);
 
 namespace UtilitiesTests\Router;
 
-use Utilities\Router\Origin;
+use PHPUnit\Framework\TestCase;
+use Utilities\Auth\Origin;
 
-class OriginTest extends \PHPUnit\Framework\TestCase
+class OriginTest extends TestCase
 {
 
     public function test_is_valid()

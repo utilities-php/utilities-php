@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace Utilities\Router\Interfaces;
 
+use Throwable;
+
 /**
  * ApplicationInterface class
  *
@@ -16,10 +18,10 @@ interface ApplicationRouteInterface extends CommonRouteInterface
     /**
      * On exception, this method will be called.
      *
-     * @param \Throwable $throwable the exception
+     * @param Throwable $throwable the exception
      * @return void
      */
-    public function __exception(\Throwable $throwable): void;
+    public function __exception(Throwable $throwable): void;
 
     /**
      * On not found, this method will be called.

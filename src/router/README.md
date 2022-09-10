@@ -148,7 +148,9 @@ class HelloController extends \Utilities\Router\Controller
 
 ##### Create a controller with secure routes
 
-Please note that you have to implement the `__isAuthorized()` method into your controller class, and also you can rewrite the unauthorized message by implementing the `__unauthorized()` method.
+Please note that you have to implement the `__isAuthorized()` method into your controller class, and also you can
+rewrite the unauthorized message by implementing the `__unauthorized()` method.
+
 ```php
 use Utilities\Router\Attributes\Route;
 use Utilities\Router\Response;

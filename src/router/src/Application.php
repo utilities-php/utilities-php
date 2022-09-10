@@ -3,6 +3,11 @@ declare(strict_types=1);
 
 namespace Utilities\Router;
 
+use ReflectionClass;
+use ReflectionMethod;
+use Throwable;
+use Utilities\Auth\Origin;
+use Utilities\Auth\Session;
 use Utilities\Router\Interfaces\ApplicationRouteInterface;
 use Utilities\Router\Traits\ControllerTrait;
 use Utilities\Router\Traits\DirectoryTrait;
@@ -41,7 +46,7 @@ abstract class Application implements ApplicationRouteInterface
      */
     public function resolve(array $options = []): void
     {
-        set_exception_handler(function (\Throwable $throwable) {
+        set_exception_handler(function (Throwable $throwable) {
             $this->__exception($throwable);
             die(500);
         });
@@ -51,8 +56,8 @@ abstract class Application implements ApplicationRouteInterface
         $this->__process(Router::createRequest());
 
         $this->findDirectory([
-            'sector' => URLs::segment(0),
-            'method' => URLs::segment(1),
+            'sector' => URL::segment(0),
+            'method' => URL::segment(1),
         ]);
 
         if (Response::getStatusCode() === -1) {
@@ -63,10 +68,10 @@ abstract class Application implements ApplicationRouteInterface
     /**
      * to handle the exceptions, implement this method in your class
      *
-     * @param \Throwable $throwable
+     * @param Throwable $throwable
      * @return void
      */
-    public function __exception(\Throwable $throwable): void
+    public function __exception(Throwable $throwable): void
     {
         Response::send(StatusCode::INTERNAL_SERVER_ERROR, [
             'description' => "Internal Server Error",
@@ -99,7 +104,7 @@ abstract class Application implements ApplicationRouteInterface
             Services::run();
         });
 
-        foreach ((new \ReflectionClass($this))->getMethods(\ReflectionMethod::IS_PUBLIC) as $refMethod) {
+        foreach ((new ReflectionClass($this))->getMethods(ReflectionMethod::IS_PUBLIC) as $refMethod) {
             if (Assistant::hasRouteAttribute($refMethod)) {
                 foreach (Assistant::extractRouteAttributes($refMethod) as $route) {
                     $methodName = $refMethod->getName();

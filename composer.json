@@ -28,16 +28,15 @@
    "prefer-stable": true,
    "require": {
       "php": ">=8.0",
-      "ext-pdo": "*",
+      "ext-fileinfo": "*",
       "ext-json": "*",
       "ext-mcrypt": "*",
       "ext-openssl": "*",
-      "ext-fileinfo": "*",
+      "ext-pdo": "*",
       "psr/container": "^1.0|^2.0",
       "psr/log": "^1.0|^2.0|^3.0"
    },
    "require-dev": {
-      "rector/rector": "^0.12.9",
       "phpunit/phpunit": "^9.5.20",
       "nxp/math-executor": "^2.3.0",
       "shahradelahi/easy-http": "^v1.2.0"
@@ -48,22 +47,29 @@
       "tests": "phpunit --configuration ./phpunit.xml --teamcity --colors=always",
       "split-packages": "./bin/detect-spliter.sh"
    },
-   "suggest": {},
+   "suggest": {
+      "doctrine/dbal": "Required to rename columns and drop SQLite columns (^2.13.3|^3.1.4).",
+      "fakerphp/faker": "Required to use the eloquent factory builder (^1.20.0)."
+   },
    "replace": {
+      "utilities-php/auth": "*",
+      "utilities-php/common": "*",
       "utilities-php/database": "*",
       "utilities-php/router": "*",
-      "utilities-php/common": "*"
+      "utilities-php/trader": "*"
    },
    "autoload": {
       "psr-4": {
+         "Utilities\\Auth\\": "src/auth/src/",
+         "Utilities\\Common\\": "src/common/src/",
          "Utilities\\Database\\": "src/database/src/",
          "Utilities\\Router\\": "src/router/src/",
-         "Utilities\\Common\\": "src/common/src/",
          "Utilities\\Trader\\": "src/trader/src/"
       }
    },
    "autoload-dev": {
       "psr-4": {
+         "UtilitiesTests\\Auth\\": "src/auth/tests/",
          "UtilitiesTests\\Common\\": "src/common/tests/",
          "UtilitiesTests\\Database\\": "src/database/tests/",
          "UtilitiesTests\\Router\\": "src/router/tests/",

@@ -1,9 +1,9 @@
 <?php
 declare(strict_types=1);
 
-namespace Utilities\Router;
+namespace Utilities\Auth;
 
-use Utilities\Router\Traits\OriginTrait;
+use Utilities\Auth\Traits\OriginTrait;
 
 /**
  * Origin class

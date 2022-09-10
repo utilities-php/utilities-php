@@ -3,9 +3,10 @@ declare(strict_types=1);
 
 namespace UtilitiesTests\Router;
 
-use Utilities\Router\Session;
+use PHPUnit\Framework\TestCase;
+use Utilities\Auth\Session;
 
-class SessionTest extends \PHPUnit\Framework\TestCase
+class SessionTest extends TestCase
 {
 
     public function test_session(): void

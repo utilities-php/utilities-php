@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Utilities\Router\Traits;
 
+use RuntimeException;
 use Utilities\Router\Application;
 use Utilities\Router\Controller;
 use Utilities\Router\Router;
@@ -33,7 +34,7 @@ trait ControllerTrait
 
         foreach ($controllers as $slug => $value) {
             if (!is_subclass_of($value['controller'], Controller::class)) {
-                throw new \RuntimeException(sprintf(
+                throw new RuntimeException(sprintf(
                     'Class `%s` must be a instance of `%s`',
                     $value['controller'],
                     Controller::class
@@ -41,7 +42,7 @@ trait ControllerTrait
             }
 
             if (in_array($slug, Application::$reserved_words)) {
-                throw new \RuntimeException(sprintf(
+                throw new RuntimeException(sprintf(
                     'The slug `%s` is reserved word',
                     $slug
                 ));

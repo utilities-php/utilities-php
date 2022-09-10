@@ -2,10 +2,11 @@
 
 namespace UtilitiesTests\Common;
 
+use PHPUnit\Framework\TestCase;
 use Utilities\Common\Common;
 use Utilities\Common\Encryption;
 
-class EncryptionTest extends \PHPUnit\Framework\TestCase
+class EncryptionTest extends TestCase
 {
 
     private string $text = "Lorem Ipsum is simply dummy text of the printing and typesetting industry.";

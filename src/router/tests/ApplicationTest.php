@@ -3,10 +3,11 @@ declare(strict_types=1);
 
 namespace UtilitiesTests\Router;
 
+use PHPUnit\Framework\TestCase;
 use Utilities\Router\Response;
 use UtilitiesTests\Router\Creative\App;
 
-class ApplicationTest extends \PHPUnit\Framework\TestCase
+class ApplicationTest extends TestCase
 {
 
     public function test_james_controller()

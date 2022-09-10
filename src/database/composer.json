@@ -1,6 +1,6 @@
 {
    "name": "utilities-php/database",
-   "description": "Utilities for working with databases",
+   "description": "A PDO wrapper for PHP",
    "license": "MIT",
    "keywords": [
       "php",
@@ -23,6 +23,10 @@
    "scripts": {
       "install": "composer install --ignore-platform-reqs",
       "update": "composer update --ignore-platform-reqs"
+   },
+   "suggest": {
+      "doctrine/dbal": "Required to rename columns and drop SQLite columns (^2.13.3|^3.1.4).",
+      "fakerphp/faker": "Required to use the eloquent factory builder (^1.20.0)."
    },
    "autoload": {
       "psr-4": {

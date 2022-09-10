@@ -3,14 +3,17 @@ declare(strict_types=1);
 
 namespace UtilitiesTests\Router;
 
-class PathFinderTest extends \PHPUnit\Framework\TestCase
+use PHPUnit\Framework\TestCase;
+use Utilities\Router\PathFinder;
+
+class PathFinderTest extends TestCase
 {
 
     public function testPathFinder()
     {
         $this->assertEquals(
             'text/plain',
-            \Utilities\Router\PathFinder::getMimeType(__FILE__)
+            PathFinder::getMimeType(__FILE__)
         );
     }
 

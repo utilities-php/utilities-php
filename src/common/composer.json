@@ -20,6 +20,7 @@
       "ext-pcntl": "*",
       "ext-openssl": "*",
       "ext-fileinfo": "*",
+      "vlucas/phpdotenv": "^v5.4.1",
       "nxp/math-executor": "^2.3.0",
       "shahradelahi/easy-http": "^v1.2.0"
    },

@@ -18,6 +18,7 @@
    "require": {
       "php": ">=8.0",
       "ext-fileinfo": "*",
+      "utilities-php/auth": "*",
       "utilities-php/common": "*"
    },
    "scripts": {

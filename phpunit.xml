@@ -4,17 +4,19 @@
          stopOnFailure="false">
     <coverage processUncoveredFiles="true">
         <include>
-            <directory suffix=".php">./src/router/src</directory>
-            <directory suffix=".php">./src/database/src</directory>
+            <directory suffix=".php">./src/auth/src</directory>
             <directory suffix=".php">./src/common/src</directory>
+            <directory suffix=".php">./src/database/src</directory>
+            <directory suffix=".php">./src/router/src</directory>
             <directory suffix=".php">./src/trader/src</directory>
         </include>
     </coverage>
     <testsuites>
         <testsuite name="Tests">
-            <directory suffix="Test.php">./src/router/tests</directory>
-            <directory suffix="Test.php">./src/database/tests</directory>
+            <directory suffix="Test.php">./src/auth/tests</directory>
             <directory suffix="Test.php">./src/common/tests</directory>
+            <directory suffix="Test.php">./src/database/tests</directory>
+            <directory suffix="Test.php">./src/router/tests</directory>
             <directory suffix="Test.php">./src/trader/tests</directory>
         </testsuite>
     </testsuites>

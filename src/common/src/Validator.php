@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace Utilities\Common;
 
+use InvalidArgumentException;
+
 /**
  * Validator class
  *
@@ -149,9 +151,9 @@ class Validator
     /**
      * isString
      *
-     * @param mixed $string
-     * @param int $min_length
-     * @param int $max_length
+     * @param mixed $string The string to check
+     * @param int $min_length The minimum length of the string
+     * @param int $max_length The maximum length of the string
      * @return bool
      */
     public static function isString(mixed $string, int $min_length = 0, int $max_length = 0): bool
@@ -218,7 +220,7 @@ class Validator
         foreach ($needles as $key => $types) {
             $actual_type = strtolower(gettype($haystack[$key]));
             if (!in_array($actual_type, $valid_types)) {
-                throw new \InvalidArgumentException(sprintf(
+                throw new InvalidArgumentException(sprintf(
                     'Invalid type for key "%s". Expected one of "%s", got "%s".',
                     $key,
                     implode('", "', $valid_types),

@@ -4,11 +4,12 @@ declare(strict_types=1);
 namespace UtilitiesTests\Router\Controllers;
 
 use Utilities\Router\Attributes\Route;
+use Utilities\Router\Controller;
 use Utilities\Router\Request;
 use Utilities\Router\Response;
 use Utilities\Router\Utils\StatusCode;
 
-class JamesController extends \Utilities\Router\Controller
+class JamesController extends Controller
 {
 
     /**

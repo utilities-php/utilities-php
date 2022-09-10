@@ -1,16 +1,20 @@
 <?php
-$Database = new \Utilities\Database\DB();
+declare(strict_types=1);
 
-$Database->setConnection([
+use Utilities\Common\Common;
+use Utilities\Database\DB;
+
+$database = new DB();
+
+$database->setConnection([
     'host' => 'localhost',
     'user' => 'root',
     'pass' => '',
     'db' => 'test'
 ]);
 
-$Secret = \Utilities\Common\Common::makeUUID();
-$Save = $Database->saveConnection($Secret);
+$secret = Common::makeUUID();
 
-if ($Save) {
-    echo 'Connection saved. Secret: ' . $Secret;
+if ($database->saveConnection($secret)) {
+    echo 'Connection saved. Secret: ' . $secret;
 }

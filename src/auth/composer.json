@@ -1,0 +1,43 @@
+{
+   "name": "utilities-php/auth",
+   "description": "Coroutine based authentication library for PHP",
+   "license": "MIT",
+   "keywords": [
+      "php",
+      "utilities",
+      "auth"
+   ],
+   "homepage": "https://github.com/utilities-php/utilities-php",
+   "support": {
+      "issues": "https://github.com/utilities-php/utilities-php/issues",
+      "source": "https://github.com/utilities-php/utilities-php",
+      "docs": "https://github.com/utilities-php/utilities-php"
+   },
+   "minimum-stability": "dev",
+   "prefer-stable": true,
+   "require": {
+      "php": ">=8.0",
+      "ext-pcntl": "*",
+      "ext-openssl": "*",
+      "ext-fileinfo": "*",
+      "nxp/math-executor": "^2.3.0",
+      "shahradelahi/easy-http": "^v1.2.0"
+   },
+   "scripts": {
+      "install": "composer install --ignore-platform-reqs",
+      "update": "composer update --ignore-platform-reqs"
+   },
+   "autoload": {
+      "psr-4": {
+         "Utilities\\Auth\\": "src/"
+      }
+   },
+   "autoload-dev": {
+      "psr-4": {
+         "UtilitiesTests\\Auth\\": "tests/"
+      }
+   },
+   "config": {
+      "sort-packages": true
+   }
+}

@@ -1,6 +1,9 @@
 <?php
+declare(strict_types=1);
 
 namespace Utilities\Database;
+
+use RuntimeException;
 
 /**
  * Middleware class
@@ -84,7 +87,7 @@ class Middleware
     public static function update(mixed $primary, array $data): bool
     {
         if (static::$primary_key === '') {
-            throw new \RuntimeException("You must set the primary key of the table");
+            throw new RuntimeException("You must set the primary key of the table");
         }
 
         return self::getDatabase()->update([

@@ -4,13 +4,13 @@ declare(strict_types=1);
 namespace Utilities\Router;
 
 /**
- * URLs class
+ * URL class
  *
  * @link    https://github.com/utilities-php/router
  * @author  Shahrad Elahi (https://github.com/shahradelahi)
  * @license https://github.com/utilities-php/router/blob/master/LICENSE (MIT License)
  */
-class URLs
+class URL
 {
 
     /**
@@ -122,7 +122,7 @@ class URLs
             $keyword = strtolower($keyword);
         }
 
-        foreach (URLs::getSegments() as $index => $value) {
+        foreach (URL::getSegments() as $index => $value) {
             if ($insensitive) {
                 $value = strtolower($value);
             }
