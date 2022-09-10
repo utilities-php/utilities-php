@@ -70,12 +70,28 @@ class QueryBuilder
      */
     public static function select(array $data, bool $pdo = false): string
     {
-        self::checkDataIsset($data, ['table', 'columns']);
-        $columns = self::combineColumns($data['columns']);
+        self::checkDataIsset($data, ['table', 'where']);
+        $columns = self::combineColumns($data['columns'] ?? '*');
         $where = self::combineWhere($data['where'], $pdo);
         $order = self::combineOrder($data['order'] ?? []);
         $limit = self::combineLimit($data['limit'] ?? []);
         return trim("SELECT $columns FROM `{$data['table']}` WHERE $where $order $limit");
+    }
+
+    /**
+     * Convert array to sql insert or update query (upsert)
+     *
+     * @param array $data {table, columns, where}
+     * @param bool $pdo If true, it will return a PDO template to be used in prepared statements
+     * @return string
+     */
+    public static function upsert(array $data, bool $pdo): string
+    {
+        self::checkDataIsset($data, ['table', 'columns', 'where']);
+        $columns = self::combineColumns(array_keys($data['columns']));
+        $values = self::combineInsertValues($data['columns'], $pdo);
+        $where = self::combineWhere($data['where'], $pdo);
+        return trim("INSERT INTO `{$data['table']}` ($columns) VALUES ($values) ON DUPLICATE KEY UPDATE $where");
     }
 
 }

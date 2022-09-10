@@ -8,6 +8,7 @@ use PDOStatement;
 use RuntimeException;
 use Utilities\Common\Common;
 use Utilities\Database\Exceptions\InvalidSecretException;
+use Utilities\Database\Exceptions\QueryException;
 use Utilities\Database\Traits\ConnectorTrait;
 
 /**
@@ -68,6 +69,17 @@ class DB
         }
 
         return false;
+    }
+
+    /**
+     * Prepare a query
+     *
+     * @param string $query The query string to prepare
+     * @return PDOStatement
+     */
+    public function prepare(string $query): PDOStatement
+    {
+        return $this->getConnection()->prepare($query);
     }
 
     /**
@@ -172,68 +184,6 @@ class DB
     }
 
     /**
-     * @param array $data ["debug", "table", "where", "columns"]
-     * @return bool
-     */
-    public function update(array $data): bool
-    {
-        $Query = QueryBuilder::update($data);
-        if (isset($data['debug'])) {
-            Common::htmlCode($Query);
-        }
-
-        return $this->query($Query) !== false;
-    }
-
-    /**
-     * @param array $data ["debug", "table", "columns"]
-     * @return bool
-     */
-    public function insert(array $data): bool
-    {
-        $Query = QueryBuilder::insert($data);
-        if (isset($data['debug'])) {
-            Common::htmlCode($Query);
-        }
-
-        return $this->query($Query) !== false;
-    }
-
-    /**
-     * @param array $data ["debug", "table", "where"]
-     * @return bool
-     */
-    public function delete(array $data): bool
-    {
-        $query = QueryBuilder::delete($data);
-        if (isset($data['debug'])) {
-            Common::htmlCode($query);
-        }
-
-        return $this->query($query) !== false;
-    }
-
-    /**
-     * Check if any row exists with the given data
-     *
-     * @param array $data ["debug", "table", "where"]
-     * @return bool
-     */
-    public function exists(array $data): bool
-    {
-        $query = QueryBuilder::select($data);
-        if (isset($data['debug'])) {
-            Common::htmlCode($query);
-        }
-
-        if (($result = $this->query($query))) {
-            return $result->rowCount() > 0;
-        }
-
-        throw new RuntimeException("Error while checking if row exists");
-    }
-
-    /**
      * Search for a specific row, and it sorted by the given condition
      *
      * @param array $data {debug, table, columns, search, order, limit}
@@ -258,24 +208,6 @@ class DB
         }
 
         return $result;
-    }
-
-    /**
-     * Insert row and if it existed update
-     *
-     * @param array $data {debug, table, where, columns}
-     * @return bool
-     */
-    public function metaQuery(array $data): bool
-    {
-        $query = $this->query(QueryBuilder::select($data));
-        $rowCount = $query->rowCount();
-
-        if ($rowCount > 0) {
-            return $this->update($data);
-        }
-
-        return $this->insert($data);
     }
 
     /**
@@ -307,6 +239,103 @@ class DB
         }
 
         return false;
+    }
+
+    /**
+     * Insert row into the database
+     *
+     * @param array $data {debug, table, columns}
+     * @return bool
+     */
+    public function insert(array $data): bool
+    {
+        $query = QueryBuilder::insert($data, true);
+
+        if (isset($data['debug']) && $data['debug'] === true) {
+            Common::htmlCode($query);
+        }
+
+        $this->prepare($query)->execute($data['columns']);
+
+        return $this->getConnection()->errorCode() === '00000';
+    }
+
+    /**
+     * Update or insert row into the database
+     *
+     * @param array $data {debug, table, where, columns}
+     * @return bool
+     */
+    public function upsert(array $data): bool
+    {
+        $query = QueryBuilder::upsert($data, true);
+
+        if (isset($data['debug']) && $data['debug'] === true) {
+            Common::htmlCode($query);
+        }
+
+        $this->prepare($query)->execute($data['columns']);
+
+        return $this->getConnection()->errorCode() === '00000';
+    }
+
+    /**
+     * Update row into the database
+     *
+     * @param array $data {debug, table, where, columns}
+     * @return bool
+     */
+    public function update(array $data): bool
+    {
+        $query = QueryBuilder::update($data, true);
+
+        if (isset($data['debug']) && $data['debug'] === true) {
+            Common::htmlCode($query);
+        }
+
+        $this->prepare($query)->execute($data['columns']);
+
+        return $this->getConnection()->errorCode() === '00000';
+    }
+
+    /**
+     * Delete row from the database
+     *
+     * @param array $data {debug, table, where}
+     * @return bool
+     */
+    public function delete(array $data): bool
+    {
+        $query = QueryBuilder::delete($data, true);
+
+        if (isset($data['debug']) && $data['debug'] === true) {
+            Common::htmlCode($query);
+        }
+
+        $this->prepare($query)->execute($data['where']);
+
+        return $this->getConnection()->errorCode() === '00000';
+    }
+
+    /**
+     * Check any row exists with the given data
+     *
+     * @param array $data {debug, tabel, where}
+     * @return bool
+     */
+    public function exists(array $data): bool
+    {
+        $query = QueryBuilder::select($data);
+
+        if (isset($data['debug']) && $data['debug'] === true) {
+            Common::htmlCode($query);
+        }
+
+        if (($result = $this->query($query))) {
+            return $result->rowCount() > 0;
+        }
+
+        throw new QueryException("The query failed to execute.");
     }
 
 }

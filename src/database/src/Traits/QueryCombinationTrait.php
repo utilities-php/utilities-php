@@ -61,19 +61,17 @@ trait QueryCombinationTrait
     /**
      * Combine insert values
      *
-     * @param array $values The values to be inserted, by default it is all values
+     * @param array $columns The columns to be inserted
      * @param bool $pdo If true, it will return PDO values
      * @return string
      */
-    private static function combineInsertValues(array $values, bool $pdo = false): string
+    private static function combineInsertValues(array $columns, bool $pdo = false): string
     {
         $index = 0;
         $combined = "";
-        foreach ($values as $value) {
-            $more = count($values) - 1 == $index ? ' ' : ', ';
-            $combined .= !$pdo
-                ? self::combineValue($value) . $more
-                : "':$value'";
+        foreach ($columns as $column => $value) {
+            $more = count($columns) - 1 == $index ? ' ' : ', ';
+            $combined .= $pdo ? ":$column$more" : self::combineValue($value) . $more;
             $index++;
         }
         return trim($combined);

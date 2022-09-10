@@ -29,7 +29,6 @@ trait ConnectorTrait
      * @var array
      */
     private array $default_options = [
-        PDO::ATTR_EMULATE_PREPARES => false, // turn off emulation mode for "real" prepared statements
         PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION, //turn on errors in the form of exceptions
         PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC, //make the default fetch be an associative array
     ];
@@ -82,16 +81,22 @@ trait ConnectorTrait
             $options = array_merge($this->default_options, $options);
             $dsn = "mysql:host={$data['host']};dbname={$data['db']}";
 
-            $connect = new PDO($dsn, $data['user'], $data['pass'], $options);
+            $this->connection = new PDO($dsn, $data['user'], $data['pass'], $options);
             $this->temp_login = $data;
 
-            if ($connect->errorCode() !== null && $connect->errorCode() !== "00000") {
+            if ($this->connection->errorCode() !== null && $this->connection->errorCode() !== "00000") {
                 throw new ConnectionException(sprintf(
-                    "Connection refused: %s", $connect->errorInfo()[2]
+                    "Connection refused: %s", $this->connection->errorInfo()[2]
                 ));
             }
 
-            return ($this->pdo = $connect);
+            $this->connection->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
+
+            foreach ($options as $key => $value) {
+                $this->connection->setAttribute($key, $value);
+            }
+
+            return $this->connection;
         }
 
         throw new InvalidSecretException("The given data doesn't contain all required fields.");
@@ -102,10 +107,10 @@ trait ConnectorTrait
      */
     public function getConnection(): PDO
     {
-        $this->pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
-        $this->pdo->setAttribute(PDO::ATTR_STRINGIFY_FETCHES, false);
+        $this->connection->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
+        $this->connection->setAttribute(PDO::ATTR_STRINGIFY_FETCHES, false);
 
-        return $this->pdo;
+        return $this->connection;
     }
 
     /**
@@ -133,13 +138,13 @@ trait ConnectorTrait
         $fileId = $this->getFileId($secret);
         $filePath = $startPath . $fileId;
 
-        if (file_exists($startPath) && $overwrite !== true) {
+        if (file_exists($filePath) && $overwrite !== true) {
             throw new ConnectionException('This secret key has already been in used');
         }
 
         $encryptedInfo = Encryption::encrypt($secret, json_encode($this->temp_login), false);
 
-        return file_put_contents($filePath, $encryptedInfo);
+        return file_put_contents($filePath, $encryptedInfo) !== false;
     }
 
 }
