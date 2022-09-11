@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Utilities\Database;
 
 use RuntimeException;
+use Utilities\Database\Traits\CommonConnectionTrait;
 
 /**
  * Middleware class
@@ -15,25 +16,12 @@ use RuntimeException;
 class Middleware
 {
 
-    /**
-     * @var string
-     */
-    protected static string $table_name;
-
-    /**
-     * @var string
-     */
-    protected static string $primary_key;
-
-    /**
-     * @var string
-     */
-    protected static string $database_secret;
+    use CommonConnectionTrait;
 
     /**
      * @var ?DB
      */
-    private static ?DB $database = null;
+    private static ?DB $DB = null;
 
     /**
      * Get Database
@@ -42,96 +30,11 @@ class Middleware
      */
     protected static function getDatabase(): DB
     {
-        return static::$database ?: (static::$database = new DB(static::$database_secret));
-    }
-
-    /**
-     * Find data with specified column and value
-     *
-     * @param string $column
-     * @param mixed $value
-     * @return array|bool
-     */
-    public static function where(string $column, mixed $value): array|bool
-    {
-        return self::get([$column => $value])[0] ?? false;
-    }
-
-    /**
-     * Get rows with specified conditions
-     *
-     * @param array|string $conditions e.g. [{'column' => 'value'}, ...] or single line string
-     * @return array
-     */
-    public static function get(array|string $conditions): array
-    {
-        return self::getDatabase()->select([
-            'table' => static::$table_name,
-            'where' => $conditions
-        ]);
-    }
-
-    /**
-     * Update data
-     *
-     * @param mixed $primary The primary key of the row to update
-     * @param array $data The data to update
-     * @return bool
-     */
-    public static function update(mixed $primary, array $data): bool
-    {
-        if (static::$primary_key === '') {
-            throw new RuntimeException("You must set the primary key of the table");
+        if (!isset(static::$TABLE_NAME, static::$PRIMARY_KEY, static::$DATABASE_SECRET)) {
+            throw new RuntimeException('The {$table_name, $primary_key, $database_secret} properties must be set.');
         }
 
-        return self::getDatabase()->update([
-            'table' => static::$table_name,
-            'where' => [static::$primary_key => $primary],
-            'columns' => $data
-        ]);
-    }
-
-    /**
-     * Delete data
-     *
-     * @param array $conditions e.g. [{'column' => 'value'}, ...]
-     * @return bool
-     */
-    public static function delete(array $conditions): bool
-    {
-        if (static::$primary_key === '') {
-            return false;
-        }
-
-        return self::getDatabase()->delete([
-            'table' => static::$table_name,
-            'where' => $conditions
-        ]);
-    }
-
-    /**
-     * Insert data
-     *
-     * @param array $data The data to insert
-     * @return mixed
-     */
-    public static function insert(array $data): mixed
-    {
-        return self::getDatabase()->insert([
-            'table' => static::$table_name,
-            'columns' => $data
-        ]);
-    }
-
-    /**
-     * Check data does exist
-     *
-     * @param array $conditions e.g. [{'column' => 'value'}, ...]
-     * @return bool
-     */
-    public static function exists(array $conditions): bool
-    {
-        return self::get($conditions)[0] !== false;
+        return static::$DB ?: (static::$DB = new DB(static::$DATABASE_SECRET));
     }
 
 }

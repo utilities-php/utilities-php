@@ -98,7 +98,7 @@ class Services
 
         $last_runs = [];
         $startTime = time();
-        Loop::run(function () use (&$last_runs, $startTime) {
+        Loop::run(500, function () use (&$last_runs, $startTime) {
             if (time() - $startTime > 60) {
                 Loop::stop();
             }

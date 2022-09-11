@@ -34,29 +34,6 @@ class Time
     }
 
     /**
-     * Sleep for the random time in given range and time is milliseconds
-     *
-     * @param int $min
-     * @param int $max
-     * @return void
-     */
-    public static function rangedSleep(int $min, int $max): void
-    {
-        self::millisecondSleep(rand($min, $max));
-    }
-
-    /**
-     * Sleep for given time in milliseconds
-     *
-     * @param int $millisecond
-     * @return void
-     */
-    public static function millisecondSleep(int $millisecond): void
-    {
-        usleep($millisecond * 1000);
-    }
-
-    /**
      * Get Time in UTC format
      *
      * @param int $time

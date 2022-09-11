@@ -50,7 +50,9 @@ class Telegram
     public function send(string $method, array $data = []): array|false
     {
         $url = "https://api.telegram.org/bot" . $this->token . "/" . $method;
-        $response = (new Client())->post($url, $data);
+        $response = (new Client())->post($url, [
+            'body' => $data,
+        ]);
 
         if ($response->getStatusCode() == 200) {
             return json_decode($response->getBody(), true);

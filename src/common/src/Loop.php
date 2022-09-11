@@ -21,19 +21,15 @@ class Loop
     protected static bool $running = false;
 
     /**
+     * Create an infinite loop with custom interval
+     *
+     * NOTE: To stop the loop, call the stop() method.
+     *
+     * @param int $interval (e.g. 500 for 500 milliseconds)
+     * @param callable $callback The callback function
      * @return void
      */
-    public static function stop(): void
-    {
-        static::$running = false;
-    }
-
-    /**
-     * @param callable $callback
-     * @param int $interval in milliseconds
-     * @return void
-     */
-    public static function run(callable $callback, int $interval): void
+    public static function run(int $interval, callable $callback): void
     {
         static::$running = true;
         $last_hit = Time::getMillisecond();
@@ -46,14 +42,13 @@ class Loop
     }
 
     /**
-     * @param callable $callback
-     * @param int $interval in milliseconds
+     * Stop the current loop
+     *
      * @return void
      */
-    public static function runAfter(callable $callback, int $interval): void
+    public static function stop(): void
     {
-        Time::millisecondSleep($interval);
-        $callback();
+        static::$running = false;
     }
 
 }

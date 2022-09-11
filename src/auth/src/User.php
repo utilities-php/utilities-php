@@ -5,6 +5,7 @@ namespace Utilities\Auth;
 
 use Utilities\Common\Common;
 use Utilities\Common\Time;
+use Utilities\Common\UUID;
 
 /**
  * User class
@@ -29,7 +30,7 @@ class User
     public function __construct(array $extend_data = [])
     {
         $this->data = array_merge($extend_data, [
-            'id' => Common::makeUUID(),
+            'id' => UUID::generate(),
             'created_at' => Time::getMillisecond(),
             'updated_at' => Time::getMillisecond(),
         ]);
