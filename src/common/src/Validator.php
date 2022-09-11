@@ -23,7 +23,7 @@ class Validator
      */
     public static function isUuid(string $uuid): bool
     {
-        return preg_match('/^{?[0-9a-f]{8}-?[0-9a-f]{4}-?[0-9a-f]{4}-?' . '[0-9a-f]{4}-?[0-9a-f]{12}}?$/i', $uuid) === 1;
+        return UUID::validate($uuid);
     }
 
     /**

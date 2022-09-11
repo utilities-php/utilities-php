@@ -178,11 +178,13 @@ class Common
     }
 
     /**
+     * Generate random string with given length and chars
+     *
      * @param int $length
      * @param string|null $chars [optional] If null, it will use default chars
      * @return string
      */
-    public static function GenerateRandomString(int $length = 10, string $chars = null): string
+    public static function randomString(int $length = 10, string $chars = null): string
     {
         $characters = $chars ?? '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
         $charactersLength = strlen($characters);
@@ -203,48 +205,6 @@ class Common
     public static function removeStr(string $needle, string $haystack): string
     {
         return str_replace($needle, "", $haystack);
-    }
-
-    /**
-     * Generate a random UUID with context
-     *
-     * @param ?string $content
-     * @return string
-     */
-    public static function makeUUID(string $content = null): string
-    {
-        if ($content === null) $content = self::randomString();
-        $namespace = "1f5dcd39-3a03-4007-8640-73030245dafd";
-        $nhex = str_replace(array('-', '{', '}'), '', $namespace);
-        $nstr = '';
-        for ($i = 0; $i < strlen($nhex); $i += 2) {
-            $nstr .= chr(hexdec($nhex[$i] . $nhex[$i + 1]));
-        }
-        $hash = sha1($nstr . $content);
-        return sprintf('%08s-%04s-%04x-%04x-%12s',
-            substr($hash, 0, 8),
-            substr($hash, 8, 4),
-            (hexdec(substr($hash, 12, 4)) & 0x0fff) | 0x5000,
-            (hexdec(substr($hash, 16, 4)) & 0x3fff) | 0x8000,
-            substr($hash, 20, 12)
-        );
-    }
-
-    /**
-     * Generate random string with given length
-     *
-     * @param int $length
-     * @return string
-     */
-    public static function randomString(int $length = 10): string
-    {
-        $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-        $charactersLength = strlen($characters);
-        $randomString = '';
-        for ($i = 0; $i < $length; $i++) {
-            $randomString .= $characters[rand(0, $charactersLength - 1)];
-        }
-        return $randomString;
     }
 
     /**
