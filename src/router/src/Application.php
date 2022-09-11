@@ -6,7 +6,6 @@ namespace Utilities\Router;
 use ReflectionClass;
 use ReflectionMethod;
 use Throwable;
-use Utilities\Auth\Origin;
 use Utilities\Auth\Session;
 use Utilities\Router\Interfaces\ApplicationRouteInterface;
 use Utilities\Router\Traits\ControllerTrait;

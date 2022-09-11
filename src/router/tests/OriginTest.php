@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace UtilitiesTests\Router;
 
 use PHPUnit\Framework\TestCase;
-use Utilities\Auth\Origin;
+use Utilities\Router\Origin;
 
 class OriginTest extends TestCase
 {

@@ -4,10 +4,10 @@ declare(strict_types=1);
 namespace UtilitiesTests\Router\Creative;
 
 use Throwable;
-use Utilities\Auth\Origin;
 use Utilities\Router\Application;
 use Utilities\Router\Attributes\Route;
 use Utilities\Router\Controller;
+use Utilities\Router\Origin;
 use Utilities\Router\Request;
 use Utilities\Router\Response;
 use Utilities\Router\Utils\StatusCode;
