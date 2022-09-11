@@ -5,7 +5,6 @@ namespace Utilities\Database;
 
 use PDO;
 use PDOStatement;
-use RuntimeException;
 use Utilities\Common\Common;
 use Utilities\Database\Exceptions\InvalidSecretException;
 use Utilities\Database\Exceptions\QueryException;
@@ -59,19 +58,6 @@ class DB
     }
 
     /**
-     * @param string $query The query to execute
-     * @return array|bool
-     */
-    public function queryResult(string $query): array|bool
-    {
-        if (($result = $this->query($query))) {
-            return $result->fetchAll(PDO::FETCH_ASSOC);
-        }
-
-        return false;
-    }
-
-    /**
      * Prepare a query
      *
      * @param string $query The query string to prepare
@@ -94,16 +80,6 @@ class DB
         $stmt = $this->getConnection()->query($query, $mode);
         \assert($stmt instanceof PDOStatement);
         return $stmt;
-    }
-
-    /**
-     * Get the last insert ID.
-     *
-     * @return int|string
-     */
-    public function insertId(): int|string
-    {
-        return $this->getConnection()->lastInsertId();
     }
 
     /**
@@ -174,16 +150,6 @@ class DB
     }
 
     /**
-     * Get the wrapped PDO connection.
-     *
-     * @return \PDO
-     */
-    public function getWrappedConnection(): PDO
-    {
-        return $this->connection;
-    }
-
-    /**
      * Search for a specific row, and it sorted by the given condition
      *
      * @param array $data {debug, table, columns, search, order, limit}
@@ -213,32 +179,38 @@ class DB
     /**
      * Select rows from the database
      *
-     * @param array $data {debug, table, where, columns, order, limit}
+     * @param array $data {debug, table, columns, where, order, limit}
      * @return array|false
      */
     public function select(array $data): array|false
     {
-        $query = QueryBuilder::select($data);
+        $query = QueryBuilder::select($data, true);
 
         if (isset($data['debug']) && $data['debug'] === true) {
             Common::htmlCode($query);
         }
 
-        if (($result = $this->query($query))) {
-            $data = $result->fetchAll(PDO::FETCH_ASSOC);
+        $prepare = $this->prepare($query);
+        $prepare->execute([
+            ...$data['columns'] ?? [],
+            ...$data['where']
+        ]);
 
-            foreach ($data as $key => $value) {
-                foreach ($value as $k => $v) {
-                    if (gettype($v) === "string") {
-                        $data[$key][$k] = htmlspecialchars_decode($v);
-                    }
-                }
-            }
-
-            return $data;
+        if ($this->getConnection()->errorCode() !== '00000') {
+            return false;
         }
 
-        return false;
+        $data = $prepare->fetchAll(PDO::FETCH_ASSOC);
+
+        foreach ($data as $key => $value) {
+            foreach ($value as $k => $v) {
+                if (gettype($v) === "string") {
+                    $data[$key][$k] = htmlspecialchars_decode($v);
+                }
+            }
+        }
+
+        return $data;
     }
 
     /**
@@ -274,7 +246,10 @@ class DB
             Common::htmlCode($query);
         }
 
-        $this->prepare($query)->execute($data['columns']);
+        $this->prepare($query)->execute([
+            ...$data['columns'],
+            ...$data['where']
+        ]);
 
         return $this->getConnection()->errorCode() === '00000';
     }
@@ -293,7 +268,10 @@ class DB
             Common::htmlCode($query);
         }
 
-        $this->prepare($query)->execute($data['columns']);
+        $this->prepare($query)->execute([
+            ...$data['columns'],
+            ...$data['where']
+        ]);
 
         return $this->getConnection()->errorCode() === '00000';
     }
@@ -320,7 +298,7 @@ class DB
     /**
      * Check any row exists with the given data
      *
-     * @param array $data {debug, tabel, where}
+     * @param array $data {debug, table, where}
      * @return bool
      */
     public function exists(array $data): bool
