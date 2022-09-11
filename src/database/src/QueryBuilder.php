@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Utilities\Database;
 
+use Utilities\Database\Traits\BuilderTrait;
 use Utilities\Database\Traits\QueryCombinationTrait;
 
 /**
@@ -16,6 +17,7 @@ class QueryBuilder
 {
 
     use QueryCombinationTrait;
+    use BuilderTrait;
 
     /**
      * Convert array to sql insert query
@@ -70,9 +72,9 @@ class QueryBuilder
      */
     public static function select(array $data, bool $pdo = false): string
     {
-        self::checkDataIsset($data, ['table', 'where']);
+        self::checkDataIsset($data, ['table']);
         $columns = self::combineColumns($data['columns'] ?? '*');
-        $where = self::combineWhere($data['where'], $pdo);
+        $where = self::combineWhere($data['where'] ?? [], $pdo);
         $order = self::combineOrder($data['order'] ?? []);
         $limit = self::combineLimit($data['limit'] ?? []);
         return trim("SELECT $columns FROM `{$data['table']}` WHERE $where $order $limit");

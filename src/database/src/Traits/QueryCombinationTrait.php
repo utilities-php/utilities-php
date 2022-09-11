@@ -45,17 +45,37 @@ trait QueryCombinationTrait
      * etc.
      *
      * @param mixed $value The value to be combined
+     * @param bool $pdo Whether to use PDO or not
      * @return mixed
      */
-    private static function combineValue(mixed $value): mixed
+    private static function combineValue(mixed $value, bool $pdo = false): mixed
     {
         return match (gettype($value)) {
-            'string' => "'$value'",
-            'integer', 'double' => $value,
-            'boolean' => $value ? 1 : 0,
-            'NULL' => 'NULL',
+            'string' => $pdo ? ":$value" : "'$value'",
+            'integer', 'double' => $pdo ? ":$value" : $value,
+            'boolean' => $pdo ? ":$value" : ($value ? 1 : 0),
+            'NULL' => $pdo ? ":$value" : 'NULL',
+            'array' => self::combineValueArray($value, $pdo),
             default => throw new QueryException("Invalid value type for combination: " . gettype($value)),
         };
+    }
+
+    /**
+     * Combine where array
+     *
+     * eg. ['a', 'b', 'c'] => ('a', 'b', 'c')
+     *
+     * @param array $array The array to be combined
+     * @param bool $pdo Whether to use PDO or not
+     * @return string
+     */
+    private static function combineValueArray(array $array, bool $pdo = false): string
+    {
+        $combined = "";
+        foreach ($array as $item) {
+            $combined .= self::combineValue($item, $pdo) . ", ";
+        }
+        return "(" . trim($combined, ", ") . ")";
     }
 
     /**
@@ -119,11 +139,13 @@ trait QueryCombinationTrait
                 $index++;
             }
         } else {
-            foreach ($where as $column => $value) {
+            foreach ($where as $key => $value) {
                 $more = count($where) - 1 == $index ? ' ' : ' AND ';
-                $combined .= !$pdo
-                    ? "`$column` = " . self::combineValue($value) . $more
-                    : "`$column` = :$column$more";
+                $match = match (gettype($value)) {
+                    default => $pdo ? "`$key` = :$key" : "`$key` = " . self::combineValue($value),
+                    'array' => "`$key` IN " . self::combineValueArray($value, $pdo),
+                };
+                $combined .= $match . $more;
                 $index++;
             }
         }
@@ -171,37 +193,6 @@ trait QueryCombinationTrait
             return "LIMIT {$limit[0]}, {$limit[1]}";
         }
         return "";
-    }
-
-    /**
-     * Filter quotation. convert " and ' to &quot; and &#039;
-     *
-     * @param mixed $value The value to be filtered
-     * @return mixed
-     */
-    private static function filterQuotation(mixed $value): mixed
-    {
-        if (is_string($value)) {
-            return str_replace(["'", '"'], ["&#039;", "&quot;"], $value);
-        }
-
-        return $value;
-    }
-
-    /**
-     * Check the data contains with given columns, On the false, it will throw an exception
-     *
-     * @param array $data The data to be checked
-     * @param array $columns The columns to be used
-     * @return void
-     */
-    private static function checkDataIsset(array $data, array $columns): void
-    {
-        foreach ($columns as $column) {
-            if (!isset($data[$column])) {
-                throw new QueryException(sprintf("Column '%s' is not set", $column));
-            }
-        }
     }
 
 }

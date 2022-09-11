@@ -21,7 +21,7 @@ class Middleware
     /**
      * @var ?DB
      */
-    private static ?DB $DB = null;
+    protected static ?DB $DB = null;
 
     /**
      * Get Database

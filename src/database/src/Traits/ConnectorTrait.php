@@ -103,6 +103,8 @@ trait ConnectorTrait
     }
 
     /**
+     * Get the database connection
+     *
      * @return PDO
      */
     public function getConnection(): PDO
@@ -145,6 +147,16 @@ trait ConnectorTrait
         $encryptedInfo = Encryption::encrypt($secret, json_encode($this->temp_login), false);
 
         return file_put_contents($filePath, $encryptedInfo) !== false;
+    }
+
+    /**
+     * Get the server version for the connection.
+     *
+     * @return string
+     */
+    public function getServerVersion(): string
+    {
+        return $this->connection->getAttribute(PDO::ATTR_SERVER_VERSION);
     }
 
 }

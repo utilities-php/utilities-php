@@ -5,7 +5,7 @@ namespace UtilitiesTests\Database;
 
 use Utilities\Database\QueryBuilder;
 
-class DatabaseTest extends \PHPUnit\Framework\TestCase
+class QueryBuilderTest extends \PHPUnit\Framework\TestCase
 {
 
     public function test_create_update_query(): void
@@ -106,6 +106,21 @@ class DatabaseTest extends \PHPUnit\Framework\TestCase
             ]),
             "SELECT `id`, `name`, `email` FROM `users` WHERE `id` = 1 AND `name` = 'John'"
         );
+    }
+
+    public function test_using_IN_operator(): void
+    {
+        $query = QueryBuilder::select([
+            'table' => 'users',
+            'columns' => [
+                'email'
+            ],
+            'where' => [
+                'id' => [1, 2, 3]
+            ]
+        ]);
+
+        $this->assertEquals("SELECT `email` FROM `users` WHERE `id` IN (1, 2, 3)", $query);
     }
 
 }

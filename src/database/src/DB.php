@@ -131,22 +131,12 @@ class DB
      * Wrap quotes around the given input.
      *
      * @param string $input
-     * @param string $type
+     * @param int $type (optional) The PDO::PARAM_* constant
      * @return string
      */
-    public function quote(string $input, string $type = PDO::PARAM_STR): string
+    public function quote(string $input, int $type = PDO::PARAM_STR): string
     {
         return $this->connection->quote($input, $type);
-    }
-
-    /**
-     * Get the server version for the connection.
-     *
-     * @return string
-     */
-    public function getServerVersion(): string
-    {
-        return $this->connection->getAttribute(PDO::ATTR_SERVER_VERSION);
     }
 
     /**
@@ -157,11 +147,15 @@ class DB
      */
     public function search(array $data): array
     {
+        if (!isset($data['table'], $data['columns'], $data['search'])) {
+            throw new QueryException('The table, columns, and search properties must be set.');
+        }
+
         $result = [];
 
         foreach ($data['columns'] as $column) {
             $result = array_merge($result, $this->select([
-                'debug' => $data['debug'],
+                'debug' => $data['debug'] ?? false,
                 'table' => $data['table'],
                 'where' => [
                     [
@@ -169,8 +163,10 @@ class DB
                         'operator' => 'LIKE',
                         'value' => "%{$data['search']}%"
                     ]
-                ]
-            ]));
+                ],
+                'order' => $data['order'] ?? [],
+                'limit' => $data['limit'] ?? []
+            ]) ?? []);
         }
 
         return $result;
@@ -190,10 +186,27 @@ class DB
             Common::htmlCode($query);
         }
 
+        $where = [];
+
+        foreach ($data['where'] as $key => $value) {
+            if (is_array($value)) {
+                if (isset($value['column'], $value['operator'], $value['value'])) {
+                    $where[$value['column']] = $value['value'];
+                    continue;
+                }
+
+                foreach ($value as $k) {
+                    $where[$k] = $k;
+                }
+            } else {
+                $where[$key] = $value;
+            }
+        }
+
         $prepare = $this->prepare($query);
         $prepare->execute([
-            ...$data['columns'] ?? [],
-            ...$data['where']
+            ...($data['columns'] ?? []),
+            ...$where
         ]);
 
         if ($this->getConnection()->errorCode() !== '00000') {

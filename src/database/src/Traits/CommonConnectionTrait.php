@@ -43,7 +43,7 @@ trait CommonConnectionTrait
      */
     public static function where(string $column, mixed $value): array|bool
     {
-        return self::get([$column => $value])[0] ?? false;
+        return self::get(['where' => [$column => $value]])[0] ?? false;
     }
 
     /**
@@ -64,15 +64,9 @@ trait CommonConnectionTrait
      */
     public static function get(array $data): array
     {
-        if (isset($data['table'])){
+        if (isset($data['table'])) {
             throw new \RuntimeException('Table name is not allowed in data');
         }
-
-        $data['columns'] = $data['columns'] ?? '*';
-        $data['where'] = $data['where'] ?? [];
-        $data['order'] = $data['order'] ?? [];
-        $data['limit'] = $data['limit'] ?? null;
-        $data['offset'] = $data['offset'] ?? null;
 
         return self::getDatabase()->select([
             'table' => static::$TABLE_NAME,
@@ -84,9 +78,9 @@ trait CommonConnectionTrait
      * Insert data
      *
      * @param array $columns
-     * @return bool
+     * @return mixed
      */
-    public static function insert(array $columns): bool
+    public static function insert(array $columns): mixed
     {
         return self::getDatabase()->insert([
             'table' => static::$TABLE_NAME,
@@ -97,32 +91,32 @@ trait CommonConnectionTrait
     /**
      * Update data
      *
+     * @param mixed $primary
      * @param array $columns
-     * @param array $where
-     * @return bool
+     * @return mixed
      */
-    public static function update(array $columns, array $where): bool
+    public static function update(mixed $primary, array $columns): mixed
     {
         return self::getDatabase()->update([
             'table' => static::$TABLE_NAME,
             'columns' => $columns,
-            'where' => $where
+            'where' => [static::$PRIMARY_KEY => $primary]
         ]);
     }
 
     /**
      * Upsert data
      *
+     * @param mixed $primary
      * @param array $columns
-     * @param array $where
-     * @return bool
+     * @return mixed
      */
-    public static function upsert(array $columns, array $where): bool
+    public static function upsert(mixed $primary, array $columns): mixed
     {
         return self::getDatabase()->upsert([
             'table' => static::$TABLE_NAME,
             'columns' => $columns,
-            'where' => $where
+            'where' => [static::$PRIMARY_KEY => $primary]
         ]);
     }
 
@@ -130,9 +124,9 @@ trait CommonConnectionTrait
      * Delete data
      *
      * @param array $where
-     * @return bool
+     * @return mixed
      */
-    public static function delete(array $where): bool
+    public static function delete(array $where): mixed
     {
         return self::getDatabase()->delete([
             'table' => static::$TABLE_NAME,
