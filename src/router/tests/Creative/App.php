@@ -54,14 +54,14 @@ class App extends Application
     }
 
     /**
-     * @param array $queries
+     * @param array $query
      * @return void
      */
     #[Route('GET', '/echo')]
-    public function echo(array $queries): void
+    public function echo(array $query): void
     {
         Response::send(StatusCode::OK, [
-            'result' => $queries ?? [],
+            'result' => $query ?? [],
         ]);
     }
 

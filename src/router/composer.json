@@ -19,7 +19,8 @@
       "php": ">=8.0",
       "ext-fileinfo": "*",
       "utilities-php/auth": "*",
-      "utilities-php/common": "*"
+      "utilities-php/common": "*",
+      "symfony/mime": "^v6.0.12"
    },
    "scripts": {
       "install": "composer install --ignore-platform-reqs",

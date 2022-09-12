@@ -6,7 +6,7 @@ namespace UtilitiesTests\Router;
 use PHPUnit\Framework\TestCase;
 use Utilities\Router\URL;
 
-class URLsTest extends TestCase
+class URLTest extends TestCase
 {
 
     public function test_query_string()
@@ -44,6 +44,12 @@ class URLsTest extends TestCase
     {
         $_SERVER['REQUEST_URI'] = '/test/hello/world';
         $this->assertEquals(['test', 'hello', 'world'], URL::getSegments());
+    }
+
+    public function test_parse_params()
+    {
+        $_SERVER['REQUEST_URI'] = '/test/hello/world';
+        $this->assertEquals(['first' => 'hello', 'second' => 'world'], URL::parseParams('/test/{first}/{second}'));
     }
 
 }

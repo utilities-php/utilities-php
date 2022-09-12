@@ -58,7 +58,7 @@ class Assistant
     /**
      * Generate passing data
      *
-     * @param ReflectionParameter[] $require ["headers", "queries", "params", "input"]
+     * @param ReflectionParameter[] $require ["request", "headers", "query", "params", "input"]
      * @param array $mergeWith
      * @return array
      */
@@ -72,11 +72,14 @@ class Assistant
         }
 
         foreach ($fetchRequirements as $key) {
+            if ($key == 'request') {
+                $methodParams['request'] = Request::getInstance();
+            }
             if ($key == 'headers') {
                 $methodParams['headers'] = getallheaders();
             }
-            if ($key == 'queries') {
-                $methodParams['queries'] = array_merge($_GET, $_POST, URL::QueryString());
+            if ($key == 'query') {
+                $methodParams['query'] = array_merge($_GET, $_POST, URL::QueryString());
             }
             if ($key == 'params') {
                 $methodParams['params'] = Request::getParams();

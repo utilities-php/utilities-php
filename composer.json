@@ -17,13 +17,6 @@
       "source": "https://github.com/utilities-php/utilities-php",
       "docs": "https://github.com/utilities-php/utilities-php"
    },
-   "authors": [
-      {
-         "name": "Shahrad Elahi",
-         "email": "shahrad@litehex.com",
-         "role": "developer"
-      }
-   ],
    "minimum-stability": "dev",
    "prefer-stable": true,
    "require": {
@@ -33,6 +26,7 @@
       "ext-mcrypt": "*",
       "ext-openssl": "*",
       "ext-pdo": "*",
+      "symfony/mime": "^v6.0.12",
       "psr/container": "^1.0|^2.0",
       "psr/log": "^1.0|^2.0|^3.0"
    },
@@ -49,7 +43,8 @@
    },
    "suggest": {
       "doctrine/dbal": "Required to rename columns and drop SQLite columns (^2.13.3|^3.1.4).",
-      "fakerphp/faker": "Required to use the eloquent factory builder (^1.20.0)."
+      "fakerphp/faker": "Required to use the eloquent factory builder (^1.20.0).",
+      "symfony/mime": "Required to use mime type guessing (^v6.0.12)."
    },
    "replace": {
       "utilities-php/auth": "*",

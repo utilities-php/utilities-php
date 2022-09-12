@@ -73,20 +73,11 @@ trait RouterTrait
     private static function find(string $uri): array|false
     {
         foreach (static::$routes[URL::getMethod()] ?? [] as $route => $callback) {
-            if (preg_match_all(self::convertUri2RegExp($route), $uri, $matches)) {
-                $params = [];
-                foreach ($matches as $key => $value) {
-                    if (is_numeric($key)) {
-                        continue;
-                    }
-
-                    $params[$key] = $value[0];
-                }
-
+            if (preg_match_all(self::convertUri2RegExp($route), $uri)) {
                 return [
+                    'params' => URL::parseParams($route),
                     'method' => URL::getMethod(),
                     'route' => $route,
-                    'params' => $params,
                 ];
             }
         }

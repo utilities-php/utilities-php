@@ -31,35 +31,40 @@ class Request
     private static array $data = [];
 
     /**
+     * The allowed data.
+     *
+     * @var array
+     */
+    private static array $allowedData = [
+        'uri' => "string",
+        'method' => "string",
+        'query_string' => "array",
+        'headers' => "array",
+        "params" => "array",
+    ];
+
+    /**
      * Request constructor.
      *
      * @param array $initial
      */
     public function __construct(array $initial)
     {
-        $types = [
-            'uri' => "string",
-            'method' => "string",
-            'query_string' => "array",
-            'headers' => "array",
-            "params" => "array",
-        ];
-
-        foreach ($types as $key => $value) {
+        foreach (self::$allowedData as $key => $value) {
             if (!in_array($key, array_keys($initial))) {
                 throw new RuntimeException(sprintf(
                     'The given data of %s, must contain the following keys: %s',
                     '\Utilities\Router\Request',
-                    implode(', ', array_keys($types))
+                    implode(', ', array_keys(self::$allowedData))
                 ));
             }
         }
 
-        if (!Validator::validateType($initial, $types)) {
+        if (!Validator::validateType($initial, self::$allowedData)) {
             throw new RuntimeException(sprintf(
                 "The type of %s must be %s",
                 '\Utilities\Router\Request',
-                implode(', ', $types)
+                implode(', ', self::$allowedData)
             ));
         }
 
@@ -135,21 +140,57 @@ class Request
     }
 
     /**
+     * Get instance of Request with available data
+     *
+     * @return Request
+     */
+    public static function getInstance(): Request
+    {
+        return new static(static::$data);
+    }
+
+    /**
+     * Returns the request quick data.
+     *
+     * @param string $name The name of the data.
+     * @return mixed
+     */
+    protected static function get(string $name): mixed
+    {
+        $uri = static::$data['uri'] ?? URL::getURL();
+
+        return match ($name) {
+            'uri' => $uri,
+            'method' => static::$data[$name] ?? URL::getMethod(),
+            'query_string' => static::$data[$name] ?? URL::QueryString(),
+            'headers' => static::$data[$name] ?? getallheaders(),
+            'params' => static::$data[$name] ?? URL::parseParams($uri),
+            default => null
+        };
+    }
+
+    /**
      * @param string $name
      * @param array $arguments
      * @return mixed
      */
     public static function __callStatic(string $name, array $arguments): mixed
     {
-        if (str_starts_with($name, 'get')) {
+        if (str_starts_with($name, 'set') || str_starts_with($name, 'get')){
+            $type = substr($name, 0, 3);
             $property = substr($name, 3);
-            return static::$data[strtolower(ltrim(preg_replace('/[A-Z]/', '_$0', $property), '_'))];
-        }
+            $snake = strtolower(ltrim(preg_replace('/[A-Z]/', '_$0', $property), '_'));
 
-        if (str_starts_with($name, 'set')) {
-            $property = substr($name, 3);
-            static::$data[strtolower(ltrim(preg_replace('/[A-Z]/', '_$0', $property), '_'))] = $arguments[0];
-            return null;
+            if (in_array($snake, array_keys(static::$allowedData))) {
+                if ($type == 'get') {
+                    return isset(static::$data[$snake]) && static::$data[$snake] != null
+                        ? static::$data[$snake]
+                        : static::get($snake);
+                }
+
+                static::$data[] = $arguments[0];
+                return null;
+            }
         }
 
         if (method_exists(static::class, $name)) {
@@ -157,7 +198,7 @@ class Request
         }
 
         throw new BadMethodCallException(sprintf(
-            'Call to undefined method %s::%s()',
+            'The method %s::%s does not exist',
             self::class,
             $name
         ));

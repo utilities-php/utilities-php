@@ -11,10 +11,7 @@ class PathFinderTest extends TestCase
 
     public function testPathFinder()
     {
-        $this->assertEquals(
-            'text/plain',
-            PathFinder::getMimeType(__FILE__)
-        );
+        $this->assertEquals('application/x-php', PathFinder::getMimeType(__FILE__));
     }
 
 }

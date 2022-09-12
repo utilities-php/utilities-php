@@ -22,10 +22,10 @@ class JamesController extends Controller
     }
 
     #[Route('GET', '/echo')]
-    public function echo(array $queries): void
+    public function echo(array $query): void
     {
         Response::send(StatusCode::OK, [
-            'result' => $queries ?? [],
+            'result' => $query ?? [],
         ]);
     }
 

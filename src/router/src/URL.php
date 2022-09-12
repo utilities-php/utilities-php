@@ -145,4 +145,41 @@ class URL
         return $_SERVER['REQUEST_METHOD'] ?? 'GET';
     }
 
+    /**
+     * @param string $uri
+     * @return string
+     */
+    private static function convertUri2RegExp(string $uri): string
+    {
+        if (str_contains($uri, '{')) {
+            $uri = preg_replace('/\{([^}]+)}/', '(?<$1>[^/]+)', $uri);
+        }
+
+        return '#^' . $uri . '$#';
+    }
+
+    /**
+     * Parse the url parameters
+     *
+     * @param string $uri
+     * @return array
+     */
+    public static function parseParams(string $uri): array
+    {
+        if (preg_match_all(self::convertUri2RegExp($uri), self::getURL(), $matches)) {
+            $params = [];
+            foreach ($matches as $key => $value) {
+                if (is_numeric($key)) {
+                    continue;
+                }
+
+                $params[$key] = $value[0];
+            }
+
+            return $params;
+        }
+
+        return [];
+    }
+
 }
