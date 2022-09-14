@@ -190,8 +190,12 @@ class DB
 
         foreach ($data['where'] as $key => $value) {
             if (is_array($value)) {
-                if (isset($value['column'], $value['operator'], $value['value'])) {
-                    $where[$value['column']] = $value['value'];
+                if (isset($value['operator'], $value['value'])) {
+                    if (!isset($value['column'])){
+                        $value['column'] = $key;
+                    }
+
+                    $where[$key] = $value['value'];
                     continue;
                 }
 

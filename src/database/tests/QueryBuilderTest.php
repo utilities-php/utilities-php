@@ -84,7 +84,11 @@ class QueryBuilderTest extends \PHPUnit\Framework\TestCase
                 'email'
             ],
             'where' => [
-                'id' => 1
+                [
+                    'column' => 'id',
+                    'operator' => '=',
+                    'value' => 1
+                ]
             ]
         ]);
     }
@@ -94,17 +98,16 @@ class QueryBuilderTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(
             QueryBuilder::select([
                 'table' => 'users',
-                'columns' => [
-                    'id',
-                    'name',
-                    'email'
-                ],
                 'where' => [
                     'id' => 1,
-                    'name' => 'John'
+                    'name' => [
+                        'operator' => 'LIKE',
+                        'value' => '%John%'
+                    ],
+                    'status' => [1, 2, 3]
                 ]
             ]),
-            "SELECT `id`, `name`, `email` FROM `users` WHERE `id` = 1 AND `name` = 'John'"
+            "SELECT * FROM `users` WHERE `id` = 1 AND `name` LIKE '%John%' AND `status` IN (1, 2, 3)"
         );
     }
 
@@ -116,11 +119,15 @@ class QueryBuilderTest extends \PHPUnit\Framework\TestCase
                 'email'
             ],
             'where' => [
-                'id' => [1, 2, 3]
+                'id' => [1, 2, 3],
+                'status' => [
+                    'operator' => 'IN',
+                    'value' => [1, 2, 3]
+                ]
             ]
         ]);
 
-        $this->assertEquals("SELECT `email` FROM `users` WHERE `id` IN (1, 2, 3)", $query);
+        $this->assertEquals("SELECT `email` FROM `users` WHERE `id` IN (1, 2, 3) AND `status` IN (1, 2, 3)", $query);
     }
 
 }

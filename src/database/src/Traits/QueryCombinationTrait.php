@@ -130,24 +130,23 @@ trait QueryCombinationTrait
     {
         $index = 0;
         $combined = "";
-        if (isset($where[0])) {
-            foreach ($where as $item) {
-                $more = count($where) - 1 == $index ? ' ' : ' AND ';
+        foreach ($where as $key => $value) {
+            $more = count($where) - 1 == $index ? ' ' : ' AND ';
+            if (is_array($value) && isset($value['operator'], $value['value'])) {
+                if (!isset($value['column'])) {
+                    $value['column'] = $key;
+                }
                 $combined .= !$pdo
-                    ? "`{$item['column']}` {$item['operator']} " . self::combineValue($item['value']) . $more
-                    : "`{$item['column']}` {$item['operator']} :{$item['column']}$more";
-                $index++;
-            }
-        } else {
-            foreach ($where as $key => $value) {
-                $more = count($where) - 1 == $index ? ' ' : ' AND ';
+                    ? "`{$value['column']}` {$value['operator']} " . self::combineValue($value['value']) . $more
+                    : "`{$value['column']}` {$value['operator']} :{$value['column']}$more";
+            } else {
                 $match = match (gettype($value)) {
                     default => $pdo ? "`$key` = :$key" : "`$key` = " . self::combineValue($value),
                     'array' => "`$key` IN " . self::combineValueArray($value, $pdo),
                 };
                 $combined .= $match . $more;
-                $index++;
             }
+            $index++;
         }
         return trim($combined);
     }
