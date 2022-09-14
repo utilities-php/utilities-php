@@ -266,6 +266,9 @@ class DB
             Common::htmlCode($query);
         }
 
+        $data['update'] = $data['columns'];
+        unset($data['columns']);
+
         $this->prepare($query)->execute([
             ...($this->extractValues($data))
         ]);

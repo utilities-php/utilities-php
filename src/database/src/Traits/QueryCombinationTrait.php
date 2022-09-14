@@ -138,7 +138,7 @@ trait QueryCombinationTrait
                 }
                 $combined .= !$pdo
                     ? "`{$value['column']}` {$value['operator']} " . self::combineValue($value['value']) . $more
-                    : "`{$value['column']}` {$value['operator']} :{$value['column']}$more";
+                    : "`{$value['column']}` {$value['operator']} :WHERE_{$value['column']}$more";
             } else {
                 $match = match (gettype($value)) {
                     default => $pdo ? "`$key` = :WHERE_$key" : "`$key` = " . self::combineValue($value),
