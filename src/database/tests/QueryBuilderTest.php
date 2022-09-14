@@ -130,4 +130,29 @@ class QueryBuilderTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals("SELECT `email` FROM `users` WHERE `id` IN (1, 2, 3) AND `status` IN (1, 2, 3)", $query);
     }
 
+    public function test_upsert(): void
+    {
+        $query = QueryBuilder::upsert([
+            'table' => 'users',
+            'columns' => [
+                'name' => 'John',
+                'email' => 'john@litehex.com',
+                'created_at' => '2020-01-01 00:00:00',
+                'updated_at' => '2020-01-01 00:00:00'
+            ],
+            'where' => [
+                'id' => 1
+            ],
+            'update' => [
+                'name' => 'John Doe',
+                'updated_at' => '2020-01-01 00:00:00'
+            ]
+        ]);
+
+        $this->assertEquals(
+            "INSERT INTO `users` (`name`, `email`, `created_at`, `updated_at`) VALUES ('John', 'john@litehex.com', '2020-01-01 00:00:00', '2020-01-01 00:00:00') ON DUPLICATE KEY UPDATE `name` = 'John Doe', `updated_at` = '2020-01-01 00:00:00'",
+            $query
+        );
+    }
+
 }

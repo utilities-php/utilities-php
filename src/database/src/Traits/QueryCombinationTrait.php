@@ -51,10 +51,10 @@ trait QueryCombinationTrait
     private static function combineValue(mixed $value, bool $pdo = false): mixed
     {
         return match (gettype($value)) {
-            'string' => $pdo ? ":$value" : "'$value'",
-            'integer', 'double' => $pdo ? ":$value" : $value,
-            'boolean' => $pdo ? ":$value" : ($value ? 1 : 0),
-            'NULL' => $pdo ? ":$value" : 'NULL',
+            'string' => $pdo ? ":WHERE_$value" : "'$value'",
+            'integer', 'double' => $pdo ? ":WHERE_$value" : $value,
+            'boolean' => $pdo ? ":WHERE_$value" : ($value ? 1 : 0),
+            'NULL' => $pdo ? ":WHERE_$value" : 'NULL',
             'array' => self::combineValueArray($value, $pdo),
             default => throw new QueryException("Invalid value type for combination: " . gettype($value)),
         };
@@ -91,7 +91,7 @@ trait QueryCombinationTrait
         $combined = "";
         foreach ($columns as $column => $value) {
             $more = count($columns) - 1 == $index ? ' ' : ', ';
-            $combined .= $pdo ? ":$column$more" : self::combineValue($value) . $more;
+            $combined .= $pdo ? ":COLUMN_$column$more" : self::combineValue($value) . $more;
             $index++;
         }
         return trim($combined);
@@ -113,7 +113,7 @@ trait QueryCombinationTrait
             $more = count($columns) - 1 == $index ? ' ' : ', ';
             $combined .= !$pdo
                 ? "`$column` = " . self::combineValue($values[$index]) . $more
-                : "`$column` = :$column$more";
+                : "`$column` = :UPDATE_$column$more";
             $index++;
         }
         return trim($combined);
@@ -141,7 +141,7 @@ trait QueryCombinationTrait
                     : "`{$value['column']}` {$value['operator']} :{$value['column']}$more";
             } else {
                 $match = match (gettype($value)) {
-                    default => $pdo ? "`$key` = :$key" : "`$key` = " . self::combineValue($value),
+                    default => $pdo ? "`$key` = :WHERE_$key" : "`$key` = " . self::combineValue($value),
                     'array' => "`$key` IN " . self::combineValueArray($value, $pdo),
                 };
                 $combined .= $match . $more;

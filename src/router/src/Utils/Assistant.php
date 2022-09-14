@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace Utilities\Router\Utils;
 
-use Exception;
 use ReflectionFunction;
 use ReflectionMethod;
 use ReflectionParameter;
@@ -38,21 +37,18 @@ class Assistant
         }
 
         try {
-
-            $reflection = new ReflectionFunction($callback);
-            $arguments = $reflection->getParameters();
-
-            call_user_func_array($callback, self::generatePassingData($arguments, $mergeWith));
-
-            return true;
-
-        } catch (Exception $e) {
+            $arguments = (new ReflectionFunction($callback))->getParameters();
+        } catch (\ReflectionException $e) {
             throw new RuntimeException(
                 $e->getMessage(),
-                $e->getCode(),
+                (int)$e->getCode(),
                 $e->getPrevious()
             );
         }
+
+        call_user_func_array($callback, self::generatePassingData($arguments, $mergeWith));
+
+        return true;
     }
 
     /**
@@ -89,7 +85,15 @@ class Assistant
             }
         }
 
-        return array_merge($methodParams, $mergeWith);
+        foreach ($mergeWith as $key => $value) {
+            if (in_array($key, $fetchRequirements)) {
+                $methodParams = array_merge($methodParams, [
+                    $key => $value
+                ]);
+            }
+        }
+
+        return $methodParams;
     }
 
     /**

@@ -7,6 +7,7 @@ use Utilities\Router\Controller;
 use Utilities\Router\Request;
 use Utilities\Router\Router;
 use Utilities\Router\URL;
+use Utilities\Router\Utils\Assistant;
 
 /**
  * RouterTrait class
@@ -59,7 +60,9 @@ trait RouterTrait
         if (($find = Router::find($uri)) !== false) {
             if (is_callable(($callback = static::$routes[$find['method']][$find['route']]))) {
                 Request::setParams($find['params']);
-                call_user_func_array($callback, [...$find['params']]);
+                Assistant::passDataToCallback($callback, [
+                    'params' => $find['params'],
+                ]);
             }
         }
     }
@@ -68,7 +71,7 @@ trait RouterTrait
      * Find dynamic route with the given uri
      *
      * @param string $uri
-     * @return array|false [method, route, params]
+     * @return array|false {method, route, params}
      */
     private static function find(string $uri): array|false
     {

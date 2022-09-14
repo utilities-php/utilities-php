@@ -41,7 +41,9 @@ trait BuilderTrait
     {
         foreach ($columns as $column) {
             if (!isset($data[$column])) {
-                throw new QueryException(sprintf("Column '%s' is not set", $column));
+                throw new QueryException(sprintf(
+                    "Column '%s' is not set", $column
+                ));
             }
         }
     }

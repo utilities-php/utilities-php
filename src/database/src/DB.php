@@ -9,6 +9,7 @@ use Utilities\Common\Common;
 use Utilities\Database\Exceptions\InvalidSecretException;
 use Utilities\Database\Exceptions\QueryException;
 use Utilities\Database\Traits\ConnectorTrait;
+use Utilities\Database\Traits\ValueExtractionTrait;
 
 /**
  * DB class
@@ -21,6 +22,7 @@ class DB
 {
 
     use ConnectorTrait;
+    use ValueExtractionTrait;
 
     /**
      * The database connection
@@ -186,31 +188,9 @@ class DB
             Common::htmlCode($query);
         }
 
-        $where = [];
-
-        foreach ($data['where'] as $key => $value) {
-            if (is_array($value)) {
-                if (isset($value['operator'], $value['value'])) {
-                    if (!isset($value['column'])){
-                        $value['column'] = $key;
-                    }
-
-                    $where[$key] = $value['value'];
-                    continue;
-                }
-
-                foreach ($value as $k) {
-                    $where[$k] = $k;
-                }
-            } else {
-                $where[$key] = $value;
-            }
-        }
-
         $prepare = $this->prepare($query);
         $prepare->execute([
-            ...($data['columns'] ?? []),
-            ...$where
+            ...($this->extractValues($data))
         ]);
 
         if ($this->getConnection()->errorCode() !== '00000') {
@@ -244,7 +224,9 @@ class DB
             Common::htmlCode($query);
         }
 
-        $this->prepare($query)->execute($data['columns']);
+        $this->prepare($query)->execute([
+            ...($this->extractValues($data))
+        ]);
 
         return $this->getConnection()->errorCode() === '00000';
     }
@@ -252,7 +234,7 @@ class DB
     /**
      * Update or insert row into the database
      *
-     * @param array $data {debug, table, where, columns}
+     * @param array $data {debug, table, columns, update}
      * @return bool
      */
     public function upsert(array $data): bool
@@ -264,8 +246,7 @@ class DB
         }
 
         $this->prepare($query)->execute([
-            ...$data['columns'],
-            ...$data['where']
+            ...($this->extractValues($data))
         ]);
 
         return $this->getConnection()->errorCode() === '00000';
@@ -286,8 +267,7 @@ class DB
         }
 
         $this->prepare($query)->execute([
-            ...$data['columns'],
-            ...$data['where']
+            ...($this->extractValues($data))
         ]);
 
         return $this->getConnection()->errorCode() === '00000';
@@ -307,7 +287,9 @@ class DB
             Common::htmlCode($query);
         }
 
-        $this->prepare($query)->execute($data['where']);
+        $this->prepare($query)->execute([
+            ...($this->extractValues($data))
+        ]);
 
         return $this->getConnection()->errorCode() === '00000';
     }

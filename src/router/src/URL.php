@@ -78,9 +78,14 @@ class URL
         $result = [];
 
         if (count($raw_data) > 0 && $raw_data[0] != "") {
-            foreach ($raw_data as $Query) {
-                [$key, $val] = explode("=", $Query);
-                $result[$key] = urldecode($val);
+            foreach ($raw_data as $query) {
+                $query = explode("=", $query);
+                $result[$query[0]] = null;
+
+                if (isset($query[1])) {
+                    [$key, $val] = $query;
+                    $result[$key] = is_string($val) ? urldecode($val) : $val;
+                }
             }
         }
 

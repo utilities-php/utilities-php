@@ -49,7 +49,6 @@ class Common
         echo "<pre>$string</pre>";
     }
 
-
     /**
      * @param string $string
      * @return string
@@ -115,7 +114,9 @@ class Common
     {
         $result = [];
         foreach ($needle as $key) {
-            if ($haystack[$key] == null) continue;
+            if (!isset($haystack[$key])) {
+                continue;
+            }
             $result[$key] = $haystack[$key];
         }
         return $result;

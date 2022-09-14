@@ -83,17 +83,17 @@ class QueryBuilder
     /**
      * Convert array to sql insert or update query (upsert)
      *
-     * @param array $data {table, columns, where}
+     * @param array $data {table, columns, update}
      * @param bool $pdo If true, it will return a PDO template to be used in prepared statements
      * @return string
      */
-    public static function upsert(array $data, bool $pdo): string
+    public static function upsert(array $data, bool $pdo = false): string
     {
-        self::checkDataIsset($data, ['table', 'columns', 'where']);
+        self::checkDataIsset($data, ['table', 'columns', 'update']);
         $columns = self::combineColumns(array_keys($data['columns']));
         $values = self::combineInsertValues($data['columns'], $pdo);
-        $where = self::combineWhere($data['where'], $pdo);
-        return trim("INSERT INTO `{$data['table']}` ($columns) VALUES ($values) ON DUPLICATE KEY UPDATE $where");
+        $update = self::combineUpdateColumns(array_keys($data['update']), array_values($data['update']), $pdo);
+        return trim("INSERT INTO `{$data['table']}` ($columns) VALUES ($values) ON DUPLICATE KEY UPDATE $update");
     }
 
 }

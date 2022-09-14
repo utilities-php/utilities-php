@@ -108,15 +108,21 @@ class Request
      *
      * If any value is empty, send error response.
      *
-     * @param array $params
+     * @param array $haystack Array to filter
+     * @param array $needle Array of keys to check
      * @return void
      */
-    public static function emptyParams(array $params = []): void
+    public static function emptyParams(array $haystack, array $needle): void
     {
-        foreach ($params as $key => $value) {
-            if ($value == null) Response::send(StatusCode::BAD_REQUEST, [
-                'description' => sprintf("Bad Request: the '%s' parameter is empty", $key)
-            ]);
+        foreach ($needle as $key) {
+            if (!isset($haystack[$key]) || gettype($haystack[$key]) === 'NULL') {
+                Response::send(StatusCode::BAD_REQUEST, [
+                    'description' => sprintf(
+                        "Bad Request: the '%s' parameter is empty or not set.",
+                        $key
+                    )
+                ]);
+            }
         }
     }
 
