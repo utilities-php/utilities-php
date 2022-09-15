@@ -50,7 +50,9 @@ class Common
     }
 
     /**
-     * @param string $string
+     * Converts ' to \'.
+     *
+     * @param string $string The string to be converted.
      * @return string
      */
     public static function filterApostrophe(mixed $string): string
@@ -86,31 +88,13 @@ class Common
     }
 
     /**
-     * Get multiple values from array by key
-     *
-     * @param array $haystack
-     * @param array $needle
-     * @param bool $skipEmpty (default: false)
-     * @return array
-     */
-    public static function CatchParams(array $haystack, array $needle, bool $skipEmpty = false): array
-    {
-        $result = [];
-        foreach ($needle as $key) {
-            if ($skipEmpty && $haystack[$key] == null) continue;
-            $result[$key] = $haystack[$key];
-        }
-        return $result;
-    }
-
-    /**
      * Filter keys and only keep the given keys
      *
      * @param array $haystack Array to filter
      * @param array $needle Array of keys to keep
      * @return array
      */
-    public static function FilterParams(array $haystack, array $needle): array
+    public static function filterArrayKeys(array $haystack, array $needle): array
     {
         $result = [];
         foreach ($needle as $key) {
@@ -179,21 +163,23 @@ class Common
     }
 
     /**
-     * Generate random string with given length and chars
+     * Random Text generator based on regex
      *
-     * @param int $length
-     * @param string|null $chars [optional] If null, it will use default chars
+     * NOTE: Advanced regex is not supported
+     *
+     * @param int $length [optional] default: 10
+     * @param string $regex [optional] default: [a-zA-Z0-9].
      * @return string
      */
-    public static function randomString(int $length = 10, string $chars = null): string
+    public static function randomString(int $length = 10, string $regex = '[a-zA-Z0-9]'): string
     {
-        $characters = $chars ?? '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-        $charactersLength = strlen($characters);
-        $randomString = '';
+        $space = '0132546789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ@#$%^&*()_-+=[]{}|;:,.<>/?';
+        $result = '';
         for ($i = 0; $i < $length; $i++) {
-            $randomString .= $characters[rand(0, $charactersLength - 1)];
+            preg_match_all("/$regex/", $space, $matches);
+            $result .= $matches[0][rand(0, count($matches[0]) - 1)];
         }
-        return $randomString;
+        return $result;
     }
 
     /**
@@ -235,11 +221,11 @@ class Common
     }
 
     /**
-     * By using this function, Fatal Error will be thrown
+     * This method will enable error reporting and display errors
      *
      * @return void
      */
-    public static function setDebugMode(): void
+    public static function enableErrors(): void
     {
         error_reporting(E_ERROR);
         ini_set('display_errors', '1');
@@ -248,17 +234,33 @@ class Common
     /**
      * Find a string index in array with option of insensitive-case
      *
-     * @param array $haystack
-     * @param string $needle
-     * @param bool $insensitive
-     * @return mixed false means not found, otherwise returns it's a value
+     * @param array $haystack Array to search in
+     * @param string $needle String to search for
+     * @param bool $insensitive [optional] default: false. If true, it will search for insensitive-case
+     * @return int|false false means not found, otherwise returns it's a value
      */
-    public static function findIndex(array $haystack, string $needle, bool $insensitive): mixed
+    public static function findIndex(array $haystack, string $needle, bool $insensitive = false): int|false
     {
+        $index = 0;
         if ($insensitive) {
-            return array_change_key_case($haystack)[strtolower($needle)] ?? false;
+            foreach ($haystack as $key => $value) {
+                $search = !is_string($key) ? $value : $key;
+                if (preg_match_all("/^($needle)$/i", $search)) {
+                    return $index;
+                }
+                $index++;
+            }
+        } else {
+            foreach ($haystack as $key => $value) {
+                $search = !is_string($key) ? $value : $key;
+                if ($search == $needle) {
+                    return $index;
+                }
+                $index++;
+            }
         }
-        return $haystack[$needle] ?? false;
+
+        return false;
     }
 
     /**

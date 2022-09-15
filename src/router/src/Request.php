@@ -5,6 +5,7 @@ namespace Utilities\Router;
 
 use BadMethodCallException;
 use RuntimeException;
+use Utilities\Common\Common;
 use Utilities\Common\Validator;
 use Utilities\Router\Utils\StatusCode;
 
@@ -127,6 +128,52 @@ class Request
     }
 
     /**
+     * Parse json and on the error send error response.
+     *
+     * @param string $json Any string to parse
+     * @param array $filter [optional] Array of keys to filter, throw error if any of them is empty
+     * @return array
+     */
+    public static function parseJson(string $json, array $filter = []): array
+    {
+        $data = json_decode($json, true);
+
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            Response::send(StatusCode::BAD_REQUEST, [
+                'description' => "Bad Request: the request body is not a valid JSON."
+            ]);
+        }
+
+        if (!empty($filter)) {
+            $data = Common::filterArrayKeys($data, $filter);
+            self::emptyParams($data, $filter);
+            return $data;
+        }
+
+        return $data;
+    }
+
+    /**
+     * Filter json
+     *
+     * @param string $json Any string to parse
+     * @param array $filter Array of keys to filter, throw error if any of them is empty
+     * @return array
+     */
+    public static function filterJson(string $json, array $filter): array
+    {
+        $data = json_decode($json, true);
+
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            Response::send(StatusCode::BAD_REQUEST, [
+                'description' => "Bad Request: the request body is not a valid JSON."
+            ]);
+        }
+
+        return Common::filterArrayKeys($data, $filter);
+    }
+
+    /**
      * Require given keys in array and send error if not found
      *
      * @param array $haystack
@@ -140,7 +187,7 @@ class Request
             if ($haystack[$key] == null) Response::send(StatusCode::BAD_REQUEST, [
                 'description' => sprintf("Bad Request: the '%s' parameter is required", $key)
             ]);
-            else $result[$key] = $haystack[$key];
+            $result[$key] = $haystack[$key];
         }
         return $result;
     }
@@ -182,7 +229,7 @@ class Request
      */
     public static function __callStatic(string $name, array $arguments): mixed
     {
-        if (str_starts_with($name, 'set') || str_starts_with($name, 'get')){
+        if (str_starts_with($name, 'set') || str_starts_with($name, 'get')) {
             $type = substr($name, 0, 3);
             $property = substr($name, 3);
             $snake = strtolower(ltrim(preg_replace('/[A-Z]/', '_$0', $property), '_'));
