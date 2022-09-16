@@ -20,6 +20,13 @@ trait RouterTrait
 {
 
     /**
+     * Auto resolve
+     *
+     * @var bool
+     */
+    protected static bool $AUTO_RESOLVE = true;
+
+    /**
      * @var array
      */
     private static array $routes = [];
@@ -28,6 +35,13 @@ trait RouterTrait
      * @var array|Controller[]
      */
     private static array $controllers = [];
+
+    /**
+     * The resorces routes
+     *
+     * @var array
+     */
+    private static array $resources = [];
 
     /**
      * The rate limited routes.

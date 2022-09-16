@@ -32,8 +32,6 @@ class Router
 
     use RouterTrait;
 
-    protected static bool $CAN_RESOLVE = true;
-
     /**
      * rate limit
      *
@@ -81,7 +79,7 @@ class Router
         }
 
         try {
-            static::$CAN_RESOLVE = false;
+            static::$AUTO_RESOLVE = false;
             foreach ((new ReflectionClass($controller))->getMethods() as $refMethod) {
                 if (str_starts_with($refMethod->getName(), '__')) {
                     continue;
@@ -115,11 +113,13 @@ class Router
             throw new ControllerException($e->getMessage(), $e->getCode(), $e);
 
         } finally {
-            static::$CAN_RESOLVE = true;
+            static::$AUTO_RESOLVE = true;
         }
 
-        self::$controllers[$uri] = $controller;
-        self::resolve();
+        static::$controllers[$uri] = $controller;
+        if (static::$AUTO_RESOLVE) {
+            self::resolve();
+        }
     }
 
     /**
@@ -141,7 +141,7 @@ class Router
         }
 
         static::$routes[$method][$uri] = $callback;
-        if (static::$CAN_RESOLVE) {
+        if (!defined('DISABLE_AUTO_RESOLVE')) {
             self::resolve();
         }
     }
@@ -158,17 +158,131 @@ class Router
             $request = self::createRequest();
         }
 
-        $uri = $request === null ? Request::getUri() : $request::getUri();
-        $method = $request === null ? Request::getMethod() : $request::getMethod();
+        $uri = $request::getUri();
         $uri = str_ends_with($uri, '/') ? substr($uri, 0, -1) : $uri;
 
-        if (isset(static::$routes['ANY'])) {
-            $data_to_merge = static::$routes[$method] ?? [];
-            static::$routes[$method] = array_merge($data_to_merge, static::$routes['ANY']);
-            unset(static::$routes['ANY']);
+        $isResource = false;
+        foreach (static::$resources as $resource => $location) {
+            if (str_starts_with($uri, $resource)) {
+                $isResource = true;
+                break;
+            }
         }
 
+        self::dispatch($request::getMethod(), $uri, $isResource);
+    }
+
+    /**
+     * dispatch the router
+     *
+     * @param string $method
+     * @param string $uri
+     * @param bool $isResource
+     * @return void
+     */
+    protected static function dispatch(string $method, string $uri, bool $isResource): void
+    {
+        if ($isResource) {
+            $resource = self::getResource($uri);
+            $path = str_replace($resource['uri'], '', $uri);
+
+            if (file_exists(($source = $resource['location'] . $path))) {
+
+                if (is_dir($source)) {
+                    self::loadIndexFile($source);
+                }
+
+                if (is_file($source)) {
+                    self::loadFile($source);
+                }
+
+                exit(0);
+            }
+
+            header('HTTP/1.1 404 Not Found');
+            exit(0);
+        }
+
+        self::mergeAvailableRoutes($method);
         self::findAndPassData($uri);
+    }
+
+    /**
+     * Load file
+     *
+     * @param string $source
+     * @return void
+     */
+    protected static function loadFile(string $source): void
+    {
+        $extension = pathinfo($source, PATHINFO_EXTENSION);
+
+        if ($extension !== 'php') {
+            header('Content-Type: ' . mime_content_type($source));
+        }
+
+        require_once $source;
+        exit(0);
+    }
+
+    /**
+     * Load index file
+     *
+     * @param string $source
+     * @return void
+     */
+    protected static function loadIndexFile(string $source): void
+    {
+        $defaultIndex = ['index.php', 'index.html', 'index.htm'];
+        $files = glob($source . '/index.*');
+
+        if (empty($files)) {
+            header('HTTP/1.1 404 Not Found');
+            exit(0);
+        }
+
+        foreach ($files as $file) {
+            if (in_array(pathinfo($file, PATHINFO_BASENAME), $defaultIndex)) {
+                self::loadFile($file);
+            }
+        }
+    }
+
+    /**
+     * Get resource
+     *
+     * @param string $uri
+     * @return array
+     */
+    protected static function getResource(string $uri): array
+    {
+        $resource = [];
+        foreach (static::$resources as $resourceUri => $location) {
+            if (str_starts_with($uri, $resourceUri)) {
+                $resource = [
+                    'uri' => str_ends_with($resourceUri, '/') ? substr($resourceUri, 0, -1) : $resourceUri,
+                    'location' => str_ends_with($location, '/') ? substr($location, 0, -1) : $location,
+                ];
+                break;
+            }
+        }
+
+        return $resource;
+    }
+
+    /**
+     * Merge routes for initialization dispatch
+     *
+     * @param string $currentMethod
+     * @return void
+     */
+    private static function mergeAvailableRoutes(string $currentMethod): void
+    {
+        if (isset(static::$routes['ANY'])) {
+            $merge_data = static::$routes[$currentMethod] ?? [];
+            static::$routes[$currentMethod] = array_merge($merge_data, static::$routes['ANY']);
+            unset(static::$routes['ANY']);
+        }
     }
 
     /**
@@ -209,11 +323,9 @@ class Router
      */
     public static function isRegistered(string $uri): bool
     {
-        foreach (static::$routes as $method => $routes) {
-            foreach ($routes as $route => $callback) {
-                if ($route === $uri) {
-                    return true;
-                }
+        foreach (static::$routes as $routes) {
+            if (array_key_exists($uri, $routes)) {
+                return true;
             }
         }
 
@@ -227,25 +339,15 @@ class Router
      *
      * @todo: create test for this method
      *
-     * @param string $uri the uri to rate limit (e.g. /docs)
+     * @param string $uri the uri to rate limit (e.g. /docs). it will be like example.com/docs/*
      * @param string $localPath the absolute path to the directory (e.g. /var/www/html/docs)
      * @return void
      */
     public static function resource(string $uri, string $localPath): void
     {
-        foreach (scandir($localPath) as $file) {
-            if ($file !== '.' && $file !== '..') {
-                $filePath = $localPath . '/' . $file;
-                if (is_dir($filePath)) {
-                    self::resource($uri . '/' . $file, $filePath);
-                } else {
-                    $extension = pathinfo($filePath, PATHINFO_EXTENSION);
-                    header('Content-Type: ' . PathFinder::getMimeType($extension));
-                    self::get($uri . '/' . $file, function () use ($filePath) {
-                        return file_get_contents($filePath);
-                    });
-                }
-            }
+        static::$resources[$uri] = $localPath;
+        if (!defined('DISABLE_AUTO_RESOLVE')) {
+            self::resolve();
         }
     }
 
