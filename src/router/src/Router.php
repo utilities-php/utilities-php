@@ -6,6 +6,7 @@ namespace Utilities\Router;
 use BadMethodCallException;
 use ReflectionClass;
 use ReflectionException;
+use Symfony\Component\Mime\MimeTypes;
 use Utilities\Auth\Session;
 use Utilities\Common\Time;
 use Utilities\Router\Exceptions\ControllerException;
@@ -218,7 +219,8 @@ class Router
         $extension = pathinfo($source, PATHINFO_EXTENSION);
 
         if ($extension !== 'php') {
-            header('Content-Type: ' . mime_content_type($source));
+            $mime = (new MimeTypes())->getMimeTypes($extension)[0] ?? 'application/octet-stream';
+            header('Content-Type: ' . $mime);
         }
 
         require_once $source;
