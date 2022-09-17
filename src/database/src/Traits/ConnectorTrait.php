@@ -39,9 +39,9 @@ trait ConnectorTrait
      * @param string $secret
      * @return array|false
      */
-    public function getLoginInfo(string $secret): array|false
+    public static function getLoginInfo(string $secret): array|false
     {
-        $filePath = $_SERVER['DOCUMENT_ROOT'] . "/.database/" . $this->getFileId($secret);
+        $filePath = self::getRootPath() . "/.database/" . self::getFileId($secret);
 
         if (file_exists($filePath)) {
             $encryptedData = file_get_contents($filePath);
@@ -53,10 +53,12 @@ trait ConnectorTrait
     }
 
     /**
+     * Get file id by using the secret key
+     *
      * @param string $secret
      * @return string
      */
-    private function getFileId(string $secret): string
+    public static function getFileId(string $secret): string
     {
         if (strlen($secret) < 32) {
             $repeats = (int)floor(32 / strlen($secret));
@@ -69,37 +71,38 @@ trait ConnectorTrait
     }
 
     /**
-     * @todo Add support for SQL files alongside remote connections
      * @param array $data {host, user, pass, db}
      * @param array $options (optional)
      * @return PDO
      */
     public function setConnection(array $data, array $options = []): PDO
     {
-        if (isset($data['host'], $data['user'], $data['pass'], $data['db'])) {
-
-            $options = array_merge($this->default_options, $options);
-            $dsn = "mysql:host={$data['host']};dbname={$data['db']}";
-
-            $this->connection = new PDO($dsn, $data['user'], $data['pass'], $options);
-            $this->temp_login = $data;
-
-            if ($this->connection->errorCode() !== null && $this->connection->errorCode() !== "00000") {
-                throw new ConnectionException(sprintf(
-                    "Connection refused: %s", $this->connection->errorInfo()[2]
-                ));
-            }
-
-            $this->connection->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
-
-            foreach ($options as $key => $value) {
-                $this->connection->setAttribute($key, $value);
-            }
-
-            return $this->connection;
+        if (!isset($data['host'], $data['user'], $data['pass'], $data['db'])) {
+            throw new InvalidSecretException(sprintf(
+                "The given database must have the following keys: %s",
+                implode(", ", ['host', 'user', 'pass', 'db'])
+            ));
         }
 
-        throw new InvalidSecretException("The given data doesn't contain all required fields.");
+        $options = array_merge($this->default_options, $options);
+        $dsn = "mysql:host={$data['host']};dbname={$data['db']}";
+
+        $this->connection = new PDO($dsn, $data['user'], $data['pass'], $options);
+        $this->temp_login = $data;
+
+        if ($this->connection->errorCode() !== null && $this->connection->errorCode() !== "00000") {
+            throw new ConnectionException(sprintf(
+                "Connection refused: %s", $this->connection->errorInfo()[2]
+            ));
+        }
+
+        $this->connection->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
+
+        foreach ($options as $key => $value) {
+            $this->connection->setAttribute($key, $value);
+        }
+
+        return $this->connection;
     }
 
     /**
@@ -131,7 +134,7 @@ trait ConnectorTrait
             ));
         }
 
-        $startPath = $_SERVER['DOCUMENT_ROOT'] . "/.database/";
+        $startPath = self::getRootPath() . "/.database/";
 
         if (!file_exists($startPath)) {
             mkdir($startPath, 0777, true);
@@ -157,6 +160,16 @@ trait ConnectorTrait
     public function getServerVersion(): string
     {
         return $this->connection->getAttribute(PDO::ATTR_SERVER_VERSION);
+    }
+
+    /**
+     * Get root path
+     *
+     * @return string
+     */
+    private static function getRootPath(): string
+    {
+        return mb_strlen($_SERVER['DOCUMENT_ROOT']) > 0 ? $_SERVER['DOCUMENT_ROOT'] : $_SERVER['PWD'];
     }
 
 }

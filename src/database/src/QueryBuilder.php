@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Utilities\Database;
 
+use Utilities\Database\Exceptions\QueryException;
 use Utilities\Database\Traits\BuilderTrait;
 use Utilities\Database\Traits\QueryCombinationTrait;
 
@@ -59,7 +60,19 @@ class QueryBuilder
     public static function delete(array $data, bool $pdo = false): string
     {
         self::checkDataIsset($data, ['table', 'where']);
+
+        if ($data['where'] === '*') {
+            return trim("DELETE FROM `{$data['table']}`");
+        }
+
         $where = self::combineWhere($data['where'], $pdo);
+        if (!is_array($data['where'])) {
+            throw new QueryException(sprintf(
+                "Invalid where clause for delete query: %s",
+                json_encode($data)
+            ));
+        }
+
         return trim("DELETE FROM `{$data['table']}` WHERE $where");
     }
 

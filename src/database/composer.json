@@ -18,7 +18,11 @@
    "require": {
       "php": ">=8.0",
       "ext-pdo": "*",
-      "utilities-php/common": "*"
+      "utilities-php/common": "*",
+      "vlucas/phpdotenv": "^v5.4.1"
+   },
+   "require-dev": {
+      "fakerphp/faker": "^v1.20.0"
    },
    "scripts": {
       "install": "composer install --ignore-platform-reqs",
@@ -26,7 +30,8 @@
    },
    "suggest": {
       "doctrine/dbal": "Required to rename columns and drop SQLite columns (^2.13.3|^3.1.4).",
-      "fakerphp/faker": "Required to use the eloquent factory builder (^1.20.0)."
+      "fakerphp/faker": "Required to use the eloquent factory builder (^1.20.0).",
+      "vlucas/phpdotenv": "Required to use the environments (^v5.4.1)."
    },
    "autoload": {
       "psr-4": {
@@ -39,6 +44,7 @@
       }
    },
    "config": {
-      "sort-packages": true
+      "sort-packages": true,
+      "optimize-autoloader": true
    }
 }

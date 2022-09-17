@@ -26,6 +26,7 @@
       "ext-mcrypt": "*",
       "ext-openssl": "*",
       "ext-pdo": "*",
+      "vlucas/phpdotenv": "^v5.4.1",
       "symfony/mime": "^v6.0.12",
       "psr/container": "^1.0|^2.0",
       "psr/log": "^1.0|^2.0|^3.0"
@@ -33,7 +34,8 @@
    "require-dev": {
       "phpunit/phpunit": "^9.5.20",
       "nxp/math-executor": "^2.3.0",
-      "shahradelahi/easy-http": "^v1.2.0"
+      "shahradelahi/easy-http": "^v1.2.0",
+      "fakerphp/faker": "^v1.20.0"
    },
    "scripts": {
       "install-dependencies": "composer install --ignore-platform-reqs",
@@ -44,7 +46,8 @@
    "suggest": {
       "doctrine/dbal": "Required to rename columns and drop SQLite columns (^2.13.3|^3.1.4).",
       "fakerphp/faker": "Required to use the eloquent factory builder (^1.20.0).",
-      "symfony/mime": "Required to use mime type guessing (^v6.0.12)."
+      "symfony/mime": "Required to use mime type guessing (^v6.0.12).",
+      "vlucas/phpdotenv": "Required to use the environments (^v5.4.1)."
    },
    "replace": {
       "utilities-php/auth": "*",

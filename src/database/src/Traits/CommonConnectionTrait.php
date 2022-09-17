@@ -14,27 +14,6 @@ trait CommonConnectionTrait
 {
 
     /**
-     * The table name
-     *
-     * @var string
-     */
-    protected static string $TABLE_NAME;
-
-    /**
-     * The primary of the table
-     *
-     * @var string
-     */
-    protected static string $PRIMARY_KEY;
-
-    /**
-     * The database secret
-     *
-     * @var string
-     */
-    protected static string $DATABASE_SECRET;
-
-    /**
      * Find data with specified column and value
      *
      * @param string $column
@@ -129,6 +108,20 @@ trait CommonConnectionTrait
     public static function delete(array $where): mixed
     {
         return self::getDatabase()->delete([
+            'table' => static::$TABLE_NAME,
+            'where' => $where
+        ]);
+    }
+
+    /**
+     * Exists data
+     *
+     * @param array $where
+     * @return bool
+     */
+    public static function exists(array $where): bool
+    {
+        return self::getDatabase()->exists([
             'table' => static::$TABLE_NAME,
             'where' => $where
         ]);

@@ -1,5 +1,7 @@
 .idea
+/.env
 /vendor
+/.database
 /example.php
 /composer.lock
 /.phpunit.result.cache

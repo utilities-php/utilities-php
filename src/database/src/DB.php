@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Utilities\Database;
 
+use Dotenv\Dotenv;
 use PDO;
 use PDOStatement;
 use Utilities\Common\Common;
@@ -32,21 +33,62 @@ class DB
     private PDO $connection;
 
     /**
-     * Database constructor.
+     * The database constructor
      *
-     * @param ?string $secret The secret key for auto logging into the database
+     * @param bool $autoConnect If true, it will try to load environment variables and connect to the database
      */
-    public function __construct(string $secret = null)
+    public function __construct(bool $autoConnect =true)
     {
-        if ($secret !== null) {
-            if (!($loginInfo = $this->getLoginInfo($secret))) {
-                throw new InvalidSecretException(
-                    "The given database secret is not valid or doesn't secret file does not exist.",
-                );
-            }
-
-            $this->setConnection($loginInfo);
+        if (!isset($_ENV['DATABASE_SECRET_KEY']) && $autoConnect) {
+            $location = self::getRootPath();
+            $dotenv = Dotenv::createImmutable($location);
+            $dotenv->load();
         }
+
+        if (isset($_ENV['DATABASE_SECRET_KEY']) && $autoConnect) {
+            $db = self::connectWithSecret($_ENV['DATABASE_SECRET_KEY']);
+            $this->connection = $db->connection;
+        }
+    }
+
+    /**
+     * Connect with Secret
+     *
+     * @param string $secret
+     * @return DB
+     */
+    public static function connectWithSecret(string $secret): DB
+    {
+        if (!($loginInfo = self::getLoginInfo($secret))) {
+            throw new InvalidSecretException(
+                "The given database secret is not valid or doesn't secret file does not exist.",
+            );
+        }
+
+        $db = new DB(false);
+        $db->setConnection($loginInfo);
+
+        return $db;
+    }
+
+    /**
+     * Connect with login info
+     *
+     * @param array $loginInfo {host, port[optional], user, pass, db}
+     * @return DB
+     */
+    public static function connect(array $loginInfo): DB
+    {
+        if (!isset($loginInfo['host'], $loginInfo['user'], $loginInfo['pass'], $loginInfo['db'])) {
+            throw new InvalidSecretException(
+                "The given database login info is not valid.",
+            );
+        }
+
+        $db = new DB(false);
+        $db->setConnection($loginInfo);
+
+        return $db;
     }
 
     /**
@@ -290,9 +332,14 @@ class DB
             Common::htmlCode($query);
         }
 
-        $this->prepare($query)->execute([
-            ...($this->extractValues($data))
-        ]);
+        if ($data['where'] === '*') {
+            $this->prepare($query)->execute();
+
+        } else {
+            $this->prepare($query)->execute([
+                ...($this->extractValues($data))
+            ]);
+        }
 
         return $this->getConnection()->errorCode() === '00000';
     }

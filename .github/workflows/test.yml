@@ -34,5 +34,10 @@ jobs:
           composer run-script install-dependencies
           composer run-script update-dependencies
 
+      - name: Create environment file
+        run: |
+          touch .env
+          echo ${{ secrets.PRIVATE_ENV }} >> .env
+
       - name: Run test suite
         run: composer run-script tests

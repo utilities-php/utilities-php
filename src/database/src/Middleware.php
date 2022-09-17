@@ -24,17 +24,40 @@ class Middleware
     protected static ?DB $DB = null;
 
     /**
+     * The table name (must be overridden)
+     *
+     * @var string
+     */
+    protected static string $TABLE_NAME;
+
+    /**
+     * The primary of the table (must be overridden)
+     *
+     * @var string
+     */
+    protected static string $PRIMARY_KEY;
+
+    /**
      * Get Database
      *
      * @return DB
      */
     protected static function getDatabase(): DB
     {
-        if (!isset(static::$TABLE_NAME, static::$PRIMARY_KEY, static::$DATABASE_SECRET)) {
-            throw new RuntimeException('The {$table_name, $primary_key, $database_secret} properties must be set.');
+        if (!isset(static::$TABLE_NAME, static::$PRIMARY_KEY)) {
+            throw new RuntimeException(sprintf(
+                'The %s class must have the TABLE_NAME and PRIMARY_KEY constants defined.',
+                static::class
+            ));
         }
 
-        return static::$DB ?: (static::$DB = new DB(static::$DATABASE_SECRET));
+        if (!isset($_ENV['DATABASE_SECRET_KEY'])) {
+            throw new RuntimeException(
+                'The DATABASE_SECRET_KEY environment variable is not set.'
+            );
+        }
+
+        return static::$DB ?: (static::$DB = new DB());
     }
 
 }
