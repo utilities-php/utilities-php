@@ -37,7 +37,7 @@ jobs:
       - name: Create environment file
         run: |
           touch .env
-          echo ${{ secrets.PRIVATE_ENV }} >> .env
+          printf "${{ secrets.PRIVATE_ENV }}" > .env
 
       - name: Run test suite
         run: composer run-script tests
