@@ -26,11 +26,13 @@ class Time
     /**
      * Get the current time in milliseconds
      *
+     * @param int|string $time [optional] The timestamp to convert
      * @return float
      */
-    public static function getMillisecond(): float
+    public static function getMillisecond(int|string $time = ''): float
     {
-        return round(microtime(true) * 1000);
+        $time = $time != '' ? strtotime($time) : microtime(true);
+        return round($time * 1000);
     }
 
     /**
@@ -40,11 +42,24 @@ class Time
      * @param bool $zeroTime By setting this to true, it will return 'Y-m-d' format
      * @return string
      */
-    public static function UTCTime(int $time, bool $zeroTime = false): string
+    public static function UTCFormat(int $time, bool $zeroTime = false): string
     {
         date_default_timezone_set('UTC');
-        if ($zeroTime) return date("Y-m-d", $time) . "T00:00:00Z";
-        else return date("Y-m-d", $time) . "T" . date("H:i:s", $time) . "Z";
+        if ($zeroTime) {
+            return date("Y-m-d", $time) . "T00:00:00Z";
+        }
+
+        return date("Y-m-d", $time) . "T" . date("H:i:s", $time) . "Z";
+    }
+
+    /**
+     * Get instance of DateTime
+     *
+     * @return \DateTime
+     */
+    public static function now(): \DateTime
+    {
+        return new \DateTime();
     }
 
 }

@@ -27,11 +27,14 @@ jobs:
           - local_path: 'database'
             split_repository: 'database'
 
-          - local_path: 'router'
-            split_repository: 'router'
+          - local_path: 'routing'
+            split_repository: 'routing'
 
           - local_path: 'trader'
             split_repository: 'trader'
+
+          - local_path: 'validator'
+            split_repository: 'validator'
 
     steps:
       - uses: actions/checkout@v2

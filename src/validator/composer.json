@@ -1,11 +1,11 @@
 {
-   "name": "utilities-php/common",
-   "description": "A common set of utilities for PHP",
+   "name": "utilities-php/validator",
+   "description": "Validator utility for PHP",
    "license": "MIT",
    "keywords": [
       "php",
       "utilities",
-      "common"
+      "validator"
    ],
    "homepage": "https://github.com/utilities-php/utilities-php",
    "support": {
@@ -26,27 +26,30 @@
    "minimum-stability": "dev",
    "prefer-stable": true,
    "require": {
-      "php": ">=8.0",
-      "ext-pcntl": "*",
-      "ext-openssl": "*",
-      "ext-fileinfo": "*",
-      "utilities-php/validator": "*",
-      "vlucas/phpdotenv": "^v5.4.1",
-      "nxp/math-executor": "^2.3.0",
-      "shahradelahi/easy-http": "^v1.2.0"
+      "php": "^8.0",
+      "symfony/intl": "^v6.1.0",
+      "utilities-php/common": "*"
+   },
+   "require-dev": {
+      "utilities-php/database": "*",
+      "fakerphp/faker": "^v1.20.0"
    },
    "scripts": {
       "install": "composer install --ignore-platform-reqs",
       "update": "composer update --ignore-platform-reqs"
    },
+   "suggest": {
+      "fakerphp/faker": "Required to use the eloquent factory builder (^1.20.0).",
+      "symfony/intl": "Required to use the eloquent factory builder (^v6.1.0)."
+   },
    "autoload": {
       "psr-4": {
-         "Utilities\\Common\\": "src/"
+         "Utilities\\Validator\\": "src/"
       }
    },
    "autoload-dev": {
       "psr-4": {
-         "UtilitiesTests\\Common\\": "tests/"
+         "UtilitiesTests\\Validator\\": "tests/"
       }
    },
    "config": {

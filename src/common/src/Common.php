@@ -24,7 +24,7 @@ class Common
     {
         $res = $data;
 
-        if (Validator::isJson($data)) {
+        if (Validation::isJson($data)) {
             return json_decode($data, true);
         }
 

@@ -17,6 +17,16 @@
       "source": "https://github.com/utilities-php/utilities-php",
       "docs": "https://github.com/utilities-php/utilities-php"
    },
+   "authors": [
+      {
+         "name": "LiteHex",
+         "email": "opensource@litehex.com"
+      },
+      {
+         "name": "Shahrad Elahi",
+         "email": "shahrad@litehex.com"
+      }
+   ],
    "minimum-stability": "dev",
    "prefer-stable": true,
    "require": {
@@ -26,8 +36,9 @@
       "ext-mcrypt": "*",
       "ext-openssl": "*",
       "ext-pdo": "*",
-      "vlucas/phpdotenv": "^v5.4.1",
+      "symfony/intl": "^v6.1.0",
       "symfony/mime": "^v6.0.12",
+      "vlucas/phpdotenv": "^v5.4.1",
       "psr/container": "^1.0|^2.0",
       "psr/log": "^1.0|^2.0|^3.0"
    },
@@ -53,16 +64,18 @@
       "utilities-php/auth": "*",
       "utilities-php/common": "*",
       "utilities-php/database": "*",
-      "utilities-php/router": "*",
-      "utilities-php/trader": "*"
+      "utilities-php/routing": "*",
+      "utilities-php/trader": "*",
+      "utilities-php/validator": "*"
    },
    "autoload": {
       "psr-4": {
          "Utilities\\Auth\\": "src/auth/src/",
          "Utilities\\Common\\": "src/common/src/",
          "Utilities\\Database\\": "src/database/src/",
-         "Utilities\\Router\\": "src/router/src/",
-         "Utilities\\Trader\\": "src/trader/src/"
+         "Utilities\\Routing\\": "src/routing/src/",
+         "Utilities\\Trader\\": "src/trader/src/",
+         "Utilities\\Validator\\": "src/validator/src/"
       }
    },
    "autoload-dev": {
@@ -70,8 +83,9 @@
          "UtilitiesTests\\Auth\\": "src/auth/tests/",
          "UtilitiesTests\\Common\\": "src/common/tests/",
          "UtilitiesTests\\Database\\": "src/database/tests/",
-         "UtilitiesTests\\Router\\": "src/router/tests/",
-         "UtilitiesTests\\Trader\\": "src/trader/tests/"
+         "UtilitiesTests\\Routing\\": "src/routing/tests/",
+         "UtilitiesTests\\Trader\\": "src/trader/tests/",
+         "UtilitiesTests\\Validator\\": "src/validator/tests/"
       }
    },
    "config": {

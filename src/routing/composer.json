@@ -1,11 +1,11 @@
 {
-   "name": "utilities-php/common",
-   "description": "A common set of utilities for PHP",
+   "name": "utilities-php/routing",
+   "description": "Router for PHP",
    "license": "MIT",
    "keywords": [
       "php",
       "utilities",
-      "common"
+      "routing"
    ],
    "homepage": "https://github.com/utilities-php/utilities-php",
    "support": {
@@ -27,13 +27,10 @@
    "prefer-stable": true,
    "require": {
       "php": ">=8.0",
-      "ext-pcntl": "*",
-      "ext-openssl": "*",
       "ext-fileinfo": "*",
-      "utilities-php/validator": "*",
-      "vlucas/phpdotenv": "^v5.4.1",
-      "nxp/math-executor": "^2.3.0",
-      "shahradelahi/easy-http": "^v1.2.0"
+      "utilities-php/auth": "*",
+      "utilities-php/common": "*",
+      "symfony/mime": "^v6.0.12"
    },
    "scripts": {
       "install": "composer install --ignore-platform-reqs",
@@ -41,12 +38,12 @@
    },
    "autoload": {
       "psr-4": {
-         "Utilities\\Common\\": "src/"
+         "Utilities\\Routing\\": "src/"
       }
    },
    "autoload-dev": {
       "psr-4": {
-         "UtilitiesTests\\Common\\": "tests/"
+         "UtilitiesTests\\Routing\\": "tests/"
       }
    },
    "config": {
