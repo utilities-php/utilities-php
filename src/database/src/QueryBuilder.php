@@ -44,10 +44,10 @@ class QueryBuilder
      */
     public static function update(array $data, bool $pdo = false): string
     {
-        self::checkDataIsset($data, ['table', 'columns', 'where']);
+        self::checkDataIsset($data, ['table', 'columns']);
         $columns = self::combineUpdateColumns(array_keys($data['columns']), array_values($data['columns']), $pdo);
-        $where = self::combineWhere($data['where'], $pdo);
-        return trim("UPDATE `{$data['table']}` SET $columns WHERE $where");
+        $where = self::combineWhere($data['where'] ?? [], $pdo);
+        return trim("UPDATE `{$data['table']}` SET $columns$where");
     }
 
     /**
@@ -65,7 +65,6 @@ class QueryBuilder
             return trim("DELETE FROM `{$data['table']}`");
         }
 
-        $where = self::combineWhere($data['where'], $pdo);
         if (!is_array($data['where'])) {
             throw new QueryException(sprintf(
                 "Invalid where clause for delete query: %s",
@@ -73,7 +72,9 @@ class QueryBuilder
             ));
         }
 
-        return trim("DELETE FROM `{$data['table']}` WHERE $where");
+        $where = self::combineWhere($data['where'] ?? [], $pdo);
+
+        return trim("DELETE FROM `{$data['table']}`$where");
     }
 
     /**
@@ -90,7 +91,7 @@ class QueryBuilder
         $where = self::combineWhere($data['where'] ?? [], $pdo);
         $order = self::combineOrder($data['order'] ?? []);
         $limit = self::combineLimit($data['limit'] ?? []);
-        return trim("SELECT $columns FROM `{$data['table']}` WHERE $where $order $limit");
+        return trim("SELECT $columns FROM `{$data['table']}`$where$order$limit");
     }
 
     /**

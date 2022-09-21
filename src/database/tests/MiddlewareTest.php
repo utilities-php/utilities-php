@@ -10,7 +10,7 @@ use UtilitiesTests\Database\Creative\UsersMiddleware;
 class MiddlewareTest extends \PHPUnit\Framework\TestCase
 {
 
-    public function test_insert(): void
+    public function testInsert(): void
     {
         DatabaseTest::loadENV();
         $fk = Factory::create();
@@ -28,7 +28,7 @@ class MiddlewareTest extends \PHPUnit\Framework\TestCase
         $this->assertNotFalse($res);
     }
 
-    public function test_update(): void
+    public function testUpdate(): void
     {
         DatabaseTest::loadENV();
         $fk = Factory::create();
@@ -52,7 +52,7 @@ class MiddlewareTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue($res);
     }
 
-    public function test_delete(): void
+    public function testDelete(): void
     {
         DatabaseTest::loadENV();
         $fk = Factory::create();
@@ -77,7 +77,7 @@ class MiddlewareTest extends \PHPUnit\Framework\TestCase
         $this->assertFalse(UsersMiddleware::where('id', $id));
     }
 
-    public function test_select(): void
+    public function testSelect(): void
     {
         DatabaseTest::loadENV();
         $fk = Factory::create();
@@ -105,7 +105,7 @@ class MiddlewareTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($email, $res[0]['email']);
     }
 
-    public function test_exists(): void
+    public function testExists(): void
     {
         DatabaseTest::loadENV();
         $fk = Factory::create();

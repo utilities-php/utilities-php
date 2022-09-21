@@ -8,73 +8,74 @@ use Utilities\Database\QueryBuilder;
 class QueryBuilderTest extends \PHPUnit\Framework\TestCase
 {
 
-    public function test_create_update_query(): void
+    public function testCreateUpdateQuery(): void
     {
-        $this->assertEquals(
-            "UPDATE `users` SET `name` = 'John Doe' WHERE `id` = 1",
-            $this->create_update_query()
+        $this->assertEquals("UPDATE `users` SET `name` = 'John Doe' WHERE `id` = 1",
+            QueryBuilder::update([
+                'table' => 'users',
+                'where' => [
+                    'id' => 1
+                ],
+                'columns' => [
+                    'name' => 'John Doe'
+                ]
+            ])
+        );
+
+        $this->assertEquals("UPDATE `users` SET `name` = 'John Doe'",
+            QueryBuilder::update([
+                'table' => 'users',
+                'columns' => [
+                    'name' => 'John Doe'
+                ]
+            ])
         );
     }
 
-    private function create_update_query(): string
-    {
-        return QueryBuilder::update([
-            'table' => 'users',
-            'where' => [
-                'id' => 1
-            ],
-            'columns' => [
-                'name' => 'John Doe'
-            ]
-        ]);
-    }
-
-    public function test_create_insert_query(): void
+    public function testCreateInsertQuery(): void
     {
         $this->assertEquals(
-            $this->create_insert_query(),
-            "INSERT INTO `users` (`name`, `email`) VALUES ('John', 'john@example.com')"
+            "INSERT INTO `users` (`name`, `email`) VALUES ('John', 'john@example.com')",
+            QueryBuilder::insert([
+                'table' => 'users',
+                'columns' => [
+                    'name' => 'John',
+                    'email' => 'john@example.com'
+                ]
+            ])
         );
     }
 
-    private function create_insert_query(): string
-    {
-        return QueryBuilder::insert([
-            'table' => 'users',
-            'columns' => [
-                'name' => 'John',
-                'email' => 'john@example.com'
-            ]
-        ]);
-    }
-
-    public function test_create_delete_query(): void
+    public function testCreateDeleteQuery(): void
     {
         $this->assertEquals(
-            $this->create_delete_query(),
-            "DELETE FROM `users` WHERE `id` = 1"
+            "DELETE FROM `users` WHERE `id` = 1",
+            QueryBuilder::delete([
+                'table' => 'users',
+                'where' => [
+                    'id' => 1
+                ]
+            ])
+        );
+
+        $this->assertEquals(
+            "DELETE FROM `users`",
+            QueryBuilder::delete([
+                'table' => 'users',
+                'where' => '*'
+            ])
         );
     }
 
-    private function create_delete_query(): string
-    {
-        return QueryBuilder::delete([
-            'table' => 'users',
-            'where' => [
-                'id' => 1
-            ]
-        ]);
-    }
-
-    public function test_create_select_query(): void
+    public function testCreateSelectQuery(): void
     {
         $this->assertEquals(
-            $this->create_select_query(),
+            $this->createSelectQuery(),
             "SELECT `id`, `name`, `email` FROM `users` WHERE `id` = 1"
         );
     }
 
-    private function create_select_query(): string
+    private function createSelectQuery(): string
     {
         return QueryBuilder::select([
             'table' => 'users',
@@ -93,7 +94,7 @@ class QueryBuilderTest extends \PHPUnit\Framework\TestCase
         ]);
     }
 
-    public function test_create_select_query_with_multiple_where_conditions()
+    public function testCreateSelectQueryWithMultipleWhereConditions()
     {
         $this->assertEquals(
             QueryBuilder::select([
@@ -111,7 +112,7 @@ class QueryBuilderTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function test_using_IN_operator(): void
+    public function testUsingInOperator(): void
     {
         $query = QueryBuilder::select([
             'table' => 'users',
@@ -126,11 +127,23 @@ class QueryBuilderTest extends \PHPUnit\Framework\TestCase
                 ]
             ]
         ]);
-
         $this->assertEquals("SELECT `email` FROM `users` WHERE `id` IN (1, 2, 3) AND `status` IN (1, 2, 3)", $query);
+
+        $this->assertEquals("SELECT `email` FROM `users` WHERE `id` IN (1, 2, 3) LIMIT 10",
+            QueryBuilder::select([
+                'table' => 'users',
+                'columns' => [
+                    'email'
+                ],
+                'where' => [
+                    'id' => [1, 2, 3]
+                ],
+                'limit' => 10
+            ])
+        );
     }
 
-    public function test_upsert(): void
+    public function testUpsert(): void
     {
         $query = QueryBuilder::upsert([
             'table' => 'users',

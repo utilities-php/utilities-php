@@ -129,16 +129,18 @@ trait QueryCombinationTrait
     private static function combineWhere(array $where, bool $pdo = false): string
     {
         $index = 0;
-        $combined = "";
+        $combined = "WHERE ";
+        if (count($where) == 0) {
+            return "";
+        }
+
         foreach ($where as $key => $value) {
             $more = count($where) - 1 == $index ? ' ' : ' AND ';
             if (is_array($value) && isset($value['operator'], $value['value'])) {
                 if (!isset($value['column'])) {
                     $value['column'] = $key;
                 }
-                $combined .= !$pdo
-                    ? "`{$value['column']}` {$value['operator']} " . self::combineValue($value['value']) . $more
-                    : "`{$value['column']}` {$value['operator']} :WHERE_{$value['column']}$more";
+                $combined .= "`{$value['column']}` {$value['operator']} " . self::combineValue($value['value'], $pdo) . $more;
             } else {
                 $match = match (gettype($value)) {
                     default => $pdo ? "`$key` = :WHERE_$key" : "`$key` = " . self::combineValue($value),
@@ -148,7 +150,7 @@ trait QueryCombinationTrait
             }
             $index++;
         }
-        return trim($combined);
+        return " " . trim($combined);
     }
 
     /**
@@ -175,7 +177,7 @@ trait QueryCombinationTrait
                     $index++;
                 }
             }
-            return trim($combined);
+            return " " . trim($combined);
         }
         return "";
     }
@@ -183,14 +185,19 @@ trait QueryCombinationTrait
     /**
      * Combine limit
      *
-     * @param array $limit The limit clause. [offset, limit]
+     * @param array|int $limit The limit clause. [offset, limit]
      * @return string
      */
-    private static function combineLimit(array $limit): string
+    private static function combineLimit(array|int $limit): string
     {
-        if (count($limit) > 0) {
-            return "LIMIT {$limit[0]}, {$limit[1]}";
+        if (is_array($limit) && count($limit) == 2) {
+            return " LIMIT {$limit[0]}, {$limit[1]}";
         }
+
+        if (!is_array($limit) && $limit != '') {
+            return " LIMIT $limit";
+        }
+
         return "";
     }
 

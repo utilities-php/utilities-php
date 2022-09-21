@@ -30,6 +30,13 @@ trait ValueExtractionTrait
                         $value['column'] = $key;
                     }
 
+                    if (is_array($value['value'])){
+                        foreach ($this->extractAssocArray('WHERE', $value['value']) as $k => $v) {
+                            $values[$k] = $v;
+                        }
+                        continue;
+                    }
+
                     $values["WHERE_$key"] = $value['value'];
                     continue;
                 }
@@ -37,9 +44,32 @@ trait ValueExtractionTrait
                 foreach ($value as $k) {
                     $values["WHERE_$k"] = $k;
                 }
+
             } else {
                 $values["WHERE_$key"] = $value;
             }
+        }
+
+        return $values;
+    }
+
+    /**
+     * Extract a assoc array from given array
+     *
+     * @param string $prefix
+     * @param array $array
+     * @return array
+     */
+    private function extractAssocArray(string $prefix, array $array): array
+    {
+        $values = [];
+
+        foreach ($array as $key => $value) {
+            if (is_numeric($key)){
+                $key = $value;
+            }
+
+            $values["{$prefix}_$key"] = $value;
         }
 
         return $values;
