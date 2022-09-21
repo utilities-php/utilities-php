@@ -55,6 +55,19 @@ trait CommonOperators
     }
 
     /**
+     * Is not empty.
+     *
+     * @error_message This value is empty.
+     * @error_code EMPTY
+     *
+     * @return bool
+     */
+    public function isNotEmpty(): bool
+    {
+        return !empty($this->data);
+    }
+
+    /**
      * Match the given pattern.
      *
      * @param string $pattern The regular expression pattern.

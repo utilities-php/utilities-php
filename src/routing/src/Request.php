@@ -1,5 +1,4 @@
-<?php
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 namespace Utilities\Routing;
 
@@ -8,6 +7,7 @@ use RuntimeException;
 use Utilities\Common\Common;
 use Utilities\Common\Validation;
 use Utilities\Routing\Utils\StatusCode;
+use Utilities\Validator\Validate;
 
 /**
  * Request class
@@ -154,7 +154,7 @@ class Request
     }
 
     /**
-     * Filter json
+     * Parse json and return the filtered array.
      *
      * @param string $json Any string to parse
      * @param array $filter Array of keys to filter, throw error if any of them is empty
@@ -171,6 +171,28 @@ class Request
         }
 
         return Common::filterArrayKeys($data, $filter);
+    }
+
+    /**
+     * Filter and Validate a given array
+     *
+     * @param array $data Array to filter and validate
+     * @param array $filter Array of keys to filter
+     * @param array $rules Array of rules to validate
+     * @return array
+     */
+    public static function filterWithValidation(array $data, array $filter, array $rules): array
+    {
+        $data = Common::filterArrayKeys($data, $filter);
+        $result = ($validate = new Validate($data))->withRule($rules);
+
+        if (!$result) {
+            Response::send(StatusCode::BAD_REQUEST, [
+                'description' => "Bad Request: " . $validate->getErrors()[0]
+            ]);
+        }
+
+        return $data;
     }
 
     /**

@@ -172,7 +172,7 @@ trait RuleValidator
         }
 
         if (preg_match('/@error_code\s+(.*)/', $docs, $matches)) {
-            $res['type'] = $matches[1];
+            $res['error_code'] = $matches[1];
         }
 
         return $res;
@@ -181,7 +181,7 @@ trait RuleValidator
     /**
      * Parse error message.
      *
-     * @param string $message e.g. "The value must be greater than {[0]}." or "{name} must be greater than {[0]}."
+     * @param string $message e.g. "The value must be greater than {[0]}."
      * @param array $args e.g. [0 => 10]
      * @return string
      */

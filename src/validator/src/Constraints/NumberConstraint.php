@@ -30,7 +30,29 @@ class NumberConstraint extends \Utilities\Validator\Constraint
      */
     public function isNumber(): bool
     {
-        return !is_numeric($this->data);
+        return is_numeric($this->data);
+    }
+
+    /**
+     * @error_message This value is not an integer.
+     * @error_code INVALID
+     *
+     * @return bool
+     */
+    public function isInteger(): bool
+    {
+        return is_int($this->data);
+    }
+
+    /**
+     * @error_message This value is not a float.
+     * @error_code INVALID
+     *
+     * @return bool
+     */
+    public function isFloat(): bool
+    {
+        return is_float($this->data);
     }
 
 }
