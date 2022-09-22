@@ -27,12 +27,12 @@ class Time
      * Get the current time in milliseconds
      *
      * @param int|string $time [optional] The timestamp to convert
-     * @return float
+     * @return int
      */
-    public static function getMillisecond(int|string $time = ''): float
+    public static function getMillisecond(int|string $time = ''): int
     {
         $time = $time != '' ? strtotime($time) : microtime(true);
-        return round($time * 1000);
+        return (int)round($time * 1000);
     }
 
     /**

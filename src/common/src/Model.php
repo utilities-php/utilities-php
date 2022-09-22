@@ -20,6 +20,11 @@ use Utilities\Common\Traits\hasSetters;
 class Model
 {
 
+    public function __construct()
+    {
+
+    }
+
     /**
      * @param string $name
      * @param array $arguments
@@ -27,28 +32,19 @@ class Model
      */
     public function __call(string $name, array $arguments): mixed
     {
-        $usedTraits = $this->getTraits();
+        $usedTraits = $this->__getTraits();
 
         if (in_array(hasSetters::class, $usedTraits)) {
             if (preg_match('/^set([A-Z][a-zA-Z0-9]+)$/', $name, $matches)) {
                 $property = lcfirst(str_replace(' ', '', ucwords(str_replace('_', ' ', substr($name, 3)))));
-
-                if (property_exists($this, $property)) {
-                    $this->$property = $arguments[0];
-                    return $this;
-                }
-
+                return $this->__doSet($property, $arguments[0]);
             }
         }
 
         if (in_array(hasGetters::class, $usedTraits)) {
             if (preg_match('/^get([A-Z][a-zA-Z0-9]+)$/', $name, $matches)) {
                 $property = lcfirst(str_replace(' ', '', ucwords(str_replace('_', ' ', substr($name, 3)))));
-
-                if (property_exists($this, $property)) {
-                    return $this->$property;
-                }
-
+                return $this->__doGet($property);
             }
         }
 
@@ -64,7 +60,7 @@ class Model
      *
      * @return array
      */
-    private function getTraits(): array
+    private function __getTraits(): array
     {
         $traits = [];
         $class = get_class($this);
@@ -76,6 +72,74 @@ class Model
         } while ($class = get_parent_class($class));
 
         return $traits;
+    }
+
+    /**
+     * Set data to the model.
+     *
+     * @param string $key
+     * @param mixed $data
+     * @return static
+     */
+    private function __doSet(string $key, mixed $data): static
+    {
+        if (property_exists($this, 'ASSOCIATIVE_STORAGE')) {
+            $this->$key = $data;
+            return $this;
+        }
+
+        if (property_exists($this, $key)) {
+            $this->$key = $data;
+            return $this;
+        }
+
+        throw new \InvalidArgumentException(sprintf(
+            "The property '%s' does not exist in the class '%s'.",
+            $key,
+            get_class($this)
+        ));
+    }
+
+    /**
+     * Get data from the model.
+     *
+     * @param string $key
+     * @return mixed
+     */
+    private function __doGet(string $key): mixed
+    {
+        if (property_exists($this, 'ASSOCIATIVE_STORAGE')) {
+            return $this->$key;
+        }
+
+        if (property_exists($this, $key)) {
+            return $this->$key;
+        }
+
+        throw new \InvalidArgumentException(sprintf(
+            "The property '%s' does not exist in the class '%s'.",
+            $key,
+            get_class($this)
+        ));
+    }
+
+    /**
+     * Find the key in the model.
+     *
+     * @param string $key
+     * @return bool
+     */
+    public function hasProperty(string $key): bool
+    {
+        if (property_exists($this, 'ASSOCIATIVE_STORAGE')) {
+            return array_key_exists($key, $this->ASSOCIATIVE_STORAGE);
+        }
+
+        if (property_exists($this, $key)) {
+            return true;
+        }
+
+        return false;
     }
 
 }
