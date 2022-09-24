@@ -20,9 +20,14 @@ use Utilities\Common\Traits\hasSetters;
 class Model
 {
 
-    public function __construct()
+    /**
+     * Model constructor.
+     *
+     * @param array $data The data to initialize the model
+     */
+    public function __construct(array $data = [])
     {
-
+        $this->set($data);
     }
 
     /**
@@ -35,14 +40,14 @@ class Model
         $usedTraits = $this->__getTraits();
 
         if (in_array(hasSetters::class, $usedTraits)) {
-            if (preg_match('/^set([A-Z][a-zA-Z0-9]+)$/', $name, $matches)) {
+            if (preg_match('/^set([A-Z][a-zA-Z0-9]*)$/', $name, $matches)) {
                 $property = lcfirst(str_replace(' ', '', ucwords(str_replace('_', ' ', substr($name, 3)))));
                 return $this->__doSet($property, $arguments[0]);
             }
         }
 
         if (in_array(hasGetters::class, $usedTraits)) {
-            if (preg_match('/^get([A-Z][a-zA-Z0-9]+)$/', $name, $matches)) {
+            if (preg_match('/^get([A-Z][a-zA-Z0-9]*)$/', $name, $matches)) {
                 $property = lcfirst(str_replace(' ', '', ucwords(str_replace('_', ' ', substr($name, 3)))));
                 return $this->__doGet($property);
             }
@@ -140,6 +145,38 @@ class Model
         }
 
         return false;
+    }
+
+    /**
+     * Set data to the model using array.
+     *
+     * @param array $data
+     * @return static
+     */
+    public function set(array $data): static
+    {
+        foreach ($data as $key => $value) {
+            $this->__doSet($key, $value);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Get data from the model using array.
+     *
+     * @param array $data
+     * @return array
+     */
+    public function get(array $data): array
+    {
+        $result = [];
+
+        foreach ($data as $key) {
+            $result[$key] = $this->__doGet($key);
+        }
+
+        return $result;
     }
 
 }

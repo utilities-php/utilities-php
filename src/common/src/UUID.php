@@ -35,7 +35,7 @@ class UUID
      */
     private static function generateRandom(): string
     {
-        return self::generateFromContent(uniqid((string)mt_rand(), true));
+        return self::generateFromContent(Common::randomString(32));
     }
 
     /**

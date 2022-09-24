@@ -33,4 +33,36 @@ class ModelTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(30, $user->getAge());
     }
 
+    public function testModelAssocStorage()
+    {
+        $user = new UserModel([
+            'firstName' => 'Shahrad',
+            'lastName' => 'Elahi',
+            'age' => 30
+        ]);
+
+        $this->assertEquals('Shahrad', $user->getFirstName());
+        $this->assertEquals('Elahi', $user->getLastName());
+        $this->assertEquals(30, $user->getAge());
+    }
+
+    public function testMultiGet()
+    {
+        $user = new UserModel([
+            'firstName' => 'Shahrad',
+            'lastName' => 'Elahi',
+            'age' => 30
+        ]);
+
+        $this->assertEquals([
+            'firstName' => 'Shahrad',
+            'lastName' => 'Elahi',
+            'age' => 30
+        ], $user->get([
+            'firstName',
+            'lastName',
+            'age'
+        ]));
+    }
+
 }

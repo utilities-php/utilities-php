@@ -2,7 +2,7 @@
 
 namespace UtilitiesTests\Common\Creative;
 
-use Utilities\Common\Traits\hasAssociativeStorage;
+use Utilities\Common\Traits\hasAssocStorage;
 use Utilities\Common\Traits\hasGetters;
 use Utilities\Common\Traits\hasSetters;
 
@@ -24,6 +24,6 @@ use Utilities\Common\Traits\hasSetters;
 class UserAssocModel extends \Utilities\Common\Model
 {
 
-    use hasGetters, hasSetters, hasAssociativeStorage;
+    use hasGetters, hasSetters, hasAssocStorage;
 
 }
