@@ -55,8 +55,7 @@ class Constraint
      */
     public function __construct(protected mixed $data)
     {
-        $name = "is" . $this->getType();
-        $this->$name();
+        $this->isValid();
     }
 
     /**
@@ -80,6 +79,17 @@ class Constraint
         $refClass = new \ReflectionClass($this);
         $name = $refClass->getShortName();
         return str_replace('Constraint', '', $name);
+    }
+
+    /**
+     * Check the given data is valid with the given constraint.
+     *
+     * @return bool
+     */
+    public function isValid(): bool
+    {
+        $name = "is" . $this->getType();
+        return $this->$name();
     }
 
 }

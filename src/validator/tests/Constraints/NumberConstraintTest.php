@@ -8,8 +8,8 @@ class NumberConstraintTest extends \PHPUnit\Framework\TestCase
 
     public function testNumberConstraint()
     {
-        $validator = \Utilities\Validator\Validate::number(10);
-        $this->assertTrue($validator->isNumber());
+        $this->assertTrue(validate(10)->number()->is(10));
+        $this->assertTrue(validate(10)->number()->isGreaterThan(9));
     }
 
 }

@@ -19,19 +19,20 @@ class StringConstraintTest extends \PHPUnit\Framework\TestCase
 
     public function testIsString()
     {
-        $this->assertInstanceOf(Constraint::class, Validate::string('test'));
-        $this->assertTrue(Validate::string($this->someJson())->isString());
-        $this->assertTrue(Validate::string($this->someJson())->isJson());
+        $this->assertInstanceOf(Constraint::class, validate('test')->string());
+        $this->assertTrue(validate($this->someJson())->typeOf('string'));
+        $this->assertTrue(validate($this->someJson())->string()->isJson());
     }
 
     public function testIsJson()
     {
-        $this->assertTrue(Validate::string($this->someJson())->isJson());
+        $this->assertTrue(validate($this->someJson())->string()->isJson());
     }
 
     public function testIsEmail()
     {
-        $this->assertTrue(Validate::string('shahrad@litehex.com')->isEmail());
+        $this->assertTrue(validate('shahrad@litehex.com')->typeOf('email'));
+        $this->assertTrue(validate('shahrad@litehex.com')->email()->isValid());
     }
 
 }

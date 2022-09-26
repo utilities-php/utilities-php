@@ -13,21 +13,21 @@ use Utilities\Validator\Constraints\StringConstraint;
 use Utilities\Validator\Constraints\TimestampConstraint;
 use Utilities\Validator\Constraints\UrlConstraint;
 use Utilities\Validator\Constraints\UuidConstraint;
-use Utilities\Validator\Traits\ErrorHolder;
+use Utilities\Validator\Operators\ClassicValidator;
 use Utilities\Validator\Traits\RuleValidator;
 
 /**
  * Entry point for the Validator package.
  *
- * @method static StringConstraint string(mixed $data)
- * @method static NumberConstraint number(mixed $data)
- * @method static ArrayConstraint array(mixed $data)
- * @method static UrlConstraint url(mixed $data)
- * @method static PhoneConstraint phone(mixed $data)
- * @method static EmailConstraint email(mixed $data)
- * @method static IpConstraint ip(mixed $data)
- * @method static UuidConstraint uuid(mixed $data)
- * @method static DateConstraint date(mixed $data)
+ * @method StringConstraint string()
+ * @method NumberConstraint number()
+ * @method ArrayConstraint array()
+ * @method UrlConstraint url()
+ * @method PhoneConstraint phone()
+ * @method EmailConstraint email()
+ * @method IpConstraint ip()
+ * @method UuidConstraint uuid()
+ * @method DateConstraint date()
  *
  *
  * This is part of the Utilities package.
@@ -41,7 +41,7 @@ use Utilities\Validator\Traits\RuleValidator;
 class Validate
 {
 
-    use Operations, RuleValidator, ErrorHolder;
+    use Operations, RuleValidator, ClassicValidator;
 
     /**
      * @var array|string[]
@@ -75,6 +75,32 @@ class Validate
     public function __construct(protected mixed $data, array $options = [])
     {
         $this->options = array_merge($this->options, $options);
+        $this->result = new Result();
+    }
+
+    /**
+     * Is type of
+     *
+     * @param string $type
+     * @return bool
+     */
+    public function typeOf(string $type): bool
+    {
+        $type = mb_strtolower($type);
+
+        if (!isset(self::$supported_types[$type])) {
+            throw new \InvalidArgumentException("The type '$type' is not supported.");
+        }
+
+        foreach (self::$supported_types as $supported_type => $constraint) {
+            if ((new $constraint($this->data))->isValid()) {
+                if ($supported_type === $type) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -82,14 +108,14 @@ class Validate
      * @param array $arguments
      * @return Constraint
      */
-    public static function __callStatic(string $name, array $arguments): Constraint
+    public function __call(string $name, array $arguments): Constraint
     {
         if (array_key_exists($name, self::$supported_types)) {
-            return new self::$supported_types[$name]($arguments[0]);
+            return new self::$supported_types[$name]($this->data);
         }
 
-        if (method_exists(Validate::class, $name)) {
-            return Validate::$name(...$arguments);
+        if (method_exists($this, $name)) {
+            return $this->$name(...$arguments);
         }
 
         throw new \BadMethodCallException(sprintf(
@@ -98,4 +124,5 @@ class Validate
             __CLASS__
         ));
     }
+
 }

@@ -7,6 +7,7 @@ use ReflectionMethod;
 use Utilities\Validator\Constraint;
 use Utilities\Validator\Exception\InvalidOperationException;
 use Utilities\Validator\Exception\ValidatorException;
+use Utilities\Validator\Result;
 
 /**
  * The RuleValidator class.
@@ -23,47 +24,93 @@ use Utilities\Validator\Exception\ValidatorException;
 trait RuleValidator
 {
 
+    protected Result $result;
+
+    /**
+     * Get available operators.
+     *
+     * @return array
+     */
+    public function getOperators(): array
+    {
+        $res = [];
+
+        foreach (self::$supported_types as $operators) {
+            $res = array_merge($res, array_filter(get_class_methods(new $operators('')), function ($method) {
+                return !str_starts_with($method, '__');
+            }));
+        }
+
+        return array_values(array_unique($res));
+    }
+
+    /**
+     * Check given array has rule.
+     *
+     * @param array $rules
+     * @return bool
+     */
+    public function hasRule(array $rules): bool
+    {
+        $keys = array_merge($this->getOperators(), ['type', 'errorCodes', 'errorMessages']);
+        return count(array_intersect($keys, array_keys($rules))) > 0;
+    }
+
     /**
      * Validate an associative array with the given rules.
      *
      * @param array $rules The rules to validate the data with.
-     * @return bool
+     * @return Result
      */
-    public function withRule(array $rules): bool
+    public function withRule(array $rules): Result
     {
-        if (isset($rules['type'])) {
+        if ($this->hasRule($rules)) {
+            if (!isset($rules['type'])) {
+                throw new InvalidOperationException('Type is not defined.');
+            }
+
             $rules = [$rules];
         }
 
+        $this->result = new Result();
+
         foreach ($rules as $key => $rule) {
 
+            // if rule was 'key' => 'type'
             if (is_string($rule)) {
+                // Converts 'key' => 'type' to 'key' => ['type' => 'type']
                 if (in_array(mb_strtolower($rule), array_keys(self::$supported_types))) {
-                    $rule = [
-                        'type' => $rule,
-                    ];
+                    $rule = ['type' => $rule];
                 }
             }
 
-            if (!is_numeric($key) && !array_key_exists($key, $this->data)) {
+            if (!isset($rule['type'])) {
+                throw new InvalidOperationException('Type is not defined.');
+            }
+
+            if (!is_numeric($key) && is_array($this->data) && !array_key_exists($key, $this->data)) {
                 throw new InvalidOperationException(sprintf(
-                    "The key '%s' does not exist in the data.",
+                    "This '%s' key does not exist in your data.",
                     $key
                 ));
             }
 
-            $data = is_numeric($key) ? $this->data : $this->data[$key];
+            $data = $this->data;
+            if (is_array($this->data)) {
+                $data = is_numeric($key) ? $this->data : $this->data[$key];
+            }
+
             $this->validateRules($rule, $data);
         }
 
-        if ($this->options['throw_exception'] && $this->hasError()) {
+        if ($this->options['throw_exception'] && !$this->result->isValid()) {
             throw new ValidatorException(sprintf(
                 "The given data is not valid. Errors count: %s",
-                count($this->getErrors())
+                count($this->result->getErrors())
             ));
         }
 
-        return $this->hasError() !== true;
+        return $this->result;
     }
 
     /**
@@ -73,7 +120,7 @@ trait RuleValidator
      */
     private function validateRules(array $rules, mixed $data): void
     {
-        $type = mb_strtolower($rules['type']);
+        $type = mb_strtolower($rules['type'] ?? 'string');
         if (!in_array($type, array_keys(self::$supported_types))) {
             throw new InvalidOperationException(sprintf(
                 "The type '%s' is not supported.",
@@ -90,14 +137,12 @@ trait RuleValidator
      *
      * @param Constraint $constraint The constraint to validate the data with.
      * @param array $rules The rules to validate the data with.
-     * @return array If returns an empty array, it means there is no error.
+     * @return void
      */
-    private function validate(Constraint $constraint, array $rules): array
+    private function validate(Constraint $constraint, array $rules): void
     {
-        $errors = [];
-
         foreach ($rules as $rule => $value) {
-            if ($rule === 'type' || $rule === 'error_message') {
+            if (in_array($rule, ['type', 'errorCode', 'errorMessage'])) {
                 continue;
             }
 
@@ -115,16 +160,13 @@ trait RuleValidator
 
             if (!$this->callMethod($constraint, $refMethod, $value)) {
                 $annotations = $this->getMethodAnnotations($refMethod, $value);
-                $this->addError($rules['error_message'] ?? $annotations['error_message'] ?? sprintf(
-                    "Given value '%s' is not valid for '%s'.",
-                    $value,
-                    $rule
-                ));
+                $this->result->addError(
+                    $rules['errorCode'] ?? $annotations['error_code'] ?? "INVALID",
+                    $rules['errorMessage'] ?? $annotations['error_message'] ?? "The given data is not valid."
+                );
             }
 
         }
-
-        return $errors;
     }
 
     /**

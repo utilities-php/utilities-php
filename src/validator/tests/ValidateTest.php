@@ -13,40 +13,36 @@ use Utilities\Validator\Constraints\NumberConstraint;
 use Utilities\Validator\Constraints\StringConstraint;
 use Utilities\Validator\Constraints\UrlConstraint;
 use Utilities\Validator\Type;
-use Utilities\Validator\Validate;
 
 class ValidateTest extends TestCase
 {
 
-    public function testStringConstraint()
+    public function testConstraint()
     {
-        $this->assertInstanceOf(StringConstraint::class, Validate::string('test'));
+        $this->assertInstanceOf(StringConstraint::class, validate('test')->string());
+        $this->assertInstanceOf(NumberConstraint::class, validate(1)->number());
+        $this->assertInstanceOf(ArrayConstraint::class, validate([])->array());
+        $this->assertInstanceOf(UrlConstraint::class, validate('https://www.google.com')->url());
+        $this->assertInstanceOf(IpConstraint::class, validate('1.1.1.1')->ip());
+        $this->assertInstanceOf(DateConstraint::class, validate('2021-01-01')->date());
+
+        echo json_encode(validate('Some')->getOperators(), JSON_PRETTY_PRINT);
     }
 
-    public function testNumberConstraint()
-    {
-        $this->assertInstanceOf(NumberConstraint::class, Validate::number(1));
-    }
+    public function testWithInnerValidators(){
+        $this->assertTrue(
+            validate('test')
+                ->match('/test/')
+                ->isNotEmpty()
+                ->isValid()
+        );
 
-    public function testArrayConstraint()
-    {
-        $this->assertInstanceOf(ArrayConstraint::class, Validate::array([]));
-    }
-
-    public function testUrlConstraint()
-    {
-        $this->assertInstanceOf(UrlConstraint::class, Validate::url('https://www.google.com'));
-    }
-
-    public function testIpConstraint()
-    {
-        $this->assertInstanceOf(IpConstraint::class, Validate::ip('1.1.1.1'));
-
-    }
-
-    public function testDateConstraint()
-    {
-        $this->assertInstanceOf(DateConstraint::class, Validate::date('2019-01-01'));
+        $this->assertFalse(
+            validate('test')
+                ->doesNotContains('te')
+                ->isContains('ties')
+                ->isValid()
+        );
     }
 
     public function testValidationWithRules(): void
@@ -60,7 +56,7 @@ class ValidateTest extends TestCase
             'updated_at' => Time::getMillisecond(),
         ];
 
-        $res = ($validator = new Validate($user))->withRule([
+        $res = validate($user)->withRule([
             'name' => 'string',
             'email' => [
                 'type' => Type::EMAIL,
@@ -81,45 +77,83 @@ class ValidateTest extends TestCase
             ],
         ]);
 
-        if ($validator->hasError()) {
-            echo Common::prettyJson($validator->getErrors()) . PHP_EOL;
+        if (!$res->isValid()) {
+            echo Common::prettyJson($res->getErrors()) . PHP_EOL;
         }
 
-        $this->assertTrue($res);
+        $this->assertTrue($res->isValid());
     }
 
     public function testSingleRuleValidation(): void
     {
-        $this->assertTrue((new Validate('test'))->withRule([
+        $this->assertTrue(validate('test')->withRule([
             'type' => Type::STRING,
             'isLengthEqual' => 4,
-        ]));
+        ])->isValid());
 
-        $this->assertFalse((new Validate('test'))->withRule([
+        $this->assertFalse(validate('test')->withRule([
             'type' => Type::STRING,
             'isLengthEqual' => 5,
-        ]));
+        ])->isValid());
     }
 
     public function testRegexRuleValidation(): void
     {
-        $this->assertTrue((new Validate('Some text'))->withRule([
+        $this->assertTrue(validate('Some text')->withRule([
             'type' => Type::STRING,
-            'regex' => '/^Some/',
-        ]));
+            'match' => '/^Some/',
+        ])->isValid());
 
-        $this->assertFalse((new Validate('test'))->withRule([
+        $this->assertFalse(validate('test')->withRule([
             'type' => Type::STRING,
-            'regex' => '/^test2$/',
-        ]));
+            'match' => '/^test2$/',
+        ])->isValid());
     }
 
     public function testCommonOperators(): void
     {
-        $this->assertTrue((new Validate('test'))->withRule([
+        $this->assertTrue(validate('test')->withRule([
             'type' => Type::STRING,
             'isIn' => ['test', 'test2'],
-        ]));
+        ])->isValid());
+    }
+
+    public function testErrorPrinting(): void
+    {
+        $res = validate(['SAD' => "test2"])->withRule([
+            'SAD' => [
+                'type' => Type::STRING,
+                'errorCode' => 'TEST_ERROR',
+                'errorMessage' => 'Test error message',
+                'isContains' => 'test2',
+            ]
+        ]);
+
+        $this->assertTrue($res->isValid());
+
+        $res = validate(['SAD'])->withRule([
+            'type' => Type::ARRAY,
+            'errorCode' => 'TEST_ERROR',
+            'errorMessage' => 'Test error message',
+            'isContains' => 'test2',
+        ]);
+
+        $this->assertFalse($res->isValid());
+
+        $res = validate('test')->withRule([
+            'type' => Type::STRING,
+            'errorCode' => 'TEST_ERROR',
+            'errorMessage' => 'Test error message',
+            'isContains' => 'test2',
+        ]);
+
+        $this->assertFalse($res->isValid());
+
+        echo Common::prettyJson($res->getErrors()) . PHP_EOL;
+
+        $error = $res->getFirstError();
+        $this->assertEquals('TEST_ERROR', $error->code);
+        $this->assertEquals('Test error message', $error->message);
     }
 
 }

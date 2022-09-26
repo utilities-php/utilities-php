@@ -26,7 +26,7 @@ class UuidConstraint extends \Utilities\Validator\Constraint
      */
     public function isUuid(): bool
     {
-        return $this->regex('/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/');
+        return $this->match('/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/');
     }
 
 }

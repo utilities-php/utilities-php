@@ -69,6 +69,9 @@
       "utilities-php/validator": "*"
    },
    "autoload": {
+      "files": [
+         "src/validator/helper.php"
+      ],
       "psr-4": {
          "Utilities\\Auth\\": "src/auth/src/",
          "Utilities\\Common\\": "src/common/src/",

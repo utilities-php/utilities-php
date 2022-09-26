@@ -55,6 +55,19 @@ trait CommonOperators
     }
 
     /**
+     * Is empty.
+     *
+     * @error_message This value is empty.
+     * @error_code EMPTY
+     *
+     * @return bool
+     */
+    public function isEmpty(): bool
+    {
+        return validate($this->data)->isEmpty()->isValid();
+    }
+
+    /**
      * Is not empty.
      *
      * @error_message This value is empty.
@@ -64,7 +77,29 @@ trait CommonOperators
      */
     public function isNotEmpty(): bool
     {
-        return !empty($this->data);
+        return validate($this->data)->isNotEmpty()->isValid();
+    }
+
+    /**
+     * Contains the given data.
+     *
+     * @param mixed $data
+     * @return bool False if the data is not found or not supported.
+     */
+    public function isContains(mixed $data): bool
+    {
+        return validate($this->data)->isContains($data)->isValid();
+    }
+
+    /**
+     * Does not contain the given data.
+     *
+     * @param mixed $data
+     * @return bool False if the data is not found or not supported.
+     */
+    public function doesNotContains(mixed $data): bool
+    {
+        return validate($this->data)->doesNotContains($data)->isValid();
     }
 
     /**
@@ -73,9 +108,9 @@ trait CommonOperators
      * @param string $pattern The regular expression pattern.
      * @return bool
      */
-    public function regex(string $pattern): bool
+    public function match(string $pattern): bool
     {
-        return preg_match($pattern, $this->data) === 1;
+        return validate($this->data)->match($pattern)->isValid();
     }
 
 }

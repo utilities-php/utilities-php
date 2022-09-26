@@ -43,6 +43,9 @@
       "symfony/intl": "Required to use the eloquent factory builder (^v6.1.0)."
    },
    "autoload": {
+      "files": [
+         "helper.php"
+      ],
       "psr-4": {
          "Utilities\\Validator\\": "src/"
       }

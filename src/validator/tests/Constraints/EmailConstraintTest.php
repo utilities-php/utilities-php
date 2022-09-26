@@ -12,16 +12,20 @@ class EmailConstraintTest extends \PHPUnit\Framework\TestCase
 
     public function testIsEmail()
     {
-        $this->assertTrue(Validate::string('shahrad@litehex.com')->isEmail());
+        $this->assertTrue(validate('shahrad@litehex.com')->string()->isEmail());
 
-        $this->assertFalse(Validate::string('shahrad@litehex')->isEmail());
+        $this->assertTrue(validate('shahrad@litehex.com')->typeOf(Type::EMAIL));
 
-        $this->assertTrue((new Validate('shahrad@litehex.com'))->withRule([
+        $this->assertFalse(validate('shahrad@litehex')->typeOf('email'));
+
+        $this->assertTrue(validate('shahrad@litehex')->typeOf('string'));
+
+        $this->assertTrue(validate('shahrad@litehex.com')->email()->domainIs('litehex.com'));
+
+        $this->assertTrue(validate('shahrad@litehex.com')->withRule([
             'type' => Type::EMAIL,
             'isDomain' => 'litehex.com',
-        ]));
+        ])->isValid());
     }
-
-
 
 }

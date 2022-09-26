@@ -127,17 +127,6 @@ class StringConstraint extends \Utilities\Validator\Constraint
     }
 
     /**
-     * Check if the string contains the given substring.
-     *
-     * @param string $substring
-     * @return bool
-     */
-    public function contains(string $substring): bool
-    {
-        return str_contains($this->data, $substring);
-    }
-
-    /**
      * Check if the string starts with the given substring.
      *
      * @param string $substring
