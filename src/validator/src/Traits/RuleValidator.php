@@ -231,7 +231,7 @@ trait RuleValidator
     {
         $res = $message;
         foreach ($args as $key => $value) {
-            $res = str_replace("{[$key]}", $value, $res);
+            $res = str_replace("{[$key]}", (string)$value, $res);
         }
 
         return $res;

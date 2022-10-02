@@ -20,7 +20,7 @@ class EmailConstraintTest extends \PHPUnit\Framework\TestCase
 
         $this->assertTrue(validate('shahrad@litehex')->typeOf('string'));
 
-        $this->assertTrue(validate('shahrad@litehex.com')->email()->domainIs('litehex.com'));
+        $this->assertTrue(validate('shahrad@litehex.com')->email()->isDomainEqual('litehex.com'));
 
         $this->assertTrue(validate('shahrad@litehex.com')->withRule([
             'type' => Type::EMAIL,

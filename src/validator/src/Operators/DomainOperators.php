@@ -38,51 +38,10 @@ trait DomainOperators
     }
 
     /**
-     * Domain name is
+     * Check if the domain name is valid.
      *
-     * @param string $domain
-     * @return bool
-     */
-    public function domainIs(string $domain): bool
-    {
-        return $this->getDomain($this->data) === $domain;
-    }
-
-    /**
-     * Domain name is not
-     *
-     * @param string $domain
-     * @return bool
-     */
-    public function domainIsNot(string $domain): bool
-    {
-        return $this->getDomain($this->data) !== $domain;
-    }
-
-    /**
-     * Domain name is in
-     *
-     * @param array $domains
-     * @return bool
-     */
-    public function domainIn(array $domains): bool
-    {
-        return in_array($this->getDomain($this->data), $domains);
-    }
-
-    /**
-     * Domain name is not in
-     *
-     * @param array $domains
-     * @return bool
-     */
-    public function domainNotIn(array $domains): bool
-    {
-        return !$this->domainIn($domains);
-    }
-
-    /**
-     * Domain name is valid
+     * @error_code INVALID_DOMAIN
+     * @error_message The domain name is not valid.
      *
      * @return bool
      */
@@ -92,13 +51,63 @@ trait DomainOperators
     }
 
     /**
-     * Domain name is not valid
+     * Checks if domains is exactly same.
+     *
+     * @error_code INVALID_DOMAIN
+     * @error_message The domain name is not valid.
+     *
+     * @param string $domain
      *
      * @return bool
      */
-    public function isDomainNotValid(): bool
+    public function isDomainEqual(string $domain): bool
     {
-        return !$this->isDomain();
+        return $this->getDomain($this->data) === $domain;
+    }
+
+    /**
+     * Checks if domains is not exactly same.
+     *
+     * @error_code INVALID_DOMAIN
+     * @error_message The domain name is not valid.
+     *
+     * @param string $domain
+     *
+     * @return bool
+     */
+    public function isDomainNotEqual(string $domain): bool
+    {
+        return $this->getDomain($this->data) !== $domain;
+    }
+
+    /**
+     * Check if the domain name is in
+     *
+     * @error_code INVALID_DOMAIN
+     * @error_message The domain name is not valid.
+     *
+     * @param array $domains
+     *
+     * @return bool
+     */
+    public function isDomainIn(array $domains): bool
+    {
+        return in_array($this->getDomain($this->data), $domains);
+    }
+
+    /**
+     * Check if the domain name is not in
+     *
+     * @error_code INVALID_DOMAIN
+     * @error_message The domain name is not valid.
+     *
+     * @param array $domains
+     *
+     * @return bool
+     */
+    public function isDomainNotIn(array $domains): bool
+    {
+        return !$this->isDomainIn($domains);
     }
 
 }
