@@ -6,9 +6,6 @@ use Utilities\Common\Traits\hasGetters;
 use Utilities\Common\Traits\hasSetters;
 
 /**
- * The Model class.
- *
- *
  * This is part of the Utilities package.
  *
  * @link https://github.com/utilities-php/utilities-php
@@ -17,11 +14,20 @@ use Utilities\Common\Traits\hasSetters;
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-class Model
+class Entity
 {
 
+    use hasGetters, hasSetters;
+
     /**
-     * Model constructor.
+     * Validation rules. (Used for hasValidator trait)
+     *
+     * @var array
+     */
+    protected array $VALIDATION_RULES = [];
+
+    /**
+     * Entity constructor.
      *
      * @param array $data The data to initialize the model
      */
@@ -80,55 +86,6 @@ class Model
     }
 
     /**
-     * Set data to the model.
-     *
-     * @param string $key
-     * @param mixed $data
-     * @return static
-     */
-    private function __doSet(string $key, mixed $data): static
-    {
-        if (property_exists($this, 'ASSOCIATIVE_STORAGE')) {
-            $this->$key = $data;
-            return $this;
-        }
-
-        if (property_exists($this, $key)) {
-            $this->$key = $data;
-            return $this;
-        }
-
-        throw new \InvalidArgumentException(sprintf(
-            "The property '%s' does not exist in the class '%s'.",
-            $key,
-            get_class($this)
-        ));
-    }
-
-    /**
-     * Get data from the model.
-     *
-     * @param string $key
-     * @return mixed
-     */
-    private function __doGet(string $key): mixed
-    {
-        if (property_exists($this, 'ASSOCIATIVE_STORAGE')) {
-            return $this->$key;
-        }
-
-        if (property_exists($this, $key)) {
-            return $this->$key;
-        }
-
-        throw new \InvalidArgumentException(sprintf(
-            "The property '%s' does not exist in the class '%s'.",
-            $key,
-            get_class($this)
-        ));
-    }
-
-    /**
      * Find the key in the model.
      *
      * @param string $key
@@ -148,35 +105,26 @@ class Model
     }
 
     /**
-     * Set data to the model using array.
+     * Get type of the property.
      *
-     * @param array $data
-     * @return static
+     * @param string $key
+     * @return string
      */
-    public function set(array $data): static
+    public function type(string $key): string
     {
-        foreach ($data as $key => $value) {
-            $this->__doSet($key, $value);
+        if (property_exists($this, 'ASSOCIATIVE_STORAGE')) {
+            return gettype($this->ASSOCIATIVE_STORAGE[$key]);
         }
 
-        return $this;
-    }
-
-    /**
-     * Get data from the model using array.
-     *
-     * @param array $data
-     * @return array
-     */
-    public function get(array $data): array
-    {
-        $result = [];
-
-        foreach ($data as $key) {
-            $result[$key] = $this->__doGet($key);
+        if (property_exists($this, $key)) {
+            return gettype($this->$key);
         }
 
-        return $result;
+        throw new \InvalidArgumentException(sprintf(
+            "The property '%s' does not exist in the class '%s'.",
+            $key,
+            get_class($this)
+        ));
     }
 
 }

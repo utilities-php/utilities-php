@@ -9,11 +9,11 @@ use Utilities\Common\Traits\hasSetters;
 /**
  * The UserModel class.
  *
- * @method UserModel setFirstName(string $firstName)
- * @method UserModel setLastName(string $lastName)
- * @method UserModel setAge(int $age)
- * @method UserModel setGender(string $gender)
- * @method UserModel setCountry(string $country)
+ * @method UserEntity setFirstName(string $firstName)
+ * @method UserEntity setLastName(string $lastName)
+ * @method UserEntity setAge(int $age)
+ * @method UserEntity setGender(string $gender)
+ * @method UserEntity setCountry(string $country)
  *
  * @method string getFirstName()
  * @method string getLastName()
@@ -21,7 +21,7 @@ use Utilities\Common\Traits\hasSetters;
  * @method string getGender()
  * @method string getCountry()
  */
-class UserAssocModel extends \Utilities\Common\Model
+class UserAssocEntity extends \Utilities\Common\Entity
 {
 
     use hasGetters, hasSetters, hasAssocStorage;

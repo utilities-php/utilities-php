@@ -2,10 +2,9 @@
 
 namespace Utilities\Common\Traits;
 
+use Utilities\Validator\Result;
+
 /**
- * The hasAssociativeStorage trait.
- *
- *
  * This is part of the Utilities package.
  *
  * @link https://github.com/utilities-php/utilities-php
@@ -14,14 +13,18 @@ namespace Utilities\Common\Traits;
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-trait hasAssocStorage
+trait hasValidator
 {
 
     /**
-     * The associative storage.
+     * Validate the entity.
      *
-     * @var array
+     * @param array $rules [optional] The validation rules. If not provided, it uses $this->VALIDATION_RULES.
+     * @return Result
      */
-    protected array $ASSOCIATIVE_STORAGE = [];
+    public function validate(array $rules = []): Result
+    {
+        return validate($this->toArray())->withRule($this->VALIDATION_RULES ?: $rules);
+    }
 
 }
