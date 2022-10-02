@@ -176,14 +176,15 @@ class Request
     /**
      * Filter and Validate a given array
      *
+     * Using keys of the given rules array, filter the given array and validate the values.
+     *
      * @param array $data Array to filter and validate
-     * @param array $filter Array of keys to filter
-     * @param array $rules Array of rules to validate
+     * @param array $rules Array of rules to validate.
      * @return array
      */
-    public static function filterWithValidation(array $data, array $filter, array $rules): array
+    public static function filterWithValidation(array $data, array $rules): array
     {
-        $data = Common::filterArrayKeys($data, $filter);
+        $data = Common::filterArrayKeys($data, array_keys($rules));
         $result = ($validate = new Validate($data))->withRule($rules);
 
         if (!$result) {

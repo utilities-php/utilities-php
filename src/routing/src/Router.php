@@ -161,6 +161,7 @@ class Router
 
         $uri = $request::getUri();
         $uri = str_ends_with($uri, '/') ? substr($uri, 0, -1) : $uri;
+        $uri = !str_starts_with($uri, '/') ? '/' . $uri : $uri;
 
         $isResource = false;
         foreach (static::$resources as $resource => $location) {
