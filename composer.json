@@ -36,7 +36,7 @@
       "ext-mbstring": "*",
       "ext-bcmath": "*",
       "ext-pdo": "*",
-      "shahradelahi/easy-http": "^v1.2.0",
+      "shahradelahi/easy-http": "*",
       "symfony/intl": "^v6.1.0",
       "symfony/mime": "^v6.1.5",
       "vlucas/phpdotenv": "^v5.4.1",
@@ -57,6 +57,7 @@
    "suggest": {
       "doctrine/dbal": "Required to rename columns and drop SQLite columns (^2.13.3|^3.1.4).",
       "fakerphp/faker": "Required to use the eloquent factory builder (^1.20.0).",
+      "shahradelahi/easy-http": "Required to use the http/websocket client (*).",
       "symfony/mime": "Required to use mime type guessing (^v6.0.12).",
       "vlucas/phpdotenv": "Required to use the environments (^v5.4.1)."
    },
