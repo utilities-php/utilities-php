@@ -30,7 +30,7 @@
       "ext-fileinfo": "*",
       "utilities-php/auth": "*",
       "utilities-php/common": "*",
-      "symfony/mime": "^v6.0.12"
+      "symfony/mime": "^v6.1.6"
    },
    "scripts": {
       "install": "composer install --ignore-platform-reqs",

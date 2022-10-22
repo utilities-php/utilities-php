@@ -19,7 +19,7 @@
       "php": ">=8.0",
       "ext-pdo": "*",
       "utilities-php/common": "*",
-      "vlucas/phpdotenv": "^v5.4.1"
+      "vlucas/phpdotenv": "^v5.5.0"
    },
    "require-dev": {
       "fakerphp/faker": "^v1.20.0"

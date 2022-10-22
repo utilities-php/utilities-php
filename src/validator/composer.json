@@ -28,7 +28,7 @@
    "require": {
       "php": "^8.0",
       "ext-mbstring": "*",
-      "symfony/intl": "^v6.1.0",
+      "symfony/intl": "^v6.1.6",
       "utilities-php/common": "*"
    },
    "require-dev": {

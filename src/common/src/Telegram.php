@@ -2,7 +2,7 @@
 
 namespace Utilities\Common;
 
-use EasyHttp\Client;
+use EasyHttp\HttpClient;
 
 /**
  * Telegram Class
@@ -50,7 +50,7 @@ class Telegram
     public function send(string $method, array $data = []): array|false
     {
         $url = "https://api.telegram.org/bot" . $this->token . "/" . $method;
-        $response = (new Client())->post($url, [
+        $response = (new HttpClient())->post($url, [
             'body' => $data,
         ]);
 

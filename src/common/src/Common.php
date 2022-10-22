@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace Utilities\Common;
 
-use EasyHttp\Client;
+use EasyHttp\HttpClient;
 use RuntimeException;
 
 /**
@@ -68,7 +68,7 @@ class Common
      */
     public static function getIpInfo(string $ip): array
     {
-        $Response = (new Client())->get("https://ipinfo.io/$ip/json");
+        $Response = (new HttpClient())->get("https://ipinfo.io/$ip/json");
         return json_decode($Response->getBody(), true);
     }
 

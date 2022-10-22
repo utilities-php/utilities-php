@@ -34,12 +34,13 @@
       "ext-fileinfo": "*",
       "ext-mcrypt": "*",
       "ext-mbstring": "*",
+      "ext-openssl": "*",
       "ext-bcmath": "*",
       "ext-pdo": "*",
-      "shahradelahi/easy-http": "*",
-      "symfony/intl": "^v6.1.0",
-      "symfony/mime": "^v6.1.5",
-      "vlucas/phpdotenv": "^v5.4.1",
+      "shahradelahi/easy-http": "~1.3.0",
+      "symfony/intl": "^v6.1.6",
+      "symfony/mime": "^v6.1.6",
+      "vlucas/phpdotenv": "^v5.5.0",
       "psr/container": "^1.0|^2.0",
       "psr/log": "^1.0|^2.0|^3.0"
    },
@@ -57,9 +58,9 @@
    "suggest": {
       "doctrine/dbal": "Required to rename columns and drop SQLite columns (^2.13.3|^3.1.4).",
       "fakerphp/faker": "Required to use the eloquent factory builder (^1.20.0).",
-      "shahradelahi/easy-http": "Required to use the http/websocket client (*).",
-      "symfony/mime": "Required to use mime type guessing (^v6.0.12).",
-      "vlucas/phpdotenv": "Required to use the environments (^v5.4.1)."
+      "shahradelahi/easy-http": "Required to use the http/websocket client (~1.3.0).",
+      "symfony/mime": "Required to use mime type guessing (^v6.1.6).",
+      "vlucas/phpdotenv": "Required to use the environments (^v5.5.0)."
    },
    "replace": {
       "utilities-php/auth": "*",
