@@ -7,6 +7,9 @@ on:
     tags:
       - '*'
 
+concurrency:
+  group: 'split'
+
 env:
   GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
 
@@ -48,5 +51,5 @@ jobs:
           repository_organization: 'utilities-php'
           repository_name: '${{ matrix.package.split_repository }}'
 
-          user_name: '${{ github.event.pusher.name }}'
-          user_email: '${{ github.event.pusher.email }}'
+          user_name: 'github-actions[bot]'
+          user_email: '41898282+github-actions[bot]@users.noreply.github.com'
