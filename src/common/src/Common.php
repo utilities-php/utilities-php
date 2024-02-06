@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace Utilities\Common;
 
-use EasyHttp\HttpClient;
 use RuntimeException;
 
 /**
@@ -60,17 +59,18 @@ class Common
         return str_replace("'", "\'", "$string");
     }
 
-    /**
-     * Get the IP information by using the ipinfo.io API
-     *
-     * @param string $ip IP Address
-     * @return array ["ip", "city", "region", "country", "loc", "org", "postal", "timezone"]
-     */
-    public static function getIpInfo(string $ip): array
-    {
-        $Response = (new HttpClient())->get("https://ipinfo.io/$ip/json");
-        return json_decode($Response->getBody(), true);
-    }
+// TODO: Find another HTTP client
+//    /**
+//     * Get the IP information by using the ipinfo.io API
+//     *
+//     * @param string $ip IP Address
+//     * @return array ["ip", "city", "region", "country", "loc", "org", "postal", "timezone"]
+//     */
+//    public static function getIpInfo(string $ip): array
+//    {
+//        $Response = (new HttpClient())->get("https://ipinfo.io/$ip/json");
+//        return json_decode($Response->getBody(), true);
+//    }
 
     /**
      * Check values of specified indexes in array are empty

@@ -32,8 +32,7 @@
       "ext-fileinfo": "*",
       "utilities-php/validator": "*",
       "vlucas/phpdotenv": "^v5.4.1",
-      "nxp/math-executor": "^2.3.0",
-      "shahradelahi/easy-http": "~v1.3.0"
+      "nxp/math-executor": "^2.3.0"
    },
    "scripts": {
       "install": "composer install --ignore-platform-reqs",
